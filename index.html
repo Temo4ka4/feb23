@@ -31,6 +31,11 @@
 
       --barBg: rgba(255,255,255,.10);
       --barFill: rgba(214, 255, 232, .92);
+
+      --danger: rgba(255, 178, 178, .92);
+      --dangerBg: rgba(255, 95, 95, .10);
+      --btnBg: rgba(255,255,255,.08);
+      --btnBorder: rgba(255,255,255,.14);
     }
 
     *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
@@ -39,7 +44,7 @@
       height:100%;
       margin:0;
       padding:0;
-      overflow:hidden; /* критично для iPhone: не скроллим body */
+      overflow:hidden; /* iPhone: не скроллим body */
       font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
                    Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
       color: var(--text);
@@ -55,7 +60,7 @@
       position:relative;
     }
 
-    /* внутренний скролл-контейнер вместо body */
+    /* внутренний скролл вместо body */
     .scroll{
       height:100vh;
       overflow-y:auto;
@@ -111,6 +116,7 @@
     .progressWrap{
       padding: 14px 14px 12px 14px;
       margin-bottom: 14px;
+      animation: fadeIn .22s ease both;
     }
 
     .progressTop{
@@ -161,7 +167,7 @@
       cursor:pointer;
       user-select:none;
       transform: translateZ(0);
-      transition: transform .14s ease, background .2s ease, border-color .2s ease;
+      transition: transform .14s ease, border-color .2s ease, background .2s ease;
       position:relative;
       overflow:hidden;
       animation: cardIn .46s cubic-bezier(.2,.85,.2,1) both;
@@ -275,7 +281,7 @@
       display:flex;
       flex-direction:column;
       gap: 10px;
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     .pill{
@@ -308,6 +314,7 @@
     .section{
       padding: 14px 14px;
       margin-bottom: 12px;
+      animation: fadeIn .22s ease both;
     }
 
     .sectionTitle{
@@ -328,6 +335,54 @@
       margin-top: 10px;
       font-size: 15px;
       color: rgba(242,246,243,.95);
+    }
+
+    /* CTA */
+    .ctaBtn{
+      appearance:none;
+      width:100%;
+      border-radius: 14px;
+      padding: 12px 14px;
+      border: 1px solid var(--btnBorder);
+      background: var(--btnBg);
+      color: var(--text);
+      font-size: 14px;
+      cursor:pointer;
+      transition: transform .14s ease, border-color .2s ease;
+      margin-top: 12px;
+    }
+    .ctaBtn:active{ transform: scale(var(--tap)); }
+    .ctaBtn[disabled]{ opacity:.5; cursor:not-allowed; transform:none !important; }
+
+    /* error panel */
+    .errorBox{
+      background: var(--dangerBg);
+      border: 1px solid rgba(255, 160, 160, .28);
+      border-radius: var(--radius);
+      padding: 14px 14px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px) saturate(140%);
+      -webkit-backdrop-filter: blur(16px) saturate(140%);
+      animation: fadeIn .22s ease both;
+    }
+    .errorTitle{
+      margin:0;
+      font-size: 15px;
+      color: var(--danger);
+    }
+    .errorText{
+      margin: 10px 0 0 0;
+      font-size: 13px;
+      color: rgba(242,246,243,.85);
+      line-height: 1.35;
+    }
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      color: rgba(242,246,243,.72);
+      margin-top: 10px;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
     /* loading overlay */
@@ -367,9 +422,6 @@
       pointer-events:none;
     }
 
-    .fadeIn{
-      animation: fadeIn .22s ease both;
-    }
     @keyframes fadeIn{
       from{ opacity:0; transform: translateY(6px); }
       to{ opacity:1; transform: translateY(0); }
@@ -380,7 +432,7 @@
 <body>
   <div class="loading" id="loading">
     <div class="spinner"></div>
-    <div class="loadingText">Загрузка…</div>
+    <div class="loadingText" id="loadingText">Загрузка…</div>
   </div>
 
   <div class="app">
@@ -399,9 +451,14 @@
   (() => {
     const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
 
-    // API_BASE: "" = same-origin. Можно переопределить:
-    // window.FEB23_API_BASE = "https://ваш-домен-с-api"
-    const API_BASE = (window.FEB23_API_BASE ? String(window.FEB23_API_BASE).replace(/\/+$/, "") : "");
+    // ВАЖНО: если фронт на GitHub Pages (feb23.temo4ka4.ru), то /api на этом домене нет.
+    // Поэтому даём fallback на домен, где у тебя реально работает API (как у webapp ДЗ).
+    // Поменяй на свой реальный домен API, если он другой:
+    const FALLBACK_API_BASE = "https://webapp.temo4ka4.ru";
+
+    const loadingTextEl = document.getElementById("loadingText");
+    const viewEl = document.getElementById("view");
+    const subtitleEl = document.getElementById("subtitle");
 
     const qs = new URLSearchParams(location.search);
     const fallbackAuth = {
@@ -413,41 +470,20 @@
     const initData = tg ? (tg.initData || "") : "";
     const initUser = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
 
-    const viewEl = document.getElementById("view");
-    const loadingEl = document.getElementById("loading");
-    const subtitleEl = document.getElementById("subtitle");
+    let state = null;
+    let results = null;
 
-    let state = null;    // /state
-    let results = null;  // /results
+    function setReady() { document.body.classList.add("ready"); }
+    function setLoading(msg) { loadingTextEl.textContent = msg || "Загрузка…"; }
 
-    function setReady() {
-      document.body.classList.add("ready");
-    }
-
-    function showError(message) {
+    function showErrorPopup(message) {
       const msg = String(message || "Ошибка");
       if (tg && tg.showPopup) {
-        tg.showPopup({
-          title: "Ошибка",
-          message: msg,
-          buttons: [{type: "ok"}]
-        });
+        tg.showPopup({ title: "Ошибка", message: msg, buttons: [{type:"ok"}] });
       } else if (tg && tg.showAlert) {
         tg.showAlert(msg);
       } else {
         alert(msg);
-      }
-    }
-
-    function showInfo(message) {
-      const msg = String(message || "");
-      if (!msg) return;
-      if (tg && tg.showPopup) {
-        tg.showPopup({
-          title: "Готово",
-          message: msg,
-          buttons: [{type: "ok"}]
-        });
       }
     }
 
@@ -456,24 +492,46 @@
       const hasAll = fallbackAuth.uid && fallbackAuth.ts && fallbackAuth.sig;
       if (!hasAll) return path;
       const sep = path.includes("?") ? "&" : "?";
-      const p = new URLSearchParams(fallbackAuth);
-      return path + sep + p.toString();
+      return path + sep + new URLSearchParams(fallbackAuth).toString();
     }
 
-    async function api(path, opts = {}) {
-      const url = API_BASE + withAuthUrl(path);
-      const headers = Object.assign(
-        {"Content-Type": "application/json"},
-        (opts.headers || {})
-      );
+    async function fetchText(url, opts = {}) {
+      const res = await fetch(url, opts);
+      const text = await res.text();
+      return {res, text};
+    }
 
+    async function guessApiBase() {
+      // Если задано вручную — используем.
+      if (window.FEB23_API_BASE) {
+        return String(window.FEB23_API_BASE).replace(/\/+$/, "");
+      }
+
+      // Попытка same-origin (/api) — если там реально API (JSON), оставляем.
+      // Иначе — fallback на домен с API.
+      const sameOrigin = "";
+      try {
+        const url = sameOrigin + withAuthUrl("/api/feb23/state");
+        const headers = initData ? {"X-Telegram-InitData": initData} : {};
+        const {res, text} = await fetchText(url, {headers});
+        // Если это JSON — значит same-origin работает.
+        if (res.ok) {
+          try { JSON.parse(text); return sameOrigin; } catch (_) {}
+        }
+      } catch (_) {}
+
+      return FALLBACK_API_BASE.replace(/\/+$/, "");
+    }
+
+    async function api(apiBase, path, opts = {}) {
+      const url = apiBase + withAuthUrl(path);
+      const headers = Object.assign({"Content-Type":"application/json"}, (opts.headers || {}));
       if (initData) headers["X-Telegram-InitData"] = initData;
 
-      const res = await fetch(url, Object.assign({}, opts, {headers}));
-      const text = await res.text();
+      const {res, text} = await fetchText(url, Object.assign({}, opts, {headers}));
 
       let data = null;
-      try { data = text ? JSON.parse(text) : null; } catch(e) {}
+      try { data = text ? JSON.parse(text) : null; } catch (_) {}
 
       if (!res.ok) {
         const detail = (data && (data.detail || data.error)) ? (data.detail || data.error) : (text || "Ошибка запроса");
@@ -484,20 +542,12 @@
 
     function applyTheme() {
       if (!tg || !tg.themeParams) return;
-
-      // аккуратно: используем цвета Telegram как базу текста/подсказок,
-      // но фон оставляем "оливковым" градиентом.
       const tp = tg.themeParams;
       if (tp.text_color) document.documentElement.style.setProperty("--text", tp.text_color);
       if (tp.hint_color) document.documentElement.style.setProperty("--muted", tp.hint_color);
-      if (tp.secondary_bg_color) {
-        // слегка подмешаем в стекло
-        // (в чистом виде secondary_bg_color часто слишком светлый/тёмный)
-      }
-
       try {
-        if (tg.setHeaderColor) tg.setHeaderColor("#0b150f");
-        if (tg.setBackgroundColor) tg.setBackgroundColor("#0b150f");
+        tg.setHeaderColor && tg.setHeaderColor("#0b150f");
+        tg.setBackgroundColor && tg.setBackgroundColor("#0b150f");
       } catch(_) {}
     }
 
@@ -513,26 +563,46 @@
       return c || null;
     }
 
+    function renderErrorScreen(apiBase, err) {
+      const msg = String(err && err.message ? err.message : err || "Ошибка");
+      subtitleEl.textContent = "Не удалось загрузить данные";
+
+      const hint =
+        (!initData && !(fallbackAuth.uid && fallbackAuth.ts && fallbackAuth.sig))
+          ? "Вы открыли страницу вне Telegram. Откройте через кнопку в боте или используйте подписанный URL (?uid&ts&sig)."
+          : "Проверьте, что API доступен и настроен прокси / CORS.";
+
+      viewEl.innerHTML = `
+        <div class="errorBox">
+          <div class="errorTitle">Данные не загрузились</div>
+          <div class="errorText">${hint}</div>
+          <div class="mono">apiBase: ${apiBase || "(same-origin)"}\nerror: ${msg}</div>
+          <button class="ctaBtn" id="retryBtn">Повторить</button>
+        </div>
+      `;
+
+      document.getElementById("retryBtn").addEventListener("click", () => location.reload());
+    }
+
     function renderHome() {
       if (!state) return;
 
       const total = 5;
       const progress = Number(state.progress_count || 0);
       const pct = Math.max(0, Math.min(100, Math.round((progress / total) * 100)));
-
       const status = String(state.event_status || "closed");
+      const myVotes = state.my_votes || {};
 
       subtitleEl.textContent = "Голосование до 24 февраля";
 
-      const myVotes = state.my_votes || {};
-
       const progressHtml = `
-        <div class="progressWrap glass fadeIn">
+        <div class="progressWrap glass">
           <div class="progressTop">
             <div class="progressTitle">Вы проголосовали в <b>${progress}/${total}</b> категорий</div>
             <div class="progressPct">${pct}%</div>
           </div>
           <div class="progressBar"><div style="width:${pct}%"></div></div>
+          ${progress >= 5 ? `<button class="ctaBtn" disabled>Голосование завершено</button>` : ``}
         </div>
       `;
 
@@ -541,13 +611,12 @@
         const voted = (typeof votedTarget !== "undefined");
         const name = voted ? getMemberNameById(votedTarget) : "";
 
-        const disabled = (status !== "open") || voted;
         const hint = voted
           ? `<div class="pickedLine"><span class="check">✓</span><span>${name}</span></div>`
           : `<div class="mutedHint">${status === "open" ? "Выберите кандидата" : "Голосование завершено"}</div>`;
 
         return `
-          <div class="card glass" data-cat="${c.id}" style="animation-delay:${idx * 70}ms; ${disabled ? "opacity:.92;" : ""}">
+          <div class="card glass" data-cat="${c.id}" style="animation-delay:${idx * 70}ms; ${voted ? "opacity:.94;" : ""}">
             <div class="cardRow">
               <div class="emoji">${c.emoji}</div>
               <div class="cardMeta">
@@ -555,30 +624,19 @@
                 <div class="cardDesc">${c.description}</div>
                 ${hint}
               </div>
-              <div class="cardStatus">
-                ${voted ? `<span class="check">✓</span>` : ``}
-              </div>
+              <div class="cardStatus">${voted ? `<span class="check">✓</span>` : ``}</div>
             </div>
           </div>
         `;
       }).join("");
 
-      const closedHint = (status !== "open")
-        ? `<div class="section glass fadeIn">
-             <div class="sectionTitle">Итоги</div>
-             <div class="mutedHint">Голосование закрыто. Можно только посмотреть результаты.</div>
-           </div>`
-        : "";
-
       viewEl.innerHTML = `
         ${progressHtml}
-        ${closedHint}
         <div class="cards">${cardsHtml}</div>
       `;
 
-      // клики
-      const cards = viewEl.querySelectorAll(".card");
-      cards.forEach(el => {
+      // клики по карточкам
+      viewEl.querySelectorAll(".card").forEach(el => {
         el.addEventListener("click", () => {
           const catId = Number(el.getAttribute("data-cat"));
           const votedTarget = myVotes[String(catId)];
@@ -588,7 +646,6 @@
             renderResults();
             return;
           }
-
           renderPick(catId);
         });
       });
@@ -609,11 +666,11 @@
       }).join("");
 
       viewEl.innerHTML = `
-        <div class="section glass fadeIn">
+        <div class="section glass">
           <div class="sectionTitle">Голосование завершено</div>
           <div class="mutedHint">Вы уже отдали голос во всех 5 категориях. Редактирование запрещено.</div>
           <div style="margin-top:6px;">${items}</div>
-          <div class="mutedHint" style="margin-top:14px;opacity:.9;">Кнопка “Голосование завершено” неактивна.</div>
+          <button class="ctaBtn" disabled>Голосование завершено</button>
         </div>
       `;
     }
@@ -621,10 +678,7 @@
     function renderPick(categoryId) {
       if (!state) return;
       const c = getCategoryById(categoryId);
-      if (!c) {
-        showError("Категория не найдена.");
-        return;
-      }
+      if (!c) { showErrorPopup("Категория не найдена."); return; }
 
       subtitleEl.textContent = `${c.emoji} ${c.title}`;
 
@@ -653,21 +707,19 @@
       }).join("");
 
       viewEl.innerHTML = `
-        <div class="topBar fadeIn">
+        <div class="topBar">
           <button class="backBtn" id="backBtn">← Назад</button>
           <div style="font-size:13px;color:var(--muted2);">Голос фиксируется сразу</div>
         </div>
 
-        <div class="section glass fadeIn">
+        <div class="section glass">
           <div class="sectionTitle">${c.emoji} ${c.title}</div>
           <div class="mutedHint">${c.description}</div>
-          <div class="pillList" style="margin-top:12px;">${pills}</div>
+          <div class="pillList">${pills}</div>
         </div>
       `;
 
-      document.getElementById("backBtn").addEventListener("click", () => {
-        renderHome();
-      });
+      document.getElementById("backBtn").addEventListener("click", () => renderHome());
 
       viewEl.querySelectorAll(".pill").forEach(btn => {
         btn.addEventListener("click", async () => {
@@ -678,23 +730,22 @@
 
           const doVote = async () => {
             try {
-              await api("/api/feb23/vote", {
+              await api(window.__FEB23_API_BASE, "/api/feb23/vote", {
                 method: "POST",
                 body: JSON.stringify({ category_id: categoryId, target_user_id: memberId })
               });
-              await loadState();
-              if (state.event_status !== "open") {
-                await loadResults();
+              state = await api(window.__FEB23_API_BASE, "/api/feb23/state");
+
+              if (String(state.event_status) !== "open") {
+                results = await api(window.__FEB23_API_BASE, "/api/feb23/results");
                 renderResults();
                 return;
               }
-              if (Number(state.progress_count || 0) >= 5) {
-                renderDone();
-              } else {
-                renderHome();
-              }
+
+              if (Number(state.progress_count || 0) >= 5) renderDone();
+              else renderHome();
             } catch (e) {
-              showError(e.message || e);
+              showErrorPopup(e.message || e);
             }
           };
 
@@ -706,25 +757,12 @@
                 {id: "vote", type: "default", text: "Голосовать"},
                 {id: "cancel", type: "cancel", text: "Отмена"}
               ]
-            }, (btnId) => {
-              if (btnId === "vote") doVote();
-            });
+            }, (btnId) => { if (btnId === "vote") doVote(); });
           } else {
-            const ok = confirm(`Голос: ${c.title} → ${memberName}\n\nГолос нельзя будет изменить. Продолжить?`);
-            if (ok) doVote();
+            if (confirm(`Голос: ${c.title} → ${memberName}\n\nГолос нельзя будет изменить. Продолжить?`)) doVote();
           }
         });
       });
-    }
-
-    async function loadState() {
-      state = await api("/api/feb23/state");
-      return state;
-    }
-
-    async function loadResults() {
-      results = await api("/api/feb23/results");
-      return results;
     }
 
     function renderResults() {
@@ -750,7 +788,7 @@
         }
 
         return `
-          <div class="section glass fadeIn">
+          <div class="section glass">
             <div class="sectionTitle">${c.emoji} ${c.title}</div>
             ${items}
           </div>
@@ -758,52 +796,51 @@
       }).join("");
 
       const legendHtml = legend
-        ? `<div class="section glass fadeIn">
+        ? `<div class="section glass">
              <div class="sectionTitle">🏆 Легенда класса</div>
              <div class="legend"><b>${legend.name}</b> — ${legend.votes_total} голосов</div>
            </div>`
-        : `<div class="section glass fadeIn">
+        : `<div class="section glass">
              <div class="sectionTitle">🏆 Легенда класса</div>
              <div class="mutedHint">Пока не определена — нет голосов.</div>
            </div>`;
 
-      viewEl.innerHTML = `
-        ${blocks}
-        ${legendHtml}
-      `;
+      viewEl.innerHTML = `${blocks}${legendHtml}`;
     }
 
     async function boot() {
       try {
+        setLoading("Подготовка…");
+
         if (tg) {
           tg.ready();
           tg.expand();
-          if (tg.disableVerticalSwipes) tg.disableVerticalSwipes(); // iPhone: не закрывать на вертикальные свайпы
+          if (tg.disableVerticalSwipes) tg.disableVerticalSwipes(); // iPhone: не закрывать на swipe вниз
         }
-
         applyTheme();
 
-        await loadState();
+        setLoading("Подключаемся…");
 
-        // закрыто — показываем результаты
+        const apiBase = await guessApiBase();
+        window.__FEB23_API_BASE = apiBase;
+
+        setLoading("Загружаем данные…");
+        state = await api(apiBase, "/api/feb23/state");
+
         if (String(state.event_status) !== "open") {
-          await loadResults();
+          results = await api(apiBase, "/api/feb23/results");
           renderResults();
           setReady();
           return;
         }
 
-        // открыто — либо прогресс, либо done-screen
-        if (Number(state.progress_count || 0) >= 5) {
-          renderDone();
-        } else {
-          renderHome();
-        }
+        if (Number(state.progress_count || 0) >= 5) renderDone();
+        else renderHome();
 
         setReady();
       } catch (e) {
         setReady();
-        showError(e.message || e);
+        renderErrorScreen(window.__FEB23_API_BASE || "", e);
       }
     }
 
