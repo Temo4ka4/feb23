@@ -1,270 +1,814 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Создание класса</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f0f0f5;
-            padding: 20px;
-            box-sizing: border-box;
-            margin: 0;
-        }
-        .container {
-            max-width: 90%;
-            margin: 0 auto;
-            text-align: center;
-        }
-        .container h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-weight: bold;
-            color: #000000;
-            animation: fadeIn 1s ease-in-out;
-        }
-        .form-group {
-            margin-bottom: 20px;
-            animation: fadeInUp 0.5s ease-in-out;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #333333;
-        }
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            box-sizing: border-box;
-            font-size: 16px;
-            transition: border-color 0.5s ease;
-        }
-        .form-group input:focus,
-        .form-group select:focus {
-            border-color: #007bff;
-            outline: none;
-            box-shadow: none;
-        }
-        .form-group input.error,
-        .form-group select.error {
-            border-color: #ff0000;
-        }
-        .submit-button {
-            width: 100%;
-            padding: 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-            animation: fadeInUp 0.5s ease-in-out;
-            margin-top: 20px; /* Добавлено для отступа сверху */
-        }
-        .submit-button:hover {
-            background-color: #0056b3;
-        }
-        .instructions {
-            font-size: 12px;
-            color: #666666;
-            margin-top: -5px;
-            margin-bottom: 10px;
-        }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-            .container {
-                width: 100%;
-                max-width: none;
-                height: auto;
-                padding-bottom: 20px;
-            }
-            .form-group input,
-            .form-group select {
-                font-size: 14px;
-                padding: 10px;
-            }
-            .submit-button {
-                font-size: 14px;
-                padding: 12px;
-            }
-        }
-    </style>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no"
+  />
+  <title>Рейтинг легенд класса</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    :root{
+      --bg0:#07110b;
+      --bg1:#0c1d12;
+
+      --glass: rgba(255,255,255,.09);
+      --glass2: rgba(255,255,255,.06);
+      --border: rgba(255,255,255,.16);
+
+      --text:#f2f6f3;
+      --muted: rgba(242,246,243,.72);
+      --muted2: rgba(242,246,243,.52);
+
+      --shadow: 0 18px 42px rgba(0,0,0,.38);
+      --radius:20px;
+
+      --tap: .97;
+      --ok: rgba(168,255,211,.95);
+
+      --barBg: rgba(255,255,255,.10);
+      --barFill: rgba(214, 255, 232, .92);
+    }
+
+    *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body{
+      height:100%;
+      margin:0;
+      padding:0;
+      overflow:hidden; /* критично для iPhone: не скроллим body */
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background:
+        radial-gradient(1100px 680px at 10% -12%, rgba(40,120,76,.55), transparent 60%),
+        radial-gradient(900px 560px at 100% 0%, rgba(22,61,40,.55), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg0));
+    }
+
+    .app{
+      height:100vh;
+      width:100vw;
+      position:relative;
+    }
+
+    /* внутренний скролл-контейнер вместо body */
+    .scroll{
+      height:100vh;
+      overflow-y:auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      touch-action: pan-y;
+      padding: 22px 18px calc(26px + env(safe-area-inset-bottom)) 18px;
+    }
+
+    .header{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      text-align:center;
+      padding-top: 6px;
+      margin-bottom: 18px;
+    }
+
+    .avatar{
+      width:78px;
+      height:78px;
+      border-radius:999px;
+      object-fit:cover;
+      border: 1px solid rgba(255,255,255,.22);
+      box-shadow: 0 14px 32px rgba(0,0,0,.40);
+      background: rgba(255,255,255,.06);
+      margin-bottom: 12px;
+      transform: translateZ(0);
+    }
+
+    h1{
+      margin:0;
+      font-size: 22px;
+      letter-spacing: .2px;
+      line-height: 1.15;
+    }
+
+    .subtitle{
+      margin: 8px 0 0 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .glass{
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
+    }
+
+    .progressWrap{
+      padding: 14px 14px 12px 14px;
+      margin-bottom: 14px;
+    }
+
+    .progressTop{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:baseline;
+      margin-bottom: 10px;
+    }
+
+    .progressTitle{
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .progressPct{
+      font-size: 13px;
+      color: var(--muted2);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .progressBar{
+      width:100%;
+      height:10px;
+      border-radius:999px;
+      background: var(--barBg);
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    .progressBar > div{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      background: var(--barFill);
+      transition: width .42s cubic-bezier(.2,.85,.2,1);
+      box-shadow: 0 8px 18px rgba(180,255,220,.18);
+    }
+
+    .cards{
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .card{
+      padding: 14px 14px;
+      cursor:pointer;
+      user-select:none;
+      transform: translateZ(0);
+      transition: transform .14s ease, background .2s ease, border-color .2s ease;
+      position:relative;
+      overflow:hidden;
+      animation: cardIn .46s cubic-bezier(.2,.85,.2,1) both;
+    }
+
+    @keyframes cardIn{
+      from{ opacity:0; transform: translateY(10px); filter: blur(8px); }
+      to{ opacity:1; transform: translateY(0); filter: blur(0); }
+    }
+
+    @media (hover:hover){
+      .card:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.24); }
+    }
+
+    .card:active{ transform: scale(var(--tap)); }
+
+    .cardRow{
+      display:flex;
+      gap: 12px;
+      align-items:flex-start;
+    }
+
+    .emoji{
+      font-size: 20px;
+      line-height: 1;
+      width: 28px;
+      text-align:center;
+      margin-top: 1px;
+      flex: 0 0 28px;
+    }
+
+    .cardMeta{
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .cardTitle{
+      font-size: 16px;
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    .cardDesc{
+      margin: 6px 0 0 0;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.25;
+    }
+
+    .cardStatus{
+      flex:0 0 auto;
+      font-size: 14px;
+      color: rgba(242,246,243,.78);
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+
+    .check{
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      background: rgba(180,255,220,.14);
+      border: 1px solid rgba(180,255,220,.28);
+      color: var(--ok);
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .pickedLine{
+      margin-top: 10px;
+      font-size: 14px;
+      color: rgba(242,246,243,.92);
+      display:flex;
+      align-items:center;
+      gap: 8px;
+    }
+
+    .mutedHint{
+      margin-top: 12px;
+      font-size: 12.5px;
+      color: var(--muted2);
+      line-height: 1.35;
+    }
+
+    .topBar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin: 2px 0 14px 0;
+    }
+
+    .backBtn{
+      appearance:none;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.07);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 12px;
+      font-size: 14px;
+      cursor:pointer;
+      transition: transform .14s ease;
+    }
+    .backBtn:active{ transform: scale(var(--tap)); }
+
+    .pillList{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .pill{
+      appearance:none;
+      width:100%;
+      border-radius: 999px;
+      padding: 13px 14px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.07);
+      color: rgba(242,246,243,.96);
+      text-align:left;
+      font-size: 15px;
+      line-height: 1.15;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      transition: transform .14s ease, border-color .2s ease, background .2s ease;
+    }
+    .pill:active{ transform: scale(var(--tap)); }
+    .pill small{ color: var(--muted2); font-size: 12.5px; }
+
+    .pill[disabled]{
+      opacity: .45;
+      cursor:not-allowed;
+      transform:none !important;
+    }
+
+    .section{
+      padding: 14px 14px;
+      margin-bottom: 12px;
+    }
+
+    .sectionTitle{
+      margin:0 0 10px 0;
+      font-size: 15px;
+      color: rgba(242,246,243,.92);
+    }
+
+    .ol{
+      margin: 0;
+      padding-left: 18px;
+      color: rgba(242,246,243,.92);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .legend{
+      margin-top: 10px;
+      font-size: 15px;
+      color: rgba(242,246,243,.95);
+    }
+
+    /* loading overlay */
+    .loading{
+      position:fixed;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap: 10px;
+      background:
+        radial-gradient(1000px 680px at 10% -12%, rgba(40,120,76,.45), transparent 60%),
+        linear-gradient(180deg, rgba(8,16,11,.96), rgba(8,16,11,.98));
+      z-index: 50;
+      transition: opacity .28s ease;
+    }
+
+    .spinner{
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,.22);
+      border-top-color: rgba(255,255,255,.72);
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin{ to{ transform: rotate(360deg); } }
+
+    .loadingText{
+      font-size: 13px;
+      color: rgba(242,246,243,.72);
+    }
+
+    body.ready .loading{
+      opacity:0;
+      pointer-events:none;
+    }
+
+    .fadeIn{
+      animation: fadeIn .22s ease both;
+    }
+    @keyframes fadeIn{
+      from{ opacity:0; transform: translateY(6px); }
+      to{ opacity:1; transform: translateY(0); }
+    }
+  </style>
 </head>
+
 <body>
-    <div class="container">
-        <h2>Введите данные</h2>
-        <div class="form-group">
-            <label for="className">Введите название класса</label>
-            <input type="text" id="className" name="className" placeholder="Название класса" oninput="validateClassName()" onkeydown="handleEnter(event)">
-        </div>
-        <div class="form-group">
-            <label for="schoolName">Введите название школы</label>
-            <input type="text" id="schoolName" name="schoolName" placeholder="Название школы" oninput="validateSchoolName()" onkeydown="handleEnter(event)">
-        </div>
-        <div class="form-group">
-            <label for="cityName">Введите название города</label>
-            <input type="text" id="cityName" name="cityName" placeholder="Название города" oninput="validateCityName()" onkeydown="handleEnter(event)">
-        </div>
-        <div class="form-group">
-            <label for="schoolShift">Введите смену класса (1-ая или 2-ая)</label>
-            <select id="schoolShift" name="schoolShift" onchange="validateSchoolShift()">
-                <option value="">Выберите смену</option>
-                <option value="1">1-ая смена</option>
-                <option value="2">2-ая смена</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="nickname">Введите никнейм</label>
-            <div class="instructions">Используйте только латинские буквы, цифры и подчеркивание (_).</div>
-            <input type="text" id="nickname" name="nickname" maxlength="16" oninput="ensureValidChars()" value="@" onkeydown="handleEnter(event)">
-        </div>
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div class="loadingText">Загрузка…</div>
+  </div>
+
+  <div class="app">
+    <div class="scroll" id="scroll">
+      <header class="header">
+        <img class="avatar" src="feb.png" alt="Feb23" />
+        <h1>Рейтинг легенд класса</h1>
+        <p class="subtitle" id="subtitle">Голосование до 24 февраля</p>
+      </header>
+
+      <main id="view"></main>
     </div>
+  </div>
 
-    <script>
-        let tg = window.Telegram.WebApp;
+  <script>
+  (() => {
+    const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
 
-        tg.expand();
-        tg.MainButton.setText("Отправить");
-        tg.MainButton.show();
+    // API_BASE: "" = same-origin. Можно переопределить:
+    // window.FEB23_API_BASE = "https://ваш-домен-с-api"
+    const API_BASE = (window.FEB23_API_BASE ? String(window.FEB23_API_BASE).replace(/\/+$/, "") : "");
 
-        tg.MainButton.onClick(function() {
-            const className = document.getElementById('className').value;
-            const schoolName = document.getElementById('schoolName').value;
-            const cityName = document.getElementById('cityName').value;
-            const schoolShift = document.getElementById('schoolShift').value;
-            const nickname = document.getElementById('nickname').value;
+    const qs = new URLSearchParams(location.search);
+    const fallbackAuth = {
+      uid: qs.get("uid") || "",
+      ts: qs.get("ts") || "",
+      sig: qs.get("sig") || "",
+    };
 
-            let hasError = false;
+    const initData = tg ? (tg.initData || "") : "";
+    const initUser = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
 
-            if (!className) {
-                document.getElementById('className').classList.add('error');
-                hasError = true;
-            } else {
-                document.getElementById('className').classList.remove('error');
-            }
+    const viewEl = document.getElementById("view");
+    const loadingEl = document.getElementById("loading");
+    const subtitleEl = document.getElementById("subtitle");
 
-            if (!schoolName) {
-                document.getElementById('schoolName').classList.add('error');
-                hasError = true;
-            } else {
-                document.getElementById('schoolName').classList.remove('error');
-            }
+    let state = null;    // /state
+    let results = null;  // /results
 
-            if (!cityName) {
-                document.getElementById('cityName').classList.add('error');
-                hasError = true;
-            } else {
-                document.getElementById('cityName').classList.remove('error');
-            }
+    function setReady() {
+      document.body.classList.add("ready");
+    }
 
-            if (!schoolShift) {
-                document.getElementById('schoolShift').classList.add('error');
-                hasError = true;
-            } else {
-                document.getElementById('schoolShift').classList.remove('error');
-            }
-
-            if (nickname.length < 2) {
-                document.getElementById('nickname').classList.add('error');
-                hasError = true;
-            } else {
-                document.getElementById('nickname').classList.remove('error');
-            }
-
-            if (hasError) {
-                return;
-            }
-
-            const data = {
-                appId: 'creatingClass',
-                className: className,
-                schoolName: schoolName,
-                cityName: cityName,
-                schoolShift: schoolShift,
-                nickname: nickname
-            };
-
-            // Отправка данных в Web App
-            tg.sendData(JSON.stringify(data));
-
-            // Закрытие окна Web App
-            tg.close();
+    function showError(message) {
+      const msg = String(message || "Ошибка");
+      if (tg && tg.showPopup) {
+        tg.showPopup({
+          title: "Ошибка",
+          message: msg,
+          buttons: [{type: "ok"}]
         });
+      } else if (tg && tg.showAlert) {
+        tg.showAlert(msg);
+      } else {
+        alert(msg);
+      }
+    }
 
-        function validateClassName() {
-            const input = document.getElementById('className');
-            let value = input.value;
-            value = value.replace(/^\s+/, '').replace(/\s{2,}/g, ' ');
-            input.value = value;
-        }
+    function showInfo(message) {
+      const msg = String(message || "");
+      if (!msg) return;
+      if (tg && tg.showPopup) {
+        tg.showPopup({
+          title: "Готово",
+          message: msg,
+          buttons: [{type: "ok"}]
+        });
+      }
+    }
 
-        function validateSchoolName() {
-            const input = document.getElementById('schoolName');
-            let value = input.value;
-            value = value.replace(/^\s+/, '').replace(/\s{2,}/g, ' ');
-            input.value = value;
-        }
+    function withAuthUrl(path) {
+      if (initData) return path;
+      const hasAll = fallbackAuth.uid && fallbackAuth.ts && fallbackAuth.sig;
+      if (!hasAll) return path;
+      const sep = path.includes("?") ? "&" : "?";
+      const p = new URLSearchParams(fallbackAuth);
+      return path + sep + p.toString();
+    }
 
-        function validateCityName() {
-            const input = document.getElementById('cityName');
-            let value = input.value;
-            value = value.replace(/^\s+/, '').replace(/\s{2,}/g, ' ');
-            input.value = value;
-        }
+    async function api(path, opts = {}) {
+      const url = API_BASE + withAuthUrl(path);
+      const headers = Object.assign(
+        {"Content-Type": "application/json"},
+        (opts.headers || {})
+      );
 
-        function validateSchoolShift() {
-            const select = document.getElementById('schoolShift');
-            if (select.value === "") {
-                select.classList.add('error');
-            } else {
-                select.classList.remove('error');
+      if (initData) headers["X-Telegram-InitData"] = initData;
+
+      const res = await fetch(url, Object.assign({}, opts, {headers}));
+      const text = await res.text();
+
+      let data = null;
+      try { data = text ? JSON.parse(text) : null; } catch(e) {}
+
+      if (!res.ok) {
+        const detail = (data && (data.detail || data.error)) ? (data.detail || data.error) : (text || "Ошибка запроса");
+        throw new Error(String(detail));
+      }
+      return data;
+    }
+
+    function applyTheme() {
+      if (!tg || !tg.themeParams) return;
+
+      // аккуратно: используем цвета Telegram как базу текста/подсказок,
+      // но фон оставляем "оливковым" градиентом.
+      const tp = tg.themeParams;
+      if (tp.text_color) document.documentElement.style.setProperty("--text", tp.text_color);
+      if (tp.hint_color) document.documentElement.style.setProperty("--muted", tp.hint_color);
+      if (tp.secondary_bg_color) {
+        // слегка подмешаем в стекло
+        // (в чистом виде secondary_bg_color часто слишком светлый/тёмный)
+      }
+
+      try {
+        if (tg.setHeaderColor) tg.setHeaderColor("#0b150f");
+        if (tg.setBackgroundColor) tg.setBackgroundColor("#0b150f");
+      } catch(_) {}
+    }
+
+    function getMemberNameById(id) {
+      const mid = Number(id);
+      const m = (state && state.members) ? state.members.find(x => Number(x.id) === mid) : null;
+      return m ? m.name : ("#" + mid);
+    }
+
+    function getCategoryById(id) {
+      const cid = Number(id);
+      const c = (state && state.categories) ? state.categories.find(x => Number(x.id) === cid) : null;
+      return c || null;
+    }
+
+    function renderHome() {
+      if (!state) return;
+
+      const total = 5;
+      const progress = Number(state.progress_count || 0);
+      const pct = Math.max(0, Math.min(100, Math.round((progress / total) * 100)));
+
+      const status = String(state.event_status || "closed");
+
+      subtitleEl.textContent = "Голосование до 24 февраля";
+
+      const myVotes = state.my_votes || {};
+
+      const progressHtml = `
+        <div class="progressWrap glass fadeIn">
+          <div class="progressTop">
+            <div class="progressTitle">Вы проголосовали в <b>${progress}/${total}</b> категорий</div>
+            <div class="progressPct">${pct}%</div>
+          </div>
+          <div class="progressBar"><div style="width:${pct}%"></div></div>
+        </div>
+      `;
+
+      const cardsHtml = (state.categories || []).map((c, idx) => {
+        const votedTarget = myVotes[String(c.id)];
+        const voted = (typeof votedTarget !== "undefined");
+        const name = voted ? getMemberNameById(votedTarget) : "";
+
+        const disabled = (status !== "open") || voted;
+        const hint = voted
+          ? `<div class="pickedLine"><span class="check">✓</span><span>${name}</span></div>`
+          : `<div class="mutedHint">${status === "open" ? "Выберите кандидата" : "Голосование завершено"}</div>`;
+
+        return `
+          <div class="card glass" data-cat="${c.id}" style="animation-delay:${idx * 70}ms; ${disabled ? "opacity:.92;" : ""}">
+            <div class="cardRow">
+              <div class="emoji">${c.emoji}</div>
+              <div class="cardMeta">
+                <div class="cardTitle">${c.title}</div>
+                <div class="cardDesc">${c.description}</div>
+                ${hint}
+              </div>
+              <div class="cardStatus">
+                ${voted ? `<span class="check">✓</span>` : ``}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      const closedHint = (status !== "open")
+        ? `<div class="section glass fadeIn">
+             <div class="sectionTitle">Итоги</div>
+             <div class="mutedHint">Голосование закрыто. Можно только посмотреть результаты.</div>
+           </div>`
+        : "";
+
+      viewEl.innerHTML = `
+        ${progressHtml}
+        ${closedHint}
+        <div class="cards">${cardsHtml}</div>
+      `;
+
+      // клики
+      const cards = viewEl.querySelectorAll(".card");
+      cards.forEach(el => {
+        el.addEventListener("click", () => {
+          const catId = Number(el.getAttribute("data-cat"));
+          const votedTarget = myVotes[String(catId)];
+          if (typeof votedTarget !== "undefined") return;
+
+          if (status !== "open") {
+            renderResults();
+            return;
+          }
+
+          renderPick(catId);
+        });
+      });
+    }
+
+    function renderDone() {
+      if (!state) return;
+
+      subtitleEl.textContent = "Вы уже проголосовали";
+
+      const myVotes = state.my_votes || {};
+      const items = (state.categories || []).map(c => {
+        const tid = myVotes[String(c.id)];
+        const name = getMemberNameById(tid);
+        return `<div class="mutedHint" style="font-size:14px;color:rgba(242,246,243,.92);margin:10px 0;">
+          ${c.emoji} <b>${c.title}</b> — ${name}
+        </div>`;
+      }).join("");
+
+      viewEl.innerHTML = `
+        <div class="section glass fadeIn">
+          <div class="sectionTitle">Голосование завершено</div>
+          <div class="mutedHint">Вы уже отдали голос во всех 5 категориях. Редактирование запрещено.</div>
+          <div style="margin-top:6px;">${items}</div>
+          <div class="mutedHint" style="margin-top:14px;opacity:.9;">Кнопка “Голосование завершено” неактивна.</div>
+        </div>
+      `;
+    }
+
+    function renderPick(categoryId) {
+      if (!state) return;
+      const c = getCategoryById(categoryId);
+      if (!c) {
+        showError("Категория не найдена.");
+        return;
+      }
+
+      subtitleEl.textContent = `${c.emoji} ${c.title}`;
+
+      const members = state.members || [];
+      const myNameFirst = initUser ? String(initUser.first_name || "").trim() : "";
+      const myNameLast = initUser ? String(initUser.last_name || "").trim() : "";
+      const myFull = (myNameFirst + " " + myNameLast).trim().toLowerCase().replace("ё","е");
+      const myFirst = myNameFirst.toLowerCase().replace("ё","е");
+
+      function isSelfCandidate(name) {
+        const n = String(name || "").trim().toLowerCase().replace("ё","е");
+        if (!n) return false;
+        if (myFull && n === myFull) return true;
+        if (myFirst && !n.includes(" ") && n === myFirst) return true;
+        return false;
+      }
+
+      const pills = members.map((m) => {
+        const disabled = isSelfCandidate(m.name);
+        return `
+          <button class="pill" data-mid="${m.id}" ${disabled ? "disabled" : ""}>
+            <span>🪖 ${m.name}</span>
+            <small>${disabled ? "нельзя" : "выбрать"}</small>
+          </button>
+        `;
+      }).join("");
+
+      viewEl.innerHTML = `
+        <div class="topBar fadeIn">
+          <button class="backBtn" id="backBtn">← Назад</button>
+          <div style="font-size:13px;color:var(--muted2);">Голос фиксируется сразу</div>
+        </div>
+
+        <div class="section glass fadeIn">
+          <div class="sectionTitle">${c.emoji} ${c.title}</div>
+          <div class="mutedHint">${c.description}</div>
+          <div class="pillList" style="margin-top:12px;">${pills}</div>
+        </div>
+      `;
+
+      document.getElementById("backBtn").addEventListener("click", () => {
+        renderHome();
+      });
+
+      viewEl.querySelectorAll(".pill").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          if (btn.disabled) return;
+
+          const memberId = Number(btn.getAttribute("data-mid"));
+          const memberName = getMemberNameById(memberId);
+
+          const doVote = async () => {
+            try {
+              await api("/api/feb23/vote", {
+                method: "POST",
+                body: JSON.stringify({ category_id: categoryId, target_user_id: memberId })
+              });
+              await loadState();
+              if (state.event_status !== "open") {
+                await loadResults();
+                renderResults();
+                return;
+              }
+              if (Number(state.progress_count || 0) >= 5) {
+                renderDone();
+              } else {
+                renderHome();
+              }
+            } catch (e) {
+              showError(e.message || e);
             }
+          };
+
+          if (tg && tg.showPopup) {
+            tg.showPopup({
+              title: "Подтвердить голос",
+              message: `${c.emoji} ${c.title}\n→ ${memberName}\n\nГолос нельзя будет изменить.`,
+              buttons: [
+                {id: "vote", type: "default", text: "Голосовать"},
+                {id: "cancel", type: "cancel", text: "Отмена"}
+              ]
+            }, (btnId) => {
+              if (btnId === "vote") doVote();
+            });
+          } else {
+            const ok = confirm(`Голос: ${c.title} → ${memberName}\n\nГолос нельзя будет изменить. Продолжить?`);
+            if (ok) doVote();
+          }
+        });
+      });
+    }
+
+    async function loadState() {
+      state = await api("/api/feb23/state");
+      return state;
+    }
+
+    async function loadResults() {
+      results = await api("/api/feb23/results");
+      return results;
+    }
+
+    function renderResults() {
+      if (!state || !results) return;
+
+      subtitleEl.textContent = "Итоги голосования";
+
+      const cats = results.categories || state.categories || [];
+      const top = results.top3_by_category || {};
+      const legend = results.legend;
+
+      const blocks = cats.map(c => {
+        const list = (top[String(c.id)] || []);
+        const medals = ["🥇", "🥈", "🥉"];
+
+        let items = "";
+        if (!list.length) {
+          items = `<div class="mutedHint">— пока нет голосов</div>`;
+        } else {
+          items = `<ol class="ol">${
+            list.map((x, i) => `<li>${medals[i]} ${x.name} — ${x.votes} голосов</li>`).join("")
+          }</ol>`;
         }
 
-        function ensureValidChars() {
-            const nicknameInput = document.getElementById('nickname');
-            let value = nicknameInput.value;
+        return `
+          <div class="section glass fadeIn">
+            <div class="sectionTitle">${c.emoji} ${c.title}</div>
+            ${items}
+          </div>
+        `;
+      }).join("");
 
-            // Удалить все символы, кроме латиницы, цифр и подчеркивания, и следить за максимальной длиной
-            value = '@' + value.slice(1).replace(/[^a-zA-Z0-9_]/g, '').slice(0, 15);
+      const legendHtml = legend
+        ? `<div class="section glass fadeIn">
+             <div class="sectionTitle">🏆 Легенда класса</div>
+             <div class="legend"><b>${legend.name}</b> — ${legend.votes_total} голосов</div>
+           </div>`
+        : `<div class="section glass fadeIn">
+             <div class="sectionTitle">🏆 Легенда класса</div>
+             <div class="mutedHint">Пока не определена — нет голосов.</div>
+           </div>`;
 
-            nicknameInput.value = value;
+      viewEl.innerHTML = `
+        ${blocks}
+        ${legendHtml}
+      `;
+    }
+
+    async function boot() {
+      try {
+        if (tg) {
+          tg.ready();
+          tg.expand();
+          if (tg.disableVerticalSwipes) tg.disableVerticalSwipes(); // iPhone: не закрывать на вертикальные свайпы
         }
 
-        function handleEnter(event) {
-            if (event.key === "Enter") {
-                event.target.blur(); // Скрыть клавиатуру после нажатия Enter
-            }
+        applyTheme();
+
+        await loadState();
+
+        // закрыто — показываем результаты
+        if (String(state.event_status) !== "open") {
+          await loadResults();
+          renderResults();
+          setReady();
+          return;
         }
-    </script>
+
+        // открыто — либо прогресс, либо done-screen
+        if (Number(state.progress_count || 0) >= 5) {
+          renderDone();
+        } else {
+          renderHome();
+        }
+
+        setReady();
+      } catch (e) {
+        setReady();
+        showError(e.message || e);
+      }
+    }
+
+    boot();
+  })();
+  </script>
 </body>
 </html>
