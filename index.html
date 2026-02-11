@@ -12,14 +12,15 @@
 
   <style>
     :root{
-      --bg0:#07110b;
-      --bg1:#0c1d12;
+      /* светлее низ, без провала в чёрный */
+      --bg0:#0a1a11;
+      --bg1:#0e2417;
 
       --glass: rgba(255,255,255,.09);
       --glass2: rgba(255,255,255,.06);
       --border: rgba(255,255,255,.16);
 
-      --text:#f2f6f3;
+      --text:#F2F6F3;
       --muted: rgba(242,246,243,.72);
       --muted2: rgba(242,246,243,.52);
 
@@ -49,8 +50,9 @@
                    Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
       color: var(--text);
       background:
-        radial-gradient(1100px 680px at 10% -12%, rgba(40,120,76,.55), transparent 60%),
-        radial-gradient(900px 560px at 100% 0%, rgba(22,61,40,.55), transparent 60%),
+        radial-gradient(1100px 680px at 10% -12%, rgba(56,160,104,.45), transparent 60%),
+        radial-gradient(900px 560px at 100% 0%, rgba(28,90,56,.45), transparent 60%),
+        radial-gradient(900px 640px at 60% 110%, rgba(48,150,96,.14), transparent 55%),
         linear-gradient(180deg, var(--bg1), var(--bg0));
     }
 
@@ -58,6 +60,48 @@
       height:100vh;
       width:100vw;
       position:relative;
+      isolation:isolate;
+    }
+
+    /* subtle grain */
+    .app::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      opacity:.055;
+      z-index:0;
+      background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='.45'/></svg>");
+      mix-blend-mode: overlay;
+    }
+
+    /* military grid */
+    .app::after{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      pointer-events:none;
+      z-index:0;
+      opacity:.07;
+      background-image:
+        linear-gradient(rgba(242,246,243,.22) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(242,246,243,.18) 1px, transparent 1px);
+      background-size: 36px 36px, 36px 36px;
+      mask-image: radial-gradient(closest-side at 50% 20%, rgba(0,0,0,.95), transparent 70%);
+    }
+
+    /* decorative tank */
+    .tankDecor{
+      position:absolute;
+      right:-34px;
+      bottom: calc(-14px + env(safe-area-inset-bottom));
+      width: 240px;
+      height: 170px;
+      z-index:0;
+      opacity:.11; /* 0.08–0.14 */
+      filter: blur(.2px) drop-shadow(0 10px 22px rgba(0,0,0,.18));
+      pointer-events:none;
+      transform: rotate(-2deg);
     }
 
     /* внутренний скролл вместо body */
@@ -68,6 +112,8 @@
       overscroll-behavior: contain;
       touch-action: pan-y;
       padding: 22px 18px calc(26px + env(safe-area-inset-bottom)) 18px;
+      position:relative;
+      z-index:1;
     }
 
     .header{
@@ -87,7 +133,7 @@
       border: 1px solid rgba(255,255,255,.22);
       box-shadow: 0 14px 32px rgba(0,0,0,.40);
       background: rgba(255,255,255,.06);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       transform: translateZ(0);
     }
 
@@ -98,8 +144,21 @@
       line-height: 1.15;
     }
 
+    .badge{
+      margin-top: 8px;
+      font-size: 12.5px;
+      color: rgba(242,246,243,.82);
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      padding: 6px 10px;
+      border-radius: 999px;
+      letter-spacing: .6px;
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+    }
+
     .subtitle{
-      margin: 8px 0 0 0;
+      margin: 10px 0 0 0;
       font-size: 14px;
       color: var(--muted);
     }
@@ -145,6 +204,7 @@
       background: var(--barBg);
       overflow:hidden;
       border: 1px solid rgba(255,255,255,.10);
+      transform-origin:center;
     }
     .progressBar > div{
       height:100%;
@@ -153,6 +213,15 @@
       background: var(--barFill);
       transition: width .42s cubic-bezier(.2,.85,.2,1);
       box-shadow: 0 8px 18px rgba(180,255,220,.18);
+    }
+
+    .progressBar.bump{
+      animation: bump .12s ease;
+    }
+    @keyframes bump{
+      from{ transform: scaleY(1); }
+      50%{ transform: scaleY(1.05); }
+      to{ transform: scaleY(1); }
     }
 
     .cards{
@@ -167,11 +236,18 @@
       cursor:pointer;
       user-select:none;
       transform: translateZ(0);
-      transition: transform .14s ease, border-color .2s ease, background .2s ease;
+      transition: transform .14s ease, border-color .2s ease, background .2s ease, opacity .2s ease;
       position:relative;
       overflow:hidden;
       animation: cardIn .46s cubic-bezier(.2,.85,.2,1) both;
     }
+
+    .card.readonly{
+      cursor: default;
+      opacity: .90;
+      border-color: rgba(255,255,255,.12);
+    }
+    .card.readonly:active{ transform:none; }
 
     @keyframes cardIn{
       from{ opacity:0; transform: translateY(10px); filter: blur(8px); }
@@ -180,6 +256,7 @@
 
     @media (hover:hover){
       .card:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.24); }
+      .card.readonly:hover{ transform:none; border-color: rgba(255,255,255,.14); }
     }
 
     .card:active{ transform: scale(var(--tap)); }
@@ -215,6 +292,21 @@
       font-size: 13px;
       color: var(--muted);
       line-height: 1.25;
+    }
+
+    /* отдельная иерархия для “выберите кандидата” */
+    .chooseHint{
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted2);
+      letter-spacing: .6px;
+      display:flex;
+      align-items:center;
+      gap: 8px;
+    }
+    .chooseHint .arrow{
+      opacity:.9;
+      font-weight:700;
     }
 
     .cardStatus{
@@ -395,8 +487,8 @@
       flex-direction:column;
       gap: 10px;
       background:
-        radial-gradient(1000px 680px at 10% -12%, rgba(40,120,76,.45), transparent 60%),
-        linear-gradient(180deg, rgba(8,16,11,.96), rgba(8,16,11,.98));
+        radial-gradient(1000px 680px at 10% -12%, rgba(56,160,104,.32), transparent 60%),
+        linear-gradient(180deg, rgba(10,22,15,.96), rgba(10,22,15,.98));
       z-index: 50;
       transition: opacity .28s ease;
     }
@@ -436,10 +528,23 @@
   </div>
 
   <div class="app">
+    <!-- decorative tank (SVG silhouette) -->
+    <svg class="tankDecor" viewBox="0 0 520 360" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path fill="rgba(242,246,243,1)" d="M160 170h210l40-26h48v28h-20l-16 26h-46l-8 24H140l20-52z"/>
+      <path fill="rgba(242,246,243,1)" d="M220 132h120l22 38H198l22-38z"/>
+      <path fill="rgba(242,246,243,1)" d="M300 108h92v18h-92v-18z"/>
+      <path fill="rgba(242,246,243,1)" d="M120 222h260c28 0 52 20 56 46l6 44H98l6-44c4-26 28-46 56-46z"/>
+      <circle cx="170" cy="310" r="28" fill="rgba(242,246,243,1)"/>
+      <circle cx="250" cy="310" r="28" fill="rgba(242,246,243,1)"/>
+      <circle cx="330" cy="310" r="28" fill="rgba(242,246,243,1)"/>
+      <circle cx="410" cy="310" r="28" fill="rgba(242,246,243,1)"/>
+    </svg>
+
     <div class="scroll" id="scroll">
       <header class="header">
         <img class="avatar" src="feb.png" alt="Feb23" />
         <h1>Рейтинг легенд класса</h1>
+        <div class="badge">🪖 Feb23</div>
         <p class="subtitle" id="subtitle">Голосование до 24 февраля</p>
       </header>
 
@@ -452,9 +557,10 @@
     const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
 
     // ВАЖНО: если фронт на GitHub Pages (feb23.temo4ka4.ru), то /api на этом домене нет.
-    // Поэтому даём fallback на домен, где у тебя реально работает API (как у webapp ДЗ).
-    // Поменяй на свой реальный домен API, если он другой:
+    // Поэтому даём fallback на домен, где у тебя реально работает API.
     const FALLBACK_API_BASE = "https://api.temo4ka4.ru";
+
+    const INTRO_KEY = "feb23_intro_seen";
 
     const loadingTextEl = document.getElementById("loadingText");
     const viewEl = document.getElementById("view");
@@ -472,9 +578,20 @@
 
     let state = null;
     let results = null;
+    let lastProgress = 0;
 
     function setReady() { document.body.classList.add("ready"); }
     function setLoading(msg) { loadingTextEl.textContent = msg || "Загрузка…"; }
+
+    function delay(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+    function haptic(){
+      try{
+        if (tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred) {
+          tg.HapticFeedback.impactOccurred("light");
+        }
+      }catch(_){}
+    }
 
     function showErrorPopup(message) {
       const msg = String(message || "Ошибка");
@@ -502,19 +619,15 @@
     }
 
     async function guessApiBase() {
-      // Если задано вручную — используем.
       if (window.FEB23_API_BASE) {
         return String(window.FEB23_API_BASE).replace(/\/+$/, "");
       }
 
-      // Попытка same-origin (/api) — если там реально API (JSON), оставляем.
-      // Иначе — fallback на домен с API.
       const sameOrigin = "";
       try {
         const url = sameOrigin + withAuthUrl("/api/feb23/state");
         const headers = initData ? {"X-Telegram-InitData": initData} : {};
         const {res, text} = await fetchText(url, {headers});
-        // Если это JSON — значит same-origin работает.
         if (res.ok) {
           try { JSON.parse(text); return sameOrigin; } catch (_) {}
         }
@@ -535,7 +648,9 @@
 
       if (!res.ok) {
         const detail = (data && (data.detail || data.error)) ? (data.detail || data.error) : (text || "Ошибка запроса");
-        throw new Error(String(detail));
+        const err = new Error(String(detail));
+        err.__status = res.status;
+        throw err;
       }
       return data;
     }
@@ -543,8 +658,7 @@
     function applyTheme() {
       if (!tg || !tg.themeParams) return;
       const tp = tg.themeParams;
-      if (tp.text_color) document.documentElement.style.setProperty("--text", tp.text_color);
-      if (tp.hint_color) document.documentElement.style.setProperty("--muted", tp.hint_color);
+      // Не даём тёмный текст: если Telegram вдруг отдаст странное — не трогаем.
       try {
         tg.setHeaderColor && tg.setHeaderColor("#0b150f");
         tg.setBackgroundColor && tg.setBackgroundColor("#0b150f");
@@ -584,6 +698,80 @@
       document.getElementById("retryBtn").addEventListener("click", () => location.reload());
     }
 
+    function renderIntro() {
+      if (!state) return;
+      const status = String(state.event_status || "closed");
+
+      subtitleEl.textContent = "5 категорий • 1 голос в каждой";
+
+      const cta = (status === "open")
+        ? `<button class="ctaBtn" id="introGo">Приступить к выбору</button>`
+        : `<button class="ctaBtn" id="introResults">Смотреть итоги</button>`;
+
+      viewEl.innerHTML = `
+        <div class="section glass">
+          <div class="sectionTitle">Рейтинг легенд класса</div>
+
+          <div class="mutedHint" style="margin-top:0;color:rgba(242,246,243,.88);font-size:14px;">
+            Это короткое голосование из 5 категорий — выбираешь легенд по разным ролям.
+          </div>
+
+          <div class="mutedHint" style="color:var(--muted);font-size:13px;">
+            Важно: голос фиксируется сразу после подтверждения и <b>не может быть изменён</b>.
+          </div>
+
+          <div class="sectionTitle" style="margin-top:14px;">Что получают победители</div>
+          <div class="mutedHint" style="margin-top:0;font-size:13px;">
+            🥇 уважение класса<br/>
+            🥈 упоминание в итогах<br/>
+            🥉 мем-статус (легально)
+          </div>
+
+          ${cta}
+        </div>
+      `;
+
+      if (status === "open") {
+        document.getElementById("introGo").addEventListener("click", () => {
+          localStorage.setItem(INTRO_KEY, "1");
+          routeAfterState();
+        });
+      } else {
+        document.getElementById("introResults").addEventListener("click", () => {
+          localStorage.setItem(INTRO_KEY, "1");
+          renderResults();
+        });
+      }
+    }
+
+    function routeAfterState() {
+      const status = String(state.event_status || "closed");
+      const progress = Number(state.progress_count || 0);
+
+      if (!localStorage.getItem(INTRO_KEY)) {
+        renderIntro();
+        return;
+      }
+
+      if (status !== "open") {
+        renderResults();
+        return;
+      }
+
+      if (progress >= 5) renderDone();
+      else renderHome();
+    }
+
+    function bounceProgress() {
+      const bar = document.querySelector(".progressBar");
+      if (!bar) return;
+      bar.classList.remove("bump");
+      // force reflow
+      void bar.offsetWidth;
+      bar.classList.add("bump");
+      setTimeout(() => bar.classList.remove("bump"), 160);
+    }
+
     function renderHome() {
       if (!state) return;
 
@@ -593,7 +781,13 @@
       const status = String(state.event_status || "closed");
       const myVotes = state.my_votes || {};
 
-      subtitleEl.textContent = "Голосование до 24 февраля";
+      subtitleEl.textContent = (status === "open")
+        ? "Голосование до 24 февраля"
+        : "Голосование завершено";
+
+      const topBtn = (status === "open")
+        ? (progress >= 5 ? `<button class="ctaBtn" disabled>Голосование завершено</button>` : ``)
+        : `<button class="ctaBtn" id="goResults">Смотреть итоги</button>`;
 
       const progressHtml = `
         <div class="progressWrap glass">
@@ -602,7 +796,7 @@
             <div class="progressPct">${pct}%</div>
           </div>
           <div class="progressBar"><div style="width:${pct}%"></div></div>
-          ${progress >= 5 ? `<button class="ctaBtn" disabled>Голосование завершено</button>` : ``}
+          ${topBtn}
         </div>
       `;
 
@@ -613,10 +807,14 @@
 
         const hint = voted
           ? `<div class="pickedLine"><span class="check">✓</span><span>${name}</span></div>`
-          : `<div class="mutedHint">${status === "open" ? "Выберите кандидата" : "Голосование завершено"}</div>`;
+          : (status === "open"
+              ? `<div class="chooseHint"><span class="arrow">→</span><span>Выберите кандидата</span></div>`
+              : `<div class="mutedHint">Голосование завершено</div>`);
 
         return `
-          <div class="card glass" data-cat="${c.id}" style="animation-delay:${idx * 70}ms; ${voted ? "opacity:.94;" : ""}">
+          <div class="card glass ${voted || status!=="open" ? "readonly" : ""}"
+               data-cat="${c.id}"
+               style="animation-delay:${idx * 70}ms;">
             <div class="cardRow">
               <div class="emoji">${c.emoji}</div>
               <div class="cardMeta">
@@ -635,26 +833,76 @@
         <div class="cards">${cardsHtml}</div>
       `;
 
-      // клики по карточкам
+      const goResults = document.getElementById("goResults");
+      if (goResults) goResults.addEventListener("click", () => renderResults());
+
+      // клики по карточкам: если уже проголосовал — показываем просмотр выбора
       viewEl.querySelectorAll(".card").forEach(el => {
         el.addEventListener("click", () => {
           const catId = Number(el.getAttribute("data-cat"));
           const votedTarget = myVotes[String(catId)];
-          if (typeof votedTarget !== "undefined") return;
+
+          if (typeof votedTarget !== "undefined") {
+            renderViewChoice(catId);
+            return;
+          }
 
           if (status !== "open") {
             renderResults();
             return;
           }
+
           renderPick(catId);
         });
+      });
+
+      // микро: если прогресс вырос — bump + haptic
+      if (progress > lastProgress) {
+        haptic();
+        bounceProgress();
+      }
+      lastProgress = progress;
+    }
+
+    function renderViewChoice(categoryId) {
+      if (!state) return;
+      const c = getCategoryById(categoryId);
+      if (!c) { showErrorPopup("Категория не найдена."); return; }
+
+      const myVotes = state.my_votes || {};
+      const tid = myVotes[String(categoryId)];
+      const name = (typeof tid !== "undefined") ? getMemberNameById(tid) : null;
+
+      subtitleEl.textContent = `${c.emoji} ${c.title}`;
+
+      viewEl.innerHTML = `
+        <div class="topBar">
+          <button class="backBtn" id="backBtn">← Назад</button>
+          <div style="font-size:13px;color:var(--muted2);">Изменение запрещено</div>
+        </div>
+
+        <div class="section glass">
+          <div class="sectionTitle">${c.emoji} ${c.title}</div>
+          <div class="mutedHint" style="margin-top:0;color:var(--muted);">${c.description}</div>
+
+          <div class="mutedHint" style="margin-top:14px;color:rgba(242,246,243,.9);font-size:14px;">
+            ${name ? `Вы уже проголосовали и отдали голос за <b>${name}</b>.` : `Вы не голосовали в этой категории.`}
+          </div>
+
+          <button class="ctaBtn" disabled>${name ? "Вы уже проголосовали" : "Недоступно"}</button>
+        </div>
+      `;
+
+      document.getElementById("backBtn").addEventListener("click", () => {
+        if (Number(state.progress_count || 0) >= 5) renderDone();
+        else renderHome();
       });
     }
 
     function renderDone() {
       if (!state) return;
 
-      subtitleEl.textContent = "Вы уже проголосовали";
+      subtitleEl.textContent = "Голосование завершено";
 
       const myVotes = state.my_votes || {};
       const items = (state.categories || []).map(c => {
@@ -673,10 +921,20 @@
           <button class="ctaBtn" disabled>Голосование завершено</button>
         </div>
       `;
+
+      // клики по списку — только просмотр
+      // (если захочешь: можно сделать список кликабельным, но ты это не просил)
     }
 
     function renderPick(categoryId) {
       if (!state) return;
+
+      const myVotes = state.my_votes || {};
+      if (typeof myVotes[String(categoryId)] !== "undefined") {
+        renderViewChoice(categoryId);
+        return;
+      }
+
       const c = getCategoryById(categoryId);
       if (!c) { showErrorPopup("Категория не найдена."); return; }
 
@@ -714,7 +972,8 @@
 
         <div class="section glass">
           <div class="sectionTitle">${c.emoji} ${c.title}</div>
-          <div class="mutedHint">${c.description}</div>
+          <div class="mutedHint" style="margin-top:0;color:var(--muted);">${c.description}</div>
+          <div class="chooseHint"><span class="arrow">→</span><span>Выберите кандидата</span></div>
           <div class="pillList">${pills}</div>
         </div>
       `;
@@ -726,7 +985,7 @@
           if (btn.disabled) return;
 
           const memberId = Number(btn.getAttribute("data-mid"));
-          const memberName = getMemberNameById(memberId);
+          const memberName = members.find(x => Number(x.id) === memberId)?.name || ("#" + memberId);
 
           const doVote = async () => {
             try {
@@ -734,6 +993,7 @@
                 method: "POST",
                 body: JSON.stringify({ category_id: categoryId, target_user_id: memberId })
               });
+
               state = await api(window.__FEB23_API_BASE, "/api/feb23/state");
 
               if (String(state.event_status) !== "open") {
@@ -745,6 +1005,15 @@
               if (Number(state.progress_count || 0) >= 5) renderDone();
               else renderHome();
             } catch (e) {
+              // если сервер сказал "уже голосовал" — не ругаемся, показываем просмотр
+              try{
+                state = await api(window.__FEB23_API_BASE, "/api/feb23/state");
+                const myVotes2 = state.my_votes || {};
+                if (typeof myVotes2[String(categoryId)] !== "undefined") {
+                  renderViewChoice(categoryId);
+                  return;
+                }
+              }catch(_){}
               showErrorPopup(e.message || e);
             }
           };
@@ -809,6 +1078,8 @@
     }
 
     async function boot() {
+      const t0 = Date.now();
+
       try {
         setLoading("Подготовка…");
 
@@ -820,25 +1091,31 @@
         applyTheme();
 
         setLoading("Подключаемся…");
-
         const apiBase = await guessApiBase();
         window.__FEB23_API_BASE = apiBase;
 
         setLoading("Загружаем данные…");
         state = await api(apiBase, "/api/feb23/state");
 
+        // prefetch результатов если закрыто
         if (String(state.event_status) !== "open") {
           results = await api(apiBase, "/api/feb23/results");
-          renderResults();
-          setReady();
-          return;
         }
 
-        if (Number(state.progress_count || 0) >= 5) renderDone();
-        else renderHome();
+        // минимум 3 секунды лоадинг
+        const elapsed = Date.now() - t0;
+        if (elapsed < 3000) await delay(3000 - elapsed);
+
+        // стартовая навигация
+        lastProgress = Number(state.progress_count || 0);
+        routeAfterState();
 
         setReady();
       } catch (e) {
+        // тоже держим минимум 3 секунды лоадинг
+        const elapsed = Date.now() - t0;
+        if (elapsed < 3000) await delay(3000 - elapsed);
+
         setReady();
         renderErrorScreen(window.__FEB23_API_BASE || "", e);
       }
