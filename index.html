@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>🎖 Событие к 23 февраля</title>
+  <style>
+    :root{
+      --bg1:#0b1e39;
+      --bg2:#102a4b;
+      --accent:#ffd166;
+      --accent2:#06d6a0;
+      --danger:#ef476f;
+      --glass:rgba(255,255,255,0.08);
+      --glass2:rgba(255,255,255,0.12);
+      --border:rgba(255,255,255,0.14);
+      --text:#eaf2ff;
+      --muted:rgba(234,242,255,0.72);
+      --shadow:0 18px 48px rgba(0,0,0,0.35);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box;}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: radial-gradient(1200px 700px at 20% -10%, rgba(255,209,102,0.20), transparent 55%),
+                  radial-gradient(900px 600px at 90% 10%, rgba(6,214,160,0.18), transparent 55%),
+                  linear-gradient(160deg, var(--bg1), var(--bg2));
+      overflow:hidden;
+      touch-action: manipulation;
+    }
+
+    .bgLayer{
+      position:fixed; inset:0;
+      background:
+        radial-gradient(900px 600px at 15% 20%, rgba(255,255,255,0.06), transparent 60%),
+        radial-gradient(700px 500px at 85% 75%, rgba(255,255,255,0.05), transparent 62%),
+        radial-gradient(500px 400px at 30% 90%, rgba(255,255,255,0.04), transparent 65%);
+      pointer-events:none;
+    }
+
+    .gridOverlay{
+      position:fixed; inset:0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 44px 44px;
+      opacity:0.35;
+      pointer-events:none;
+      mask-image: radial-gradient(circle at 50% 40%, rgba(0,0,0,1), rgba(0,0,0,0));
+      -webkit-mask-image: radial-gradient(circle at 50% 40%, rgba(0,0,0,1), rgba(0,0,0,0));
+    }
+
+    .grain{
+      position:fixed; inset:0;
+      pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
+      opacity:0.55;
+      mix-blend-mode: overlay;
+    }
+
+    .snow{position:fixed; inset:0; pointer-events:none;}
+    .flake{
+      position:absolute;
+      width:6px; height:6px;
+      border-radius:50%;
+      background:rgba(255,255,255,0.78);
+      filter: blur(0.2px);
+      animation: fall linear infinite;
+      opacity:0.9;
+    }
+    @keyframes fall {
+      from{transform: translateY(-10px) translateX(0);}
+      to{transform: translateY(calc(100vh + 30px)) translateX(30px);}
+    }
+
+    .wrap{
+      position:relative;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+
+    .app{
+      width:min(520px, 100%);
+      position:relative;
+    }
+
+    .screen{
+      position:absolute;
+      inset:0;
+      opacity:0;
+      transform: translateY(14px) scale(0.985);
+      pointer-events:none;
+      transition: opacity 340ms ease, transform 340ms ease;
+    }
+    .screen.active{
+      opacity:1;
+      transform: translateY(0) scale(1);
+      pointer-events:auto;
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      padding:18px 16px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    h1{
+      font-size:22px;
+      margin:0 0 10px;
+      letter-spacing:0.2px;
+    }
+    h2{
+      font-size:15px;
+      margin:6px 0 0;
+      color:var(--muted);
+      font-weight:600;
+    }
+    p{
+      margin:10px 0;
+      line-height:1.45;
+      color:var(--text);
+    }
+    .muted{color:var(--muted);}
+
+    .btnRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+    .btn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.10);
+      color:var(--text);
+      padding:12px 14px;
+      border-radius:14px;
+      font-weight:700;
+      cursor:pointer;
+      transition: transform 140ms ease, background 140ms ease;
+      flex:1 1 auto;
+      text-align:center;
+      user-select:none;
+    }
+    .btn:active{transform: translateY(1px) scale(0.995);}
+    .btn.primary{background: rgba(255,209,102,0.18); border-color: rgba(255,209,102,0.30);}
+    .btn.danger{background: rgba(239,71,111,0.16); border-color: rgba(239,71,111,0.30);}
+    .btn.secondary{background: rgba(6,214,160,0.16); border-color: rgba(6,214,160,0.30);}
+    .btn[disabled]{opacity:0.55; cursor:not-allowed;}
+
+    .loaderWrap{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; min-height:360px;}
+    .spinner{
+      width:54px; height:54px;
+      border-radius:50%;
+      border:4px solid rgba(255,255,255,0.18);
+      border-top-color: rgba(255,209,102,0.85);
+      animation: spin 1s linear infinite;
+      box-shadow: 0 10px 26px rgba(0,0,0,0.22);
+    }
+    @keyframes spin {to{transform: rotate(360deg);}}
+
+    .ruleList{margin:10px 0 0; padding-left:18px; color:var(--text);}
+    .ruleList li{margin:6px 0;}
+    .prizeList{margin:10px 0 0; padding-left:0; list-style:none;}
+    .prizeList li{margin:7px 0; padding:10px 10px; border-radius:14px; background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);}
+
+    .quizTop{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;}
+    .progress{font-weight:800; letter-spacing:0.2px;}
+    .qCard{margin-top:8px;}
+    .qText{font-size:18px; font-weight:800; margin:0 0 10px;}
+    .answers{display:grid; gap:10px;}
+    .opt{
+      padding:12px 12px;
+      border-radius:14px;
+      background: rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.14);
+      cursor:pointer;
+      font-weight:700;
+      transition: transform 140ms ease, background 140ms ease;
+      user-select:none;
+    }
+    .opt:active{transform: translateY(1px) scale(0.995);}
+    .opt[disabled]{opacity:0.55; cursor:not-allowed;}
+
+    .fadeOut{opacity:0; transform: translateY(8px) scale(0.99); transition: opacity 180ms ease, transform 180ms ease;}
+
+    .wheelArea{display:flex; flex-direction:column; align-items:center; gap:14px;}
+    .wheelWrap{
+      position:relative;
+      width: min(360px, 86vw);
+      aspect-ratio: 1/1;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      user-select:none;
+    }
+    .pointer{
+      position:absolute;
+      top:-12px;
+      left:50%;
+      transform: translateX(-50%);
+      width:0; height:0;
+      border-left:11px solid transparent;
+      border-right:11px solid transparent;
+      border-bottom:18px solid rgba(255,209,102,0.95);
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,0.35));
+      pointer-events:none;
+    }
+    .wheelGroup{
+      position:absolute;
+      inset:0;
+      border-radius:50%;
+      overflow:hidden;
+      box-shadow: 0 22px 56px rgba(0,0,0,0.45);
+      border:1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.04);
+      transform: rotate(0deg);
+    }
+    .wheelBg{
+      position:absolute;
+      inset:0;
+      border-radius:50%;
+      background: conic-gradient(
+        rgba(255,255,255,0.07) 0deg 25.714deg,
+        rgba(0,0,0,0.12) 25.714deg 51.428deg,
+        rgba(255,255,255,0.07) 51.428deg 77.142deg,
+        rgba(0,0,0,0.12) 77.142deg 102.856deg,
+        rgba(255,255,255,0.07) 102.856deg 128.57deg,
+        rgba(0,0,0,0.12) 128.57deg 154.284deg,
+        rgba(255,255,255,0.07) 154.284deg 179.998deg,
+        rgba(0,0,0,0.12) 179.998deg 205.712deg,
+        rgba(255,255,255,0.07) 205.712deg 231.426deg,
+        rgba(0,0,0,0.12) 231.426deg 257.14deg,
+        rgba(255,255,255,0.07) 257.14deg 282.854deg,
+        rgba(0,0,0,0.12) 282.854deg 308.568deg,
+        rgba(255,255,255,0.07) 308.568deg 334.282deg,
+        rgba(0,0,0,0.12) 334.282deg 360deg
+      );
+    }
+    .wheelIcons{
+      position:absolute;
+      inset:0;
+      border-radius:50%;
+      pointer-events:none;
+    }
+    .icon{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform-origin: 0 0;
+      font-size:18px;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.35));
+      opacity:0.95;
+    }
+    .wheelTapHint{
+      font-weight:800;
+      color:var(--muted);
+    }
+
+    .resultBox{
+      width:100%;
+      margin-top:10px;
+      padding:14px 14px;
+      border-radius:16px;
+      background: rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.14);
+      display:none;
+    }
+    .resultBox.show{display:block; animation: pop 260ms ease;}
+    @keyframes pop {from{opacity:0; transform: translateY(10px) scale(0.98);} to{opacity:1; transform:none;}}
+
+    .err{color: rgba(255,255,255,0.92);}
+    .err strong{color: rgba(255,209,102,0.96);}
+  </style>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <div class="bgLayer"></div>
+  <div class="gridOverlay"></div>
+  <div class="grain"></div>
+  <div class="snow" id="snow"></div>
+
+  <div class="wrap">
+    <div class="app">
+
+      <!-- Screen 1: Loading (3s) -->
+      <section class="screen active" id="s1">
+        <div class="card loaderWrap">
+          <div class="spinner" aria-label="loading"></div>
+          <div>
+            <h1>Загрузка…</h1>
+            <p class="muted">Готовим событие 🎖</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Screen 2: Gender -->
+      <section class="screen" id="s2">
+        <div class="card">
+          <h1>🎖 Событие к 23 февраля</h1>
+          <p class="muted">Выбери пол (сохраняется один раз).</p>
+          <div class="btnRow">
+            <button class="btn primary" id="btnMale">👦 Мужской</button>
+            <button class="btn secondary" id="btnFemale">👧 Женский</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Screen 3: Block (female) -->
+      <section class="screen" id="s3">
+        <div class="card">
+          <h1 id="blockTitle">⛔</h1>
+          <p id="blockText">💐 Это событие посвящено 23 февраля и доступно для мальчиков.<br>🎀 Уже скоро — отдельное событие к 8 марта!</p>
+          <div class="btnRow">
+            <button class="btn danger" id="btnClose1">Закрыть</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Screen 4: Rules -->
+      <section class="screen" id="s4">
+        <div class="card">
+          <h1>🎖 Пройди викторину и выиграй приз!</h1>
+          <div id="alreadyBox" style="display:none;">
+            <p style="font-weight:800; font-size:18px; margin-top:8px;">Ты уже принял участие 🎖</p>
+            <p class="muted" id="alreadyPrize"></p>
+            <div class="btnRow">
+              <button class="btn danger" id="btnClose2">Закрыть</button>
+            </div>
+          </div>
+          <div id="rulesBox">
+            <p class="muted">Правила:</p>
+            <ul class="ruleList">
+              <li>5 вопросов</li>
+              <li>Нужно минимум 3 правильных ответа</li>
+              <li>Участие только 1 раз</li>
+            </ul>
+
+            <p class="muted" style="margin-top:14px;">🎁 Призы:</p>
+            <ul class="prizeList">
+              <li>🏆 Кубок (100⭐) — 1</li>
+              <li>🍫 Шоколадка — 2</li>
+              <li>🚀 Ракета (50⭐) — 3</li>
+              <li>🎁 Telegram-подарок (25⭐) — 8</li>
+            </ul>
+
+            <div class="btnRow">
+              <button class="btn primary" id="btnStartQuiz">Начать викторину</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Screen 5: Quiz -->
+      <section class="screen" id="s5">
+        <div class="card">
+          <div class="quizTop">
+            <div class="progress" id="quizProgress">1/5</div>
+            <div class="muted" id="quizHint">Выбери вариант ответа</div>
+          </div>
+          <div class="qCard" id="qCard">
+            <p class="qText" id="qText">…</p>
+            <div class="answers" id="answers"></div>
+          </div>
+
+          <div id="quizEnd" style="display:none; margin-top:12px;">
+            <p id="quizEndText" style="font-weight:800; font-size:18px; margin:10px 0;">…</p>
+            <p class="muted" id="quizEndSub"></p>
+            <div class="btnRow">
+              <button class="btn danger" id="btnClose3">Закрыть</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Screen 6: Roulette -->
+      <section class="screen" id="s6">
+        <div class="card">
+          <h1>🎡 Колесо удачи</h1>
+          <h2 id="wheelSub">Нажми на колесо, чтобы прокрутить</h2>
+          <div class="wheelArea" style="margin-top:14px;">
+            <div class="wheelWrap" id="wheelWrap" aria-label="wheel">
+              <div class="pointer"></div>
+              <div class="wheelGroup" id="wheelGroup">
+                <div class="wheelBg"></div>
+                <div class="wheelIcons" id="wheelIcons"></div>
+              </div>
+            </div>
+            <div class="wheelTapHint" id="wheelTapHint">🎡 Нажми, чтобы крутануть</div>
+
+            <div class="resultBox" id="resultBox">
+              <p style="font-weight:900; font-size:18px; margin:0 0 6px;">🎉 Поздравляем с 23 февраля!</p>
+              <p style="margin:0;" id="resultPrize">🎁 Тебе выпал приз: …</p>
+              <p class="muted" id="resultExtra" style="margin-top:10px;"></p>
+              <div class="btnRow" style="margin-top:12px;">
+                <button class="btn danger" id="btnClose4">Закрыть</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script>
+    // --- Visual snow (keeps atmosphere) ---
+    (function makeSnow(){
+      const root = document.getElementById('snow');
+      if(!root) return;
+      const n = 28;
+      for(let i=0;i<n;i++){
+        const f = document.createElement('div');
+        f.className = 'flake';
+        const size = 3 + Math.random()*5;
+        f.style.width = size+'px';
+        f.style.height = size+'px';
+        f.style.left = (Math.random()*100)+'vw';
+        f.style.opacity = String(0.55 + Math.random()*0.45);
+        const dur = 8 + Math.random()*10;
+        f.style.animationDuration = dur+'s';
+        f.style.animationDelay = (-Math.random()*dur)+'s';
+        root.appendChild(f);
+      }
+    })();
+
+    // --- Telegram helpers ---
+    const tg = window.Telegram?.WebApp || null;
+    try{ tg?.ready(); tg?.expand(); }catch(_e){}
+
+    const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+      ? 'http://localhost:8000'
+      : 'https://api.temo4ka4.ru';
+
+    const INIT_DATA = (tg?.initData || '').trim();
+
+    const screens = {
+      s1: document.getElementById('s1'),
+      s2: document.getElementById('s2'),
+      s3: document.getElementById('s3'),
+      s4: document.getElementById('s4'),
+      s5: document.getElementById('s5'),
+      s6: document.getElementById('s6')
+    };
+
+    function showScreen(id){
+      Object.keys(screens).forEach(k => screens[k].classList.toggle('active', k === id));
+    }
+
+    function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+    async function api(path, opts = {}){
+      const headers = {
+        'Content-Type': 'application/json',
+        'X-Telegram-InitData': INIT_DATA
+      };
+
+      const res = await fetch(API_BASE + path, {
+        method: opts.method || 'GET',
+        headers,
+        body: opts.body ? JSON.stringify(opts.body) : undefined
+      });
+
+      let data = null;
+      try{ data = await res.json(); }catch(_e){ data = null; }
+
+      if(!res.ok){
+        const detail = (data && (data.detail || data.error)) ? (data.detail || data.error) : ('HTTP ' + res.status);
+        throw new Error(detail);
+      }
+      return data;
+    }
+
+    // --- UI elements ---
+    const btnMale = document.getElementById('btnMale');
+    const btnFemale = document.getElementById('btnFemale');
+    const btnClose1 = document.getElementById('btnClose1');
+    const btnClose2 = document.getElementById('btnClose2');
+    const btnClose3 = document.getElementById('btnClose3');
+    const btnClose4 = document.getElementById('btnClose4');
+    const btnStartQuiz = document.getElementById('btnStartQuiz');
+
+    const blockTitle = document.getElementById('blockTitle');
+    const blockText = document.getElementById('blockText');
+
+    const alreadyBox = document.getElementById('alreadyBox');
+    const rulesBox = document.getElementById('rulesBox');
+    const alreadyPrize = document.getElementById('alreadyPrize');
+
+    const quizProgress = document.getElementById('quizProgress');
+    const quizHint = document.getElementById('quizHint');
+    const qCard = document.getElementById('qCard');
+    const qText = document.getElementById('qText');
+    const answersBox = document.getElementById('answers');
+    const quizEnd = document.getElementById('quizEnd');
+    const quizEndText = document.getElementById('quizEndText');
+    const quizEndSub = document.getElementById('quizEndSub');
+
+    const wheelWrap = document.getElementById('wheelWrap');
+    const wheelGroup = document.getElementById('wheelGroup');
+    const wheelIcons = document.getElementById('wheelIcons');
+    const wheelSub = document.getElementById('wheelSub');
+    const wheelTapHint = document.getElementById('wheelTapHint');
+
+    const resultBox = document.getElementById('resultBox');
+    const resultPrize = document.getElementById('resultPrize');
+    const resultExtra = document.getElementById('resultExtra');
+
+    // --- Data ---
+    const QUESTIONS = [
+      {
+        q: 'Когда официально отмечается День защитника Отечества?',
+        a: ['22 февраля', '23 февраля', '9 мая', '12 июня']
+      },
+      {
+        q: 'Как раньше назывался праздник 23 февраля?',
+        a: ['День армии', 'День Красной армии', 'День солдата', 'День защитников']
+      },
+      {
+        q: 'Какое событие легло в основу праздника 23 февраля?',
+        a: ['Первая мировая война', 'Создание Красной армии', 'Победа в Великой Отечественной', 'Подписание мирного договора']
+      },
+      {
+        q: 'Как называется комплект военной одежды?',
+        a: ['Обмундирование', 'Гардероб', 'Униформа', 'Амуниция']
+      },
+      {
+        q: 'Сколько букв в слове “ЗАЩИТНИК”?',
+        a: ['7', '8', '9', '10']
+      }
+    ];
+
+    // Must match backend wheel layout
+    const WHEEL_SEGMENTS = [
+      'gift_25', 'rocket_50', 'gift_25', 'choco', 'gift_25', 'rocket_50', 'gift_25',
+      'cup_100', 'gift_25', 'rocket_50', 'gift_25', 'choco', 'gift_25', 'gift_25'
+    ];
+
+    const ICON_BY_TYPE = {
+      cup_100: '🏆',
+      choco: '🍫',
+      rocket_50: '🚀',
+      gift_25: '🎁'
+    };
+
+    const TITLE_BY_TYPE = {
+      cup_100: 'Кубок 100⭐',
+      choco: 'Шоколадка',
+      rocket_50: 'Ракета 50⭐',
+      gift_25: 'Telegram-подарок 25⭐'
+    };
+
+    function extraTextByType(prizeType){
+      if(prizeType === 'choco') return '🍫 Забрать можно в понедельник.';
+      if(prizeType === 'gift_25') return '🎁 Приз будет отправлен 24 февраля.\nНикуда писать не нужно.';
+      return '';
+    }
+
+    function closeWebApp(){
+      try{ tg?.close(); }catch(_e){}
+      try{ window.close(); }catch(_e){}
+    }
+
+    btnClose1.addEventListener('click', closeWebApp);
+    btnClose2.addEventListener('click', closeWebApp);
+    btnClose3.addEventListener('click', closeWebApp);
+    btnClose4.addEventListener('click', closeWebApp);
+
+    // --- Wheel icons init ---
+    function buildWheelIcons(){
+      wheelIcons.innerHTML = '';
+      const n = WHEEL_SEGMENTS.length;
+      const step = 360 / n;
+      const radius = 44; // percent translate
+
+      for(let i=0;i<n;i++){
+        const type = WHEEL_SEGMENTS[i];
+        const el = document.createElement('div');
+        el.className = 'icon';
+        el.textContent = ICON_BY_TYPE[type] || '🎁';
+        const angle = (i + 0.5) * step;
+        el.style.transform = `rotate(${angle}deg) translate(0, -${radius}%) rotate(${-angle}deg)`;
+        wheelIcons.appendChild(el);
+      }
+    }
+    buildWheelIcons();
+
+    // --- Global state ---
+    let state = null;
+    let quizAnswers = [];
+    let wheelTargetIndex = null;
+    let wheelPrizeType = null;
+    let wheelPrizeTitle = null;
+    let wheelPrizeExtra = '';
+    let wheelPoolId = 0;
+    let spinning = false;
+    let rotation = 0;
+
+    function showErrorBlock(title, text){
+      blockTitle.textContent = title;
+      blockText.innerHTML = text;
+      showScreen('s3');
+    }
+
+    function applyStateToRules(s){
+      const participated = !!s.participated;
+      if(participated){
+        alreadyBox.style.display = 'block';
+        rulesBox.style.display = 'none';
+
+        const pt = s.prize_type;
+        if(pt){
+          alreadyPrize.textContent = `Твой приз: ${TITLE_BY_TYPE[pt] || pt}`;
+        }else{
+          alreadyPrize.textContent = 'Участие завершено.';
+        }
+      }else{
+        alreadyBox.style.display = 'none';
+        rulesBox.style.display = 'block';
+      }
+    }
+
+    async function fetchState(){
+      return await api('/api/feb23/state');
+    }
+
+    function routeByState(s){
+      state = s;
+
+      if(!s || !s.ok){
+        showErrorBlock('⚠️', 'Не удалось загрузить событие.');
+        return;
+      }
+
+      // Gender not chosen
+      if(!s.gender){
+        showScreen('s2');
+        return;
+      }
+
+      // Female block
+      if(s.gender === 'female'){
+        showErrorBlock('💐', '💐 Это событие посвящено 23 февраля и доступно для мальчиков.<br>🎀 Уже скоро — отдельное событие к 8 марта!');
+        return;
+      }
+
+      // Male
+      applyStateToRules(s);
+      showScreen('s4');
+    }
+
+    async function setGenderOnce(gender){
+      btnMale.disabled = true;
+      btnFemale.disabled = true;
+      try{
+        const res = await api('/api/feb23/gender', {method:'POST', body:{gender}});
+        // Refresh state (source of truth)
+        const s = await fetchState();
+        routeByState(s);
+      }catch(e){
+        btnMale.disabled = false;
+        btnFemale.disabled = false;
+        showErrorBlock('⚠️', `<span class='err'><strong>Ошибка</strong>: ${String(e.message||e)}</span>`);
+      }
+    }
+
+    btnMale.addEventListener('click', () => setGenderOnce('male'));
+    btnFemale.addEventListener('click', () => setGenderOnce('female'));
+
+    // --- Quiz ---
+    function resetQuiz(){
+      quizAnswers = [];
+      quizEnd.style.display = 'none';
+      qCard.style.display = 'block';
+      quizHint.textContent = 'Выбери вариант ответа';
+    }
+
+    function renderQuestion(idx){
+      const total = QUESTIONS.length;
+      const q = QUESTIONS[idx];
+      quizProgress.textContent = `${idx+1}/${total}`;
+      qText.textContent = q.q;
+      answersBox.innerHTML = '';
+
+      q.a.forEach((optText, optIdx) => {
+        const b = document.createElement('button');
+        b.className = 'opt';
+        b.textContent = optText;
+        b.addEventListener('click', () => onAnswer(idx, optIdx));
+        answersBox.appendChild(b);
+      });
+    }
+
+    async function onAnswer(qIdx, optIdx){
+      // Disable options immediately
+      Array.from(answersBox.querySelectorAll('button')).forEach(b => b.disabled = true);
+      quizAnswers[qIdx] = optIdx;
+
+      // Smooth transition
+      qCard.classList.add('fadeOut');
+      await sleep(180);
+      qCard.classList.remove('fadeOut');
+
+      if(qIdx < QUESTIONS.length - 1){
+        renderQuestion(qIdx + 1);
+        return;
+      }
+
+      // Submit
+      quizHint.textContent = 'Проверяем ответы…';
+      try{
+        const res = await api('/api/feb23/quiz', {method:'POST', body:{answers: quizAnswers}});
+
+        if(!res.passed){
+          qCard.style.display = 'none';
+          quizEnd.style.display = 'block';
+          quizEndText.textContent = '❌ Недостаточно правильных ответов.';
+          quizEndSub.textContent = 'Участие завершено.\nПовтор запрещён.';
+          return;
+        }
+
+        // Passed → go to wheel
+        wheelTargetIndex = (typeof res.wheel_index === 'number') ? res.wheel_index : null;
+        wheelPrizeType = res.prize_type || null;
+        wheelPrizeTitle = res.prize_title || (wheelPrizeType ? (TITLE_BY_TYPE[wheelPrizeType] || wheelPrizeType) : null);
+        wheelPrizeExtra = res.prize_extra || extraTextByType(wheelPrizeType);
+        wheelPoolId = res.pool_id || 0;
+
+        prepareWheelScreen();
+        showScreen('s6');
+      }catch(e){
+        qCard.style.display = 'none';
+        quizEnd.style.display = 'block';
+        quizEndText.textContent = '⚠️ Ошибка.';
+        quizEndSub.textContent = String(e.message||e);
+      }
+    }
+
+    btnStartQuiz.addEventListener('click', () => {
+      resetQuiz();
+      renderQuestion(0);
+      showScreen('s5');
+    });
+
+    // --- Wheel ---
+    function prepareWheelScreen(){
+      resultBox.classList.remove('show');
+      resultBox.style.display = 'none';
+      wheelTapHint.style.display = 'block';
+      wheelSub.textContent = 'Нажми на колесо, чтобы прокрутить';
+      spinning = false;
+    }
+
+    function finishWheel(){
+      wheelTapHint.style.display = 'none';
+      wheelSub.textContent = 'Готово!';
+
+      if(wheelPrizeTitle){
+        resultPrize.innerHTML = `🎁 Тебе выпал приз: <b>${wheelPrizeTitle}</b>`;
+        resultExtra.textContent = wheelPrizeExtra || '';
+      }else{
+        resultPrize.innerHTML = '🎁 Призы закончились.';
+        resultExtra.textContent = '';
+      }
+
+      resultBox.style.display = 'block';
+      resultBox.classList.add('show');
+      try{ tg?.HapticFeedback?.notificationOccurred('success'); }catch(_e){}
+    }
+
+    function spinWheel(){
+      if(spinning) return;
+      if(typeof wheelTargetIndex !== 'number'){
+        // no target → show result without spin
+        finishWheel();
+        return;
+      }
+
+      spinning = true;
+      wheelTapHint.textContent = 'Крутим…';
+      try{ tg?.HapticFeedback?.impactOccurred('medium'); }catch(_e){}
+
+      const n = WHEEL_SEGMENTS.length;
+      const step = 360 / n;
+      const center = (wheelTargetIndex + 0.5) * step;
+
+      const turns = 8 + (wheelPoolId % 3); // 8..10
+      const offset = (((wheelPoolId % 100) / 100) - 0.5) * step * 0.18; // deterministic micro-offset
+      const target = (turns * 360) + (360 - center) + offset;
+
+      const duration = 7500 + (wheelPoolId % 2501); // 7.5s..10.0s
+
+      rotation = rotation + target;
+      wheelGroup.style.transition = `transform ${duration}ms cubic-bezier(0.14, 0.85, 0.22, 1)`;
+      wheelGroup.style.transform = `rotate(${rotation}deg)`;
+
+      const onEnd = () => {
+        wheelGroup.removeEventListener('transitionend', onEnd);
+        // Small stop effect
+        try{
+          wheelGroup.animate(
+            [{transform:`rotate(${rotation}deg)`},{transform:`rotate(${rotation+2}deg)`},{transform:`rotate(${rotation}deg)`}],
+            {duration:280, easing:'ease-out'}
+          );
+        }catch(_e){}
+        finishWheel();
+      };
+      wheelGroup.addEventListener('transitionend', onEnd);
+    }
+
+    wheelWrap.addEventListener('click', () => {
+      if(spinning) return;
+      spinWheel();
+    });
+
+    // --- Boot ---
+    (async function boot(){
+      // If opened outside Telegram → show error
+      if(!INIT_DATA){
+        await sleep(450);
+        showErrorBlock('⚠️', 'Открой событие из Telegram.');
+        return;
+      }
+
+      const minLoader = sleep(3000);
+      let s = null;
+      try{
+        s = await fetchState();
+      }catch(e){
+        // Handle common errors
+        const msg = String(e.message||e);
+        await minLoader;
+        if(msg.includes('not_in_class')){
+          showErrorBlock('🏫', 'Событие доступно только участникам класса.');
+        }else{
+          showErrorBlock('⚠️', `<span class='err'><strong>Ошибка</strong>: ${msg}</span>`);
+        }
+        return;
+      }
+
+      await minLoader;
+      routeByState(s);
+    })();
+  </script>
+</body>
+</html>
