@@ -1,853 +1,1128 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>🎖 Событие к 23 февраля</title>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no"
+  />
+  <title>Рейтинг легенд класса</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
   <style>
     :root{
-      --bg1:#0b1e39;
-      --bg2:#102a4b;
-      --accent:#ffd166;
-      --accent2:#06d6a0;
-      --danger:#ef476f;
-      --glass:rgba(255,255,255,0.08);
-      --glass2:rgba(255,255,255,0.12);
-      --border:rgba(255,255,255,0.14);
-      --text:#eaf2ff;
-      --muted:rgba(234,242,255,0.72);
-      --shadow:0 18px 48px rgba(0,0,0,0.35);
-      --radius:18px;
+      /* светлее низ, без провала в чёрный */
+      --bg0:#0a1a11;
+      --bg1:#0e2417;
+
+      --glass: rgba(255,255,255,.09);
+      --glass2: rgba(255,255,255,.06);
+      --border: rgba(255,255,255,.16);
+
+      --text:#F2F6F3;
+      --muted: rgba(242,246,243,.72);
+      --muted2: rgba(242,246,243,.52);
+
+      --shadow: 0 18px 42px rgba(0,0,0,.38);
+      --radius:20px;
+
+      --tap: .97;
+      --ok: rgba(168,255,211,.95);
+
+      --barBg: rgba(255,255,255,.10);
+      --barFill: rgba(214, 255, 232, .92);
+
+      --danger: rgba(255, 178, 178, .92);
+      --dangerBg: rgba(255, 95, 95, .10);
+      --btnBg: rgba(255,255,255,.08);
+      --btnBorder: rgba(255,255,255,.14);
     }
 
-    *{box-sizing:border-box;}
-    html,body{height:100%;}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--text);
-      background: radial-gradient(1200px 700px at 20% -10%, rgba(255,209,102,0.20), transparent 55%),
-                  radial-gradient(900px 600px at 90% 10%, rgba(6,214,160,0.18), transparent 55%),
-                  linear-gradient(160deg, var(--bg1), var(--bg2));
-      overflow:hidden;
-      touch-action: manipulation;
-    }
+    *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
 
-    .bgLayer{
-      position:fixed; inset:0;
-      background:
-        radial-gradient(900px 600px at 15% 20%, rgba(255,255,255,0.06), transparent 60%),
-        radial-gradient(700px 500px at 85% 75%, rgba(255,255,255,0.05), transparent 62%),
-        radial-gradient(500px 400px at 30% 90%, rgba(255,255,255,0.04), transparent 65%);
-      pointer-events:none;
-    }
-
-    .gridOverlay{
-      position:fixed; inset:0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-      background-size: 44px 44px;
-      opacity:0.35;
-      pointer-events:none;
-      mask-image: radial-gradient(circle at 50% 40%, rgba(0,0,0,1), rgba(0,0,0,0));
-      -webkit-mask-image: radial-gradient(circle at 50% 40%, rgba(0,0,0,1), rgba(0,0,0,0));
-    }
-
-    .grain{
-      position:fixed; inset:0;
-      pointer-events:none;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
-      opacity:0.55;
-      mix-blend-mode: overlay;
-    }
-
-    .snow{position:fixed; inset:0; pointer-events:none;}
-    .flake{
-      position:absolute;
-      width:6px; height:6px;
-      border-radius:50%;
-      background:rgba(255,255,255,0.78);
-      filter: blur(0.2px);
-      animation: fall linear infinite;
-      opacity:0.9;
-    }
-    @keyframes fall {
-      from{transform: translateY(-10px) translateX(0);}
-      to{transform: translateY(calc(100vh + 30px)) translateX(30px);}
-    }
-
-    .wrap{
-      position:relative;
+    html, body{
       height:100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
+      margin:0;
+      padding:0;
+      overflow:hidden; /* iPhone: не скроллим body */
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background:
+        radial-gradient(1100px 680px at 10% -12%, rgba(56,160,104,.45), transparent 60%),
+        radial-gradient(900px 560px at 100% 0%, rgba(28,90,56,.45), transparent 60%),
+        radial-gradient(900px 640px at 60% 110%, rgba(48,150,96,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg0));
     }
 
     .app{
-      width:min(520px, 100%);
+      height:100vh;
+      width:100vw;
       position:relative;
+      isolation:isolate;
     }
 
-    .screen{
+    /* subtle grain */
+    .app::before{
+      content:"";
       position:absolute;
       inset:0;
-      opacity:0;
-      transform: translateY(14px) scale(0.985);
       pointer-events:none;
-      transition: opacity 340ms ease, transform 340ms ease;
-    }
-    .screen.active{
-      opacity:1;
-      transform: translateY(0) scale(1);
-      pointer-events:auto;
+      opacity:.055;
+      z-index:0;
+      background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='.45'/></svg>");
+      mix-blend-mode: overlay;
     }
 
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow: var(--shadow);
-      padding:18px 16px;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+    /* military grid */
+    .app::after{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      pointer-events:none;
+      z-index:0;
+      opacity:.07;
+      background-image:
+        linear-gradient(rgba(242,246,243,.22) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(242,246,243,.18) 1px, transparent 1px);
+      background-size: 36px 36px, 36px 36px;
+      mask-image: radial-gradient(closest-side at 50% 20%, rgba(0,0,0,.95), transparent 70%);
+    }
+
+    /* decorative tank */
+    .tankDecor{
+      position:absolute;
+      right:-34px;
+      bottom: calc(-14px + env(safe-area-inset-bottom));
+      width: 240px;
+      height: 170px;
+      z-index:0;
+      opacity:.11; /* 0.08–0.14 */
+      filter: blur(.2px) drop-shadow(0 10px 22px rgba(0,0,0,.18));
+      pointer-events:none;
+      transform: rotate(-2deg);
+    }
+
+    /* внутренний скролл вместо body */
+    .scroll{
+      height:100vh;
+      overflow-y:auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      touch-action: pan-y;
+      padding: 22px 18px calc(26px + env(safe-area-inset-bottom)) 18px;
+      position:relative;
+      z-index:1;
+    }
+
+    .header{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      text-align:center;
+      padding-top: 6px;
+      margin-bottom: 18px;
+    }
+
+    .avatar{
+      width:78px;
+      height:78px;
+      border-radius:999px;
+      object-fit:cover;
+      border: 1px solid rgba(255,255,255,.22);
+      box-shadow: 0 14px 32px rgba(0,0,0,.40);
+      background: rgba(255,255,255,.06);
+      margin-bottom: 10px;
+      transform: translateZ(0);
     }
 
     h1{
-      font-size:22px;
-      margin:0 0 10px;
-      letter-spacing:0.2px;
+      margin:0;
+      font-size: 22px;
+      letter-spacing: .2px;
+      line-height: 1.15;
     }
-    h2{
-      font-size:15px;
-      margin:6px 0 0;
-      color:var(--muted);
-      font-weight:600;
-    }
-    p{
-      margin:10px 0;
-      line-height:1.45;
-      color:var(--text);
-    }
-    .muted{color:var(--muted);}
 
-    .btnRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
-    .btn{
-      appearance:none;
-      border:1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.10);
-      color:var(--text);
-      padding:12px 14px;
-      border-radius:14px;
-      font-weight:700;
+    .badge{
+      margin-top: 8px;
+      font-size: 12.5px;
+      color: rgba(242,246,243,.82);
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      padding: 6px 10px;
+      border-radius: 999px;
+      letter-spacing: .6px;
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+    }
+
+    .subtitle{
+      margin: 10px 0 0 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .glass{
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
+    }
+
+    .progressWrap{
+      padding: 14px 14px 12px 14px;
+      margin-bottom: 14px;
+      animation: fadeIn .22s ease both;
+    }
+
+    .progressTop{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:baseline;
+      margin-bottom: 10px;
+    }
+
+    .progressTitle{
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .progressPct{
+      font-size: 13px;
+      color: var(--muted2);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .progressBar{
+      width:100%;
+      height:10px;
+      border-radius:999px;
+      background: var(--barBg);
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.10);
+      transform-origin:center;
+    }
+    .progressBar > div{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      background: var(--barFill);
+      transition: width .42s cubic-bezier(.2,.85,.2,1);
+      box-shadow: 0 8px 18px rgba(180,255,220,.18);
+    }
+
+    .progressBar.bump{
+      animation: bump .12s ease;
+    }
+    @keyframes bump{
+      from{ transform: scaleY(1); }
+      50%{ transform: scaleY(1.05); }
+      to{ transform: scaleY(1); }
+    }
+
+    .cards{
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .card{
+      padding: 14px 14px;
       cursor:pointer;
-      transition: transform 140ms ease, background 140ms ease;
-      flex:1 1 auto;
-      text-align:center;
       user-select:none;
-    }
-    .btn:active{transform: translateY(1px) scale(0.995);}
-    .btn.primary{background: rgba(255,209,102,0.18); border-color: rgba(255,209,102,0.30);}
-    .btn.danger{background: rgba(239,71,111,0.16); border-color: rgba(239,71,111,0.30);}
-    .btn.secondary{background: rgba(6,214,160,0.16); border-color: rgba(6,214,160,0.30);}
-    .btn[disabled]{opacity:0.55; cursor:not-allowed;}
-
-    .loaderWrap{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; min-height:360px;}
-    .spinner{
-      width:54px; height:54px;
-      border-radius:50%;
-      border:4px solid rgba(255,255,255,0.18);
-      border-top-color: rgba(255,209,102,0.85);
-      animation: spin 1s linear infinite;
-      box-shadow: 0 10px 26px rgba(0,0,0,0.22);
-    }
-    @keyframes spin {to{transform: rotate(360deg);}}
-
-    .ruleList{margin:10px 0 0; padding-left:18px; color:var(--text);}
-    .ruleList li{margin:6px 0;}
-    .prizeList{margin:10px 0 0; padding-left:0; list-style:none;}
-    .prizeList li{margin:7px 0; padding:10px 10px; border-radius:14px; background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);}
-
-    .quizTop{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;}
-    .progress{font-weight:800; letter-spacing:0.2px;}
-    .qCard{margin-top:8px;}
-    .qText{font-size:18px; font-weight:800; margin:0 0 10px;}
-    .answers{display:grid; gap:10px;}
-    .opt{
-      padding:12px 12px;
-      border-radius:14px;
-      background: rgba(255,255,255,0.08);
-      border:1px solid rgba(255,255,255,0.14);
-      cursor:pointer;
-      font-weight:700;
-      transition: transform 140ms ease, background 140ms ease;
-      user-select:none;
-    }
-    .opt:active{transform: translateY(1px) scale(0.995);}
-    .opt[disabled]{opacity:0.55; cursor:not-allowed;}
-
-    .fadeOut{opacity:0; transform: translateY(8px) scale(0.99); transition: opacity 180ms ease, transform 180ms ease;}
-
-    .wheelArea{display:flex; flex-direction:column; align-items:center; gap:14px;}
-    .wheelWrap{
+      transform: translateZ(0);
+      transition: transform .14s ease, border-color .2s ease, background .2s ease, opacity .2s ease;
       position:relative;
-      width: min(360px, 86vw);
-      aspect-ratio: 1/1;
-      border-radius:50%;
+      overflow:hidden;
+      animation: cardIn .46s cubic-bezier(.2,.85,.2,1) both;
+    }
+
+    .card.readonly{
+      cursor: default;
+      opacity: .90;
+      border-color: rgba(255,255,255,.12);
+    }
+    .card.readonly:active{ transform:none; }
+
+    @keyframes cardIn{
+      from{ opacity:0; transform: translateY(10px); filter: blur(8px); }
+      to{ opacity:1; transform: translateY(0); filter: blur(0); }
+    }
+
+    @media (hover:hover){
+      .card:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.24); }
+      .card.readonly:hover{ transform:none; border-color: rgba(255,255,255,.14); }
+    }
+
+    .card:active{ transform: scale(var(--tap)); }
+
+    .cardRow{
+      display:flex;
+      gap: 12px;
+      align-items:flex-start;
+    }
+
+    .emoji{
+      font-size: 20px;
+      line-height: 1;
+      width: 28px;
+      text-align:center;
+      margin-top: 1px;
+      flex: 0 0 28px;
+    }
+
+    .cardMeta{
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .cardTitle{
+      font-size: 16px;
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    .cardDesc{
+      margin: 6px 0 0 0;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.25;
+    }
+
+    /* отдельная иерархия для “выберите кандидата” */
+    .chooseHint{
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted2);
+      letter-spacing: .6px;
+      display:flex;
+      align-items:center;
+      gap: 8px;
+    }
+    .chooseHint .arrow{
+      opacity:.9;
+      font-weight:700;
+    }
+
+    .cardStatus{
+      flex:0 0 auto;
+      font-size: 14px;
+      color: rgba(242,246,243,.78);
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+
+    .check{
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      background: rgba(180,255,220,.14);
+      border: 1px solid rgba(180,255,220,.28);
+      color: var(--ok);
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .pickedLine{
+      margin-top: 10px;
+      font-size: 14px;
+      color: rgba(242,246,243,.92);
+      display:flex;
+      align-items:center;
+      gap: 8px;
+    }
+
+    .mutedHint{
+      margin-top: 12px;
+      font-size: 12.5px;
+      color: var(--muted2);
+      line-height: 1.35;
+    }
+
+    .topBar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin: 2px 0 14px 0;
+    }
+
+    .backBtn{
+      appearance:none;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.07);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 12px;
+      font-size: 14px;
+      cursor:pointer;
+      transition: transform .14s ease;
+    }
+    .backBtn:active{ transform: scale(var(--tap)); }
+
+    .pillList{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .pill{
+      appearance:none;
+      width:100%;
+      border-radius: 999px;
+      padding: 13px 14px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.07);
+      color: rgba(242,246,243,.96);
+      text-align:left;
+      font-size: 15px;
+      line-height: 1.15;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      transition: transform .14s ease, border-color .2s ease, background .2s ease;
+    }
+    .pill:active{ transform: scale(var(--tap)); }
+    .pill small{ color: var(--muted2); font-size: 12.5px; }
+
+    .pill[disabled]{
+      opacity: .45;
+      cursor:not-allowed;
+      transform:none !important;
+    }
+
+    .section{
+      padding: 14px 14px;
+      margin-bottom: 12px;
+      animation: fadeIn .22s ease both;
+    }
+
+    .sectionTitle{
+      margin:0 0 10px 0;
+      font-size: 15px;
+      color: rgba(242,246,243,.92);
+    }
+
+    .ol{
+      margin: 0;
+      padding-left: 18px;
+      color: rgba(242,246,243,.92);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .legend{
+      margin-top: 10px;
+      font-size: 15px;
+      color: rgba(242,246,243,.95);
+    }
+
+    /* CTA */
+    .ctaBtn{
+      appearance:none;
+      width:100%;
+      border-radius: 14px;
+      padding: 12px 14px;
+      border: 1px solid var(--btnBorder);
+      background: var(--btnBg);
+      color: var(--text);
+      font-size: 14px;
+      cursor:pointer;
+      transition: transform .14s ease, border-color .2s ease;
+      margin-top: 12px;
+    }
+    .ctaBtn:active{ transform: scale(var(--tap)); }
+    .ctaBtn[disabled]{ opacity:.5; cursor:not-allowed; transform:none !important; }
+
+    /* error panel */
+    .errorBox{
+      background: var(--dangerBg);
+      border: 1px solid rgba(255, 160, 160, .28);
+      border-radius: var(--radius);
+      padding: 14px 14px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px) saturate(140%);
+      -webkit-backdrop-filter: blur(16px) saturate(140%);
+      animation: fadeIn .22s ease both;
+    }
+    .errorTitle{
+      margin:0;
+      font-size: 15px;
+      color: var(--danger);
+    }
+    .errorText{
+      margin: 10px 0 0 0;
+      font-size: 13px;
+      color: rgba(242,246,243,.85);
+      line-height: 1.35;
+    }
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      color: rgba(242,246,243,.72);
+      margin-top: 10px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* loading overlay */
+    .loading{
+      position:fixed;
+      inset:0;
       display:flex;
       align-items:center;
       justify-content:center;
-      user-select:none;
-    }
-    .pointer{
-      position:absolute;
-      top:-12px;
-      left:50%;
-      transform: translateX(-50%);
-      width:0; height:0;
-      border-left:11px solid transparent;
-      border-right:11px solid transparent;
-      border-bottom:18px solid rgba(255,209,102,0.95);
-      filter: drop-shadow(0 10px 18px rgba(0,0,0,0.35));
-      pointer-events:none;
-    }
-    .wheelGroup{
-      position:absolute;
-      inset:0;
-      border-radius:50%;
-      overflow:hidden;
-      box-shadow: 0 22px 56px rgba(0,0,0,0.45);
-      border:1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.04);
-      transform: rotate(0deg);
-    }
-    .wheelBg{
-      position:absolute;
-      inset:0;
-      border-radius:50%;
-      background: conic-gradient(
-        rgba(255,255,255,0.07) 0deg 25.714deg,
-        rgba(0,0,0,0.12) 25.714deg 51.428deg,
-        rgba(255,255,255,0.07) 51.428deg 77.142deg,
-        rgba(0,0,0,0.12) 77.142deg 102.856deg,
-        rgba(255,255,255,0.07) 102.856deg 128.57deg,
-        rgba(0,0,0,0.12) 128.57deg 154.284deg,
-        rgba(255,255,255,0.07) 154.284deg 179.998deg,
-        rgba(0,0,0,0.12) 179.998deg 205.712deg,
-        rgba(255,255,255,0.07) 205.712deg 231.426deg,
-        rgba(0,0,0,0.12) 231.426deg 257.14deg,
-        rgba(255,255,255,0.07) 257.14deg 282.854deg,
-        rgba(0,0,0,0.12) 282.854deg 308.568deg,
-        rgba(255,255,255,0.07) 308.568deg 334.282deg,
-        rgba(0,0,0,0.12) 334.282deg 360deg
-      );
-    }
-    .wheelIcons{
-      position:absolute;
-      inset:0;
-      border-radius:50%;
-      pointer-events:none;
-    }
-    .icon{
-      position:absolute;
-      left:50%;
-      top:50%;
-      transform-origin: 0 0;
-      font-size:18px;
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.35));
-      opacity:0.95;
-    }
-    .wheelTapHint{
-      font-weight:800;
-      color:var(--muted);
+      flex-direction:column;
+      gap: 10px;
+      background:
+        radial-gradient(1000px 680px at 10% -12%, rgba(56,160,104,.32), transparent 60%),
+        linear-gradient(180deg, rgba(10,22,15,.96), rgba(10,22,15,.98));
+      z-index: 50;
+      transition: opacity .28s ease;
     }
 
-    .resultBox{
-      width:100%;
-      margin-top:10px;
-      padding:14px 14px;
-      border-radius:16px;
-      background: rgba(255,255,255,0.08);
-      border:1px solid rgba(255,255,255,0.14);
-      display:none;
+    .spinner{
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,.22);
+      border-top-color: rgba(255,255,255,.72);
+      animation: spin .8s linear infinite;
     }
-    .resultBox.show{display:block; animation: pop 260ms ease;}
-    @keyframes pop {from{opacity:0; transform: translateY(10px) scale(0.98);} to{opacity:1; transform:none;}}
 
-    .err{color: rgba(255,255,255,0.92);}
-    .err strong{color: rgba(255,209,102,0.96);}
+    @keyframes spin{ to{ transform: rotate(360deg); } }
+
+    .loadingText{
+      font-size: 13px;
+      color: rgba(242,246,243,.72);
+    }
+
+    body.ready .loading{
+      opacity:0;
+      pointer-events:none;
+    }
+
+    @keyframes fadeIn{
+      from{ opacity:0; transform: translateY(6px); }
+      to{ opacity:1; transform: translateY(0); }
+    }
   </style>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
+
 <body>
-  <div class="bgLayer"></div>
-  <div class="gridOverlay"></div>
-  <div class="grain"></div>
-  <div class="snow" id="snow"></div>
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div class="loadingText" id="loadingText">Загрузка…</div>
+  </div>
 
-  <div class="wrap">
-    <div class="app">
+  <div class="app">
+    <!-- decorative tank (SVG silhouette) -->
+    <svg class="tankDecor" viewBox="0 0 520 360" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path fill="rgba(242,246,243,1)" d="M160 170h210l40-26h48v28h-20l-16 26h-46l-8 24H140l20-52z"/>
+      <path fill="rgba(242,246,243,1)" d="M220 132h120l22 38H198l22-38z"/>
+      <path fill="rgba(242,246,243,1)" d="M300 108h92v18h-92v-18z"/>
+      <path fill="rgba(242,246,243,1)" d="M120 222h260c28 0 52 20 56 46l6 44H98l6-44c4-26 28-46 56-46z"/>
+      <circle cx="170" cy="310" r="28" fill="rgba(242,246,243,1)"/>
+      <circle cx="250" cy="310" r="28" fill="rgba(242,246,243,1)"/>
+      <circle cx="330" cy="310" r="28" fill="rgba(242,246,243,1)"/>
+      <circle cx="410" cy="310" r="28" fill="rgba(242,246,243,1)"/>
+    </svg>
 
-      <!-- Screen 1: Loading (3s) -->
-      <section class="screen active" id="s1">
-        <div class="card loaderWrap">
-          <div class="spinner" aria-label="loading"></div>
-          <div>
-            <h1>Загрузка…</h1>
-            <p class="muted">Готовим событие 🎖</p>
-          </div>
-        </div>
-      </section>
+    <div class="scroll" id="scroll">
+      <header class="header">
+        <img class="avatar" src="feb.png" alt="Feb23" />
+        <h1>Рейтинг легенд класса</h1>
+        <div class="badge">🪖 Feb23</div>
+        <p class="subtitle" id="subtitle">Голосование до 24 февраля</p>
+      </header>
 
-      <!-- Screen 2: Gender -->
-      <section class="screen" id="s2">
-        <div class="card">
-          <h1>🎖 Событие к 23 февраля</h1>
-          <p class="muted">Выбери пол (сохраняется один раз).</p>
-          <div class="btnRow">
-            <button class="btn primary" id="btnMale">👦 Мужской</button>
-            <button class="btn secondary" id="btnFemale">👧 Женский</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Screen 3: Block (female) -->
-      <section class="screen" id="s3">
-        <div class="card">
-          <h1 id="blockTitle">⛔</h1>
-          <p id="blockText">💐 Это событие посвящено 23 февраля и доступно для мальчиков.<br>🎀 Уже скоро — отдельное событие к 8 марта!</p>
-          <div class="btnRow">
-            <button class="btn danger" id="btnClose1">Закрыть</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Screen 4: Rules -->
-      <section class="screen" id="s4">
-        <div class="card">
-          <h1>🎖 Пройди викторину и выиграй приз!</h1>
-          <div id="alreadyBox" style="display:none;">
-            <p style="font-weight:800; font-size:18px; margin-top:8px;">Ты уже принял участие 🎖</p>
-            <p class="muted" id="alreadyPrize"></p>
-            <div class="btnRow">
-              <button class="btn danger" id="btnClose2">Закрыть</button>
-            </div>
-          </div>
-          <div id="rulesBox">
-            <p class="muted">Правила:</p>
-            <ul class="ruleList">
-              <li>5 вопросов</li>
-              <li>Нужно минимум 3 правильных ответа</li>
-              <li>Участие только 1 раз</li>
-            </ul>
-
-            <p class="muted" style="margin-top:14px;">🎁 Призы:</p>
-            <ul class="prizeList">
-              <li>🏆 Кубок (100⭐) — 1</li>
-              <li>🍫 Шоколадка — 2</li>
-              <li>🚀 Ракета (50⭐) — 3</li>
-              <li>🎁 Telegram-подарок (25⭐) — 8</li>
-            </ul>
-
-            <div class="btnRow">
-              <button class="btn primary" id="btnStartQuiz">Начать викторину</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Screen 5: Quiz -->
-      <section class="screen" id="s5">
-        <div class="card">
-          <div class="quizTop">
-            <div class="progress" id="quizProgress">1/5</div>
-            <div class="muted" id="quizHint">Выбери вариант ответа</div>
-          </div>
-          <div class="qCard" id="qCard">
-            <p class="qText" id="qText">…</p>
-            <div class="answers" id="answers"></div>
-          </div>
-
-          <div id="quizEnd" style="display:none; margin-top:12px;">
-            <p id="quizEndText" style="font-weight:800; font-size:18px; margin:10px 0;">…</p>
-            <p class="muted" id="quizEndSub"></p>
-            <div class="btnRow">
-              <button class="btn danger" id="btnClose3">Закрыть</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Screen 6: Roulette -->
-      <section class="screen" id="s6">
-        <div class="card">
-          <h1>🎡 Колесо удачи</h1>
-          <h2 id="wheelSub">Нажми на колесо, чтобы прокрутить</h2>
-          <div class="wheelArea" style="margin-top:14px;">
-            <div class="wheelWrap" id="wheelWrap" aria-label="wheel">
-              <div class="pointer"></div>
-              <div class="wheelGroup" id="wheelGroup">
-                <div class="wheelBg"></div>
-                <div class="wheelIcons" id="wheelIcons"></div>
-              </div>
-            </div>
-            <div class="wheelTapHint" id="wheelTapHint">🎡 Нажми, чтобы крутануть</div>
-
-            <div class="resultBox" id="resultBox">
-              <p style="font-weight:900; font-size:18px; margin:0 0 6px;">🎉 Поздравляем с 23 февраля!</p>
-              <p style="margin:0;" id="resultPrize">🎁 Тебе выпал приз: …</p>
-              <p class="muted" id="resultExtra" style="margin-top:10px;"></p>
-              <div class="btnRow" style="margin-top:12px;">
-                <button class="btn danger" id="btnClose4">Закрыть</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      <main id="view"></main>
     </div>
   </div>
 
   <script>
-    // --- Visual snow (keeps atmosphere) ---
-    (function makeSnow(){
-      const root = document.getElementById('snow');
-      if(!root) return;
-      const n = 28;
-      for(let i=0;i<n;i++){
-        const f = document.createElement('div');
-        f.className = 'flake';
-        const size = 3 + Math.random()*5;
-        f.style.width = size+'px';
-        f.style.height = size+'px';
-        f.style.left = (Math.random()*100)+'vw';
-        f.style.opacity = String(0.55 + Math.random()*0.45);
-        const dur = 8 + Math.random()*10;
-        f.style.animationDuration = dur+'s';
-        f.style.animationDelay = (-Math.random()*dur)+'s';
-        root.appendChild(f);
-      }
-    })();
+  (() => {
+    const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
 
-    // --- Telegram helpers ---
-    const tg = window.Telegram?.WebApp || null;
-    try{ tg?.ready(); tg?.expand(); }catch(_e){}
+    // ВАЖНО: если фронт на GitHub Pages (feb23.temo4ka4.ru), то /api на этом домене нет.
+    // Поэтому даём fallback на домен, где у тебя реально работает API.
+    const FALLBACK_API_BASE = "https://api.temo4ka4.ru";
 
-    const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-      ? 'http://localhost:8000'
-      : 'https://api.temo4ka4.ru';
+    const INTRO_KEY = "feb23_intro_seen";
 
-    const INIT_DATA = (tg?.initData || '').trim();
+    const loadingTextEl = document.getElementById("loadingText");
+    const viewEl = document.getElementById("view");
+    const subtitleEl = document.getElementById("subtitle");
 
-    const screens = {
-      s1: document.getElementById('s1'),
-      s2: document.getElementById('s2'),
-      s3: document.getElementById('s3'),
-      s4: document.getElementById('s4'),
-      s5: document.getElementById('s5'),
-      s6: document.getElementById('s6')
+    const qs = new URLSearchParams(location.search);
+    const fallbackAuth = {
+      uid: qs.get("uid") || "",
+      ts: qs.get("ts") || "",
+      sig: qs.get("sig") || "",
     };
 
-    function showScreen(id){
-      Object.keys(screens).forEach(k => screens[k].classList.toggle('active', k === id));
+    const initData = tg ? (tg.initData || "") : "";
+    const initUser = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
+
+    let state = null;
+    let results = null;
+    let lastProgress = 0;
+
+    function setReady() { document.body.classList.add("ready"); }
+    function setLoading(msg) { loadingTextEl.textContent = msg || "Загрузка…"; }
+
+    function delay(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+    function haptic(){
+      try{
+        if (tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred) {
+          tg.HapticFeedback.impactOccurred("light");
+        }
+      }catch(_){}
     }
 
-    function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+    function showErrorPopup(message) {
+      const msg = String(message || "Ошибка");
+      if (tg && tg.showPopup) {
+        tg.showPopup({ title: "Ошибка", message: msg, buttons: [{type:"ok"}] });
+      } else if (tg && tg.showAlert) {
+        tg.showAlert(msg);
+      } else {
+        alert(msg);
+      }
+    }
 
-    async function api(path, opts = {}){
-      const headers = {
-        'Content-Type': 'application/json',
-        'X-Telegram-InitData': INIT_DATA
-      };
+    function withAuthUrl(path) {
+      if (initData) return path;
+      const hasAll = fallbackAuth.uid && fallbackAuth.ts && fallbackAuth.sig;
+      if (!hasAll) return path;
+      const sep = path.includes("?") ? "&" : "?";
+      return path + sep + new URLSearchParams(fallbackAuth).toString();
+    }
 
-      const res = await fetch(API_BASE + path, {
-        method: opts.method || 'GET',
-        headers,
-        body: opts.body ? JSON.stringify(opts.body) : undefined
-      });
+    async function fetchText(url, opts = {}) {
+      const res = await fetch(url, opts);
+      const text = await res.text();
+      return {res, text};
+    }
+
+    async function guessApiBase() {
+      if (window.FEB23_API_BASE) {
+        return String(window.FEB23_API_BASE).replace(/\/+$/, "");
+      }
+
+      const sameOrigin = "";
+      try {
+        const url = sameOrigin + withAuthUrl("/api/feb23/state");
+        const headers = initData ? {"X-Telegram-InitData": initData} : {};
+        const {res, text} = await fetchText(url, {headers});
+        if (res.ok) {
+          try { JSON.parse(text); return sameOrigin; } catch (_) {}
+        }
+      } catch (_) {}
+
+      return FALLBACK_API_BASE.replace(/\/+$/, "");
+    }
+
+    async function api(apiBase, path, opts = {}) {
+      const url = apiBase + withAuthUrl(path);
+      const headers = Object.assign({"Content-Type":"application/json"}, (opts.headers || {}));
+      if (initData) headers["X-Telegram-InitData"] = initData;
+
+      const {res, text} = await fetchText(url, Object.assign({}, opts, {headers}));
 
       let data = null;
-      try{ data = await res.json(); }catch(_e){ data = null; }
+      try { data = text ? JSON.parse(text) : null; } catch (_) {}
 
-      if(!res.ok){
-        const detail = (data && (data.detail || data.error)) ? (data.detail || data.error) : ('HTTP ' + res.status);
-        throw new Error(detail);
+      if (!res.ok) {
+        const detail = (data && (data.detail || data.error)) ? (data.detail || data.error) : (text || "Ошибка запроса");
+        const err = new Error(String(detail));
+        err.__status = res.status;
+        throw err;
       }
       return data;
     }
 
-    // --- UI elements ---
-    const btnMale = document.getElementById('btnMale');
-    const btnFemale = document.getElementById('btnFemale');
-    const btnClose1 = document.getElementById('btnClose1');
-    const btnClose2 = document.getElementById('btnClose2');
-    const btnClose3 = document.getElementById('btnClose3');
-    const btnClose4 = document.getElementById('btnClose4');
-    const btnStartQuiz = document.getElementById('btnStartQuiz');
-
-    const blockTitle = document.getElementById('blockTitle');
-    const blockText = document.getElementById('blockText');
-
-    const alreadyBox = document.getElementById('alreadyBox');
-    const rulesBox = document.getElementById('rulesBox');
-    const alreadyPrize = document.getElementById('alreadyPrize');
-
-    const quizProgress = document.getElementById('quizProgress');
-    const quizHint = document.getElementById('quizHint');
-    const qCard = document.getElementById('qCard');
-    const qText = document.getElementById('qText');
-    const answersBox = document.getElementById('answers');
-    const quizEnd = document.getElementById('quizEnd');
-    const quizEndText = document.getElementById('quizEndText');
-    const quizEndSub = document.getElementById('quizEndSub');
-
-    const wheelWrap = document.getElementById('wheelWrap');
-    const wheelGroup = document.getElementById('wheelGroup');
-    const wheelIcons = document.getElementById('wheelIcons');
-    const wheelSub = document.getElementById('wheelSub');
-    const wheelTapHint = document.getElementById('wheelTapHint');
-
-    const resultBox = document.getElementById('resultBox');
-    const resultPrize = document.getElementById('resultPrize');
-    const resultExtra = document.getElementById('resultExtra');
-
-    // --- Data ---
-    const QUESTIONS = [
-      {
-        q: 'Когда официально отмечается День защитника Отечества?',
-        a: ['22 февраля', '23 февраля', '9 мая', '12 июня']
-      },
-      {
-        q: 'Как раньше назывался праздник 23 февраля?',
-        a: ['День армии', 'День Красной армии', 'День солдата', 'День защитников']
-      },
-      {
-        q: 'Какое событие легло в основу праздника 23 февраля?',
-        a: ['Первая мировая война', 'Создание Красной армии', 'Победа в Великой Отечественной', 'Подписание мирного договора']
-      },
-      {
-        q: 'Как называется комплект военной одежды?',
-        a: ['Обмундирование', 'Гардероб', 'Униформа', 'Амуниция']
-      },
-      {
-        q: 'Сколько букв в слове “ЗАЩИТНИК”?',
-        a: ['7', '8', '9', '10']
-      }
-    ];
-
-    // Must match backend wheel layout
-    const WHEEL_SEGMENTS = [
-      'gift_25', 'rocket_50', 'gift_25', 'choco', 'gift_25', 'rocket_50', 'gift_25',
-      'cup_100', 'gift_25', 'rocket_50', 'gift_25', 'choco', 'gift_25', 'gift_25'
-    ];
-
-    const ICON_BY_TYPE = {
-      cup_100: '🏆',
-      choco: '🍫',
-      rocket_50: '🚀',
-      gift_25: '🎁'
-    };
-
-    const TITLE_BY_TYPE = {
-      cup_100: 'Кубок 100⭐',
-      choco: 'Шоколадка',
-      rocket_50: 'Ракета 50⭐',
-      gift_25: 'Telegram-подарок 25⭐'
-    };
-
-    function extraTextByType(prizeType){
-      if(prizeType === 'choco') return '🍫 Забрать можно в понедельник.';
-      if(prizeType === 'gift_25') return '🎁 Приз будет отправлен 24 февраля.\nНикуда писать не нужно.';
-      return '';
+    function applyTheme() {
+      if (!tg || !tg.themeParams) return;
+      const tp = tg.themeParams;
+      // Не даём тёмный текст: если Telegram вдруг отдаст странное — не трогаем.
+      try {
+        tg.setHeaderColor && tg.setHeaderColor("#0b150f");
+        tg.setBackgroundColor && tg.setBackgroundColor("#0b150f");
+      } catch(_) {}
     }
 
-    function closeWebApp(){
-      try{ tg?.close(); }catch(_e){}
-      try{ window.close(); }catch(_e){}
+    function getMemberNameById(id) {
+      const mid = Number(id);
+      const m = (state && state.members) ? state.members.find(x => Number(x.id) === mid) : null;
+      return m ? m.name : ("#" + mid);
     }
 
-    btnClose1.addEventListener('click', closeWebApp);
-    btnClose2.addEventListener('click', closeWebApp);
-    btnClose3.addEventListener('click', closeWebApp);
-    btnClose4.addEventListener('click', closeWebApp);
-
-    // --- Wheel icons init ---
-    function buildWheelIcons(){
-      wheelIcons.innerHTML = '';
-      const n = WHEEL_SEGMENTS.length;
-      const step = 360 / n;
-      const radius = 44; // percent translate
-
-      for(let i=0;i<n;i++){
-        const type = WHEEL_SEGMENTS[i];
-        const el = document.createElement('div');
-        el.className = 'icon';
-        el.textContent = ICON_BY_TYPE[type] || '🎁';
-        const angle = (i + 0.5) * step;
-        el.style.transform = `rotate(${angle}deg) translate(0, -${radius}%) rotate(${-angle}deg)`;
-        wheelIcons.appendChild(el);
-      }
-    }
-    buildWheelIcons();
-
-    // --- Global state ---
-    let state = null;
-    let quizAnswers = [];
-    let wheelTargetIndex = null;
-    let wheelPrizeType = null;
-    let wheelPrizeTitle = null;
-    let wheelPrizeExtra = '';
-    let wheelPoolId = 0;
-    let spinning = false;
-    let rotation = 0;
-
-    function showErrorBlock(title, text){
-      blockTitle.textContent = title;
-      blockText.innerHTML = text;
-      showScreen('s3');
+    function getCategoryById(id) {
+      const cid = Number(id);
+      const c = (state && state.categories) ? state.categories.find(x => Number(x.id) === cid) : null;
+      return c || null;
     }
 
-    function applyStateToRules(s){
-      const participated = !!s.participated;
-      if(participated){
-        alreadyBox.style.display = 'block';
-        rulesBox.style.display = 'none';
+    function renderErrorScreen(apiBase, err) {
+      const msg = String(err && err.message ? err.message : err || "Ошибка");
+      subtitleEl.textContent = "Не удалось загрузить данные";
 
-        const pt = s.prize_type;
-        if(pt){
-          alreadyPrize.textContent = `Твой приз: ${TITLE_BY_TYPE[pt] || pt}`;
-        }else{
-          alreadyPrize.textContent = 'Участие завершено.';
-        }
-      }else{
-        alreadyBox.style.display = 'none';
-        rulesBox.style.display = 'block';
+      const hint =
+        (!initData && !(fallbackAuth.uid && fallbackAuth.ts && fallbackAuth.sig))
+          ? "Вы открыли страницу вне Telegram. Откройте через кнопку в боте или используйте подписанный URL (?uid&ts&sig)."
+          : "Проверьте, что API доступен и настроен прокси / CORS.";
+
+      viewEl.innerHTML = `
+        <div class="errorBox">
+          <div class="errorTitle">Данные не загрузились</div>
+          <div class="errorText">${hint}</div>
+          <div class="mono">apiBase: ${apiBase || "(same-origin)"}\nerror: ${msg}</div>
+          <button class="ctaBtn" id="retryBtn">Повторить</button>
+        </div>
+      `;
+
+      document.getElementById("retryBtn").addEventListener("click", () => location.reload());
+    }
+
+    function renderIntro() {
+      if (!state) return;
+      const status = String(state.event_status || "closed");
+
+      subtitleEl.textContent = "5 категорий • 1 голос в каждой";
+
+      const cta = (status === "open")
+        ? `<button class="ctaBtn" id="introGo">Приступить к выбору</button>`
+        : `<button class="ctaBtn" id="introResults">Смотреть итоги</button>`;
+
+      viewEl.innerHTML = `
+        <div class="section glass">
+          <div class="sectionTitle">Рейтинг легенд класса</div>
+
+          <div class="mutedHint" style="margin-top:0;color:rgba(242,246,243,.88);font-size:14px;">
+            Это короткое голосование из 5 категорий — выбираешь легенд по разным ролям.
+          </div>
+
+          <div class="mutedHint" style="color:var(--muted);font-size:13px;">
+            Важно: голос фиксируется сразу после подтверждения и <b>не может быть изменён</b>.
+          </div>
+
+          <div class="sectionTitle" style="margin-top:14px;">Что получают победители</div>
+          <div class="mutedHint" style="margin-top:0;font-size:13px;">
+            🥇 уважение класса<br/>
+            🥈 упоминание в итогах<br/>
+            🥉 мем-статус (легально)
+          </div>
+
+          ${cta}
+        </div>
+      `;
+
+      if (status === "open") {
+        document.getElementById("introGo").addEventListener("click", () => {
+          localStorage.setItem(INTRO_KEY, "1");
+          routeAfterState();
+        });
+      } else {
+        document.getElementById("introResults").addEventListener("click", () => {
+          localStorage.setItem(INTRO_KEY, "1");
+          renderResults();
+        });
       }
     }
 
-    async function fetchState(){
-      return await api('/api/feb23/state');
-    }
+    function routeAfterState() {
+      const status = String(state.event_status || "closed");
+      const progress = Number(state.progress_count || 0);
 
-    function routeByState(s){
-      state = s;
-
-      if(!s || !s.ok){
-        showErrorBlock('⚠️', 'Не удалось загрузить событие.');
+      if (!localStorage.getItem(INTRO_KEY)) {
+        renderIntro();
         return;
       }
 
-      // Gender not chosen
-      if(!s.gender){
-        showScreen('s2');
+      if (status !== "open") {
+        renderResults();
         return;
       }
 
-      // Female block
-      if(s.gender === 'female'){
-        showErrorBlock('💐', '💐 Это событие посвящено 23 февраля и доступно для мальчиков.<br>🎀 Уже скоро — отдельное событие к 8 марта!');
-        return;
+      if (progress >= 5) renderDone();
+      else renderHome();
+    }
+
+    function bounceProgress() {
+      const bar = document.querySelector(".progressBar");
+      if (!bar) return;
+      bar.classList.remove("bump");
+      // force reflow
+      void bar.offsetWidth;
+      bar.classList.add("bump");
+      setTimeout(() => bar.classList.remove("bump"), 160);
+    }
+
+    function renderHome() {
+      if (!state) return;
+
+      const total = 5;
+      const progress = Number(state.progress_count || 0);
+      const pct = Math.max(0, Math.min(100, Math.round((progress / total) * 100)));
+      const status = String(state.event_status || "closed");
+      const myVotes = state.my_votes || {};
+
+      subtitleEl.textContent = (status === "open")
+        ? "Голосование до 24 февраля"
+        : "Голосование завершено";
+
+      const topBtn = (status === "open")
+        ? (progress >= 5 ? `<button class="ctaBtn" disabled>Голосование завершено</button>` : ``)
+        : `<button class="ctaBtn" id="goResults">Смотреть итоги</button>`;
+
+      const progressHtml = `
+        <div class="progressWrap glass">
+          <div class="progressTop">
+            <div class="progressTitle">Вы проголосовали в <b>${progress}/${total}</b> категорий</div>
+            <div class="progressPct">${pct}%</div>
+          </div>
+          <div class="progressBar"><div style="width:${pct}%"></div></div>
+          ${topBtn}
+        </div>
+      `;
+
+      const cardsHtml = (state.categories || []).map((c, idx) => {
+        const votedTarget = myVotes[String(c.id)];
+        const voted = (typeof votedTarget !== "undefined");
+        const name = voted ? getMemberNameById(votedTarget) : "";
+
+        const hint = voted
+          ? `<div class="pickedLine"><span class="check">✓</span><span>${name}</span></div>`
+          : (status === "open"
+              ? `<div class="chooseHint"><span class="arrow">→</span><span>Выберите кандидата</span></div>`
+              : `<div class="mutedHint">Голосование завершено</div>`);
+
+        return `
+          <div class="card glass ${voted || status!=="open" ? "readonly" : ""}"
+               data-cat="${c.id}"
+               style="animation-delay:${idx * 70}ms;">
+            <div class="cardRow">
+              <div class="emoji">${c.emoji}</div>
+              <div class="cardMeta">
+                <div class="cardTitle">${c.title}</div>
+                <div class="cardDesc">${c.description}</div>
+                ${hint}
+              </div>
+              <div class="cardStatus">${voted ? `<span class="check">✓</span>` : ``}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      viewEl.innerHTML = `
+        ${progressHtml}
+        <div class="cards">${cardsHtml}</div>
+      `;
+
+      const goResults = document.getElementById("goResults");
+      if (goResults) goResults.addEventListener("click", () => renderResults());
+
+      // клики по карточкам: если уже проголосовал — показываем просмотр выбора
+      viewEl.querySelectorAll(".card").forEach(el => {
+        el.addEventListener("click", () => {
+          const catId = Number(el.getAttribute("data-cat"));
+          const votedTarget = myVotes[String(catId)];
+
+          if (typeof votedTarget !== "undefined") {
+            renderViewChoice(catId);
+            return;
+          }
+
+          if (status !== "open") {
+            renderResults();
+            return;
+          }
+
+          renderPick(catId);
+        });
+      });
+
+      // микро: если прогресс вырос — bump + haptic
+      if (progress > lastProgress) {
+        haptic();
+        bounceProgress();
       }
-
-      // Male
-      applyStateToRules(s);
-      showScreen('s4');
+      lastProgress = progress;
     }
 
-    async function setGenderOnce(gender){
-      btnMale.disabled = true;
-      btnFemale.disabled = true;
-      try{
-        const res = await api('/api/feb23/gender', {method:'POST', body:{gender}});
-        // Refresh state (source of truth)
-        const s = await fetchState();
-        routeByState(s);
-      }catch(e){
-        btnMale.disabled = false;
-        btnFemale.disabled = false;
-        showErrorBlock('⚠️', `<span class='err'><strong>Ошибка</strong>: ${String(e.message||e)}</span>`);
-      }
-    }
+    function renderViewChoice(categoryId) {
+      if (!state) return;
+      const c = getCategoryById(categoryId);
+      if (!c) { showErrorPopup("Категория не найдена."); return; }
 
-    btnMale.addEventListener('click', () => setGenderOnce('male'));
-    btnFemale.addEventListener('click', () => setGenderOnce('female'));
+      const myVotes = state.my_votes || {};
+      const tid = myVotes[String(categoryId)];
+      const name = (typeof tid !== "undefined") ? getMemberNameById(tid) : null;
 
-    // --- Quiz ---
-    function resetQuiz(){
-      quizAnswers = [];
-      quizEnd.style.display = 'none';
-      qCard.style.display = 'block';
-      quizHint.textContent = 'Выбери вариант ответа';
-    }
+      subtitleEl.textContent = `${c.emoji} ${c.title}`;
 
-    function renderQuestion(idx){
-      const total = QUESTIONS.length;
-      const q = QUESTIONS[idx];
-      quizProgress.textContent = `${idx+1}/${total}`;
-      qText.textContent = q.q;
-      answersBox.innerHTML = '';
+      viewEl.innerHTML = `
+        <div class="topBar">
+          <button class="backBtn" id="backBtn">← Назад</button>
+          <div style="font-size:13px;color:var(--muted2);">Изменение запрещено</div>
+        </div>
 
-      q.a.forEach((optText, optIdx) => {
-        const b = document.createElement('button');
-        b.className = 'opt';
-        b.textContent = optText;
-        b.addEventListener('click', () => onAnswer(idx, optIdx));
-        answersBox.appendChild(b);
+        <div class="section glass">
+          <div class="sectionTitle">${c.emoji} ${c.title}</div>
+          <div class="mutedHint" style="margin-top:0;color:var(--muted);">${c.description}</div>
+
+          <div class="mutedHint" style="margin-top:14px;color:rgba(242,246,243,.9);font-size:14px;">
+            ${name ? `Вы уже проголосовали и отдали голос за <b>${name}</b>.` : `Вы не голосовали в этой категории.`}
+          </div>
+
+          <button class="ctaBtn" disabled>${name ? "Вы уже проголосовали" : "Недоступно"}</button>
+        </div>
+      `;
+
+      document.getElementById("backBtn").addEventListener("click", () => {
+        if (Number(state.progress_count || 0) >= 5) renderDone();
+        else renderHome();
       });
     }
 
-    async function onAnswer(qIdx, optIdx){
-      // Disable options immediately
-      Array.from(answersBox.querySelectorAll('button')).forEach(b => b.disabled = true);
-      quizAnswers[qIdx] = optIdx;
+    function renderDone() {
+      if (!state) return;
 
-      // Smooth transition
-      qCard.classList.add('fadeOut');
-      await sleep(180);
-      qCard.classList.remove('fadeOut');
+      subtitleEl.textContent = "Голосование завершено";
 
-      if(qIdx < QUESTIONS.length - 1){
-        renderQuestion(qIdx + 1);
+      const myVotes = state.my_votes || {};
+      const items = (state.categories || []).map(c => {
+        const tid = myVotes[String(c.id)];
+        const name = getMemberNameById(tid);
+        return `<div class="mutedHint" style="font-size:14px;color:rgba(242,246,243,.92);margin:10px 0;">
+          ${c.emoji} <b>${c.title}</b> — ${name}
+        </div>`;
+      }).join("");
+
+      viewEl.innerHTML = `
+        <div class="section glass">
+          <div class="sectionTitle">Голосование завершено</div>
+          <div class="mutedHint">Вы уже отдали голос во всех 5 категориях. Редактирование запрещено.</div>
+          <div style="margin-top:6px;">${items}</div>
+          <button class="ctaBtn" disabled>Голосование завершено</button>
+        </div>
+      `;
+
+      // клики по списку — только просмотр
+      // (если захочешь: можно сделать список кликабельным, но ты это не просил)
+    }
+
+    function renderPick(categoryId) {
+      if (!state) return;
+
+      const myVotes = state.my_votes || {};
+      if (typeof myVotes[String(categoryId)] !== "undefined") {
+        renderViewChoice(categoryId);
         return;
       }
 
-      // Submit
-      quizHint.textContent = 'Проверяем ответы…';
-      try{
-        const res = await api('/api/feb23/quiz', {method:'POST', body:{answers: quizAnswers}});
+      const c = getCategoryById(categoryId);
+      if (!c) { showErrorPopup("Категория не найдена."); return; }
 
-        if(!res.passed){
-          qCard.style.display = 'none';
-          quizEnd.style.display = 'block';
-          quizEndText.textContent = '❌ Недостаточно правильных ответов.';
-          quizEndSub.textContent = 'Участие завершено.\nПовтор запрещён.';
-          return;
+      subtitleEl.textContent = `${c.emoji} ${c.title}`;
+
+      const members = state.members || [];
+      const myNameFirst = initUser ? String(initUser.first_name || "").trim() : "";
+      const myNameLast = initUser ? String(initUser.last_name || "").trim() : "";
+      const myFull = (myNameFirst + " " + myNameLast).trim().toLowerCase().replace("ё","е");
+      const myFirst = myNameFirst.toLowerCase().replace("ё","е");
+
+      function isSelfCandidate(name) {
+        const n = String(name || "").trim().toLowerCase().replace("ё","е");
+        if (!n) return false;
+        if (myFull && n === myFull) return true;
+        if (myFirst && !n.includes(" ") && n === myFirst) return true;
+        return false;
+      }
+
+      const pills = members.map((m) => {
+        const disabled = isSelfCandidate(m.name);
+        return `
+          <button class="pill" data-mid="${m.id}" ${disabled ? "disabled" : ""}>
+            <span>🪖 ${m.name}</span>
+            <small>${disabled ? "нельзя" : "выбрать"}</small>
+          </button>
+        `;
+      }).join("");
+
+      viewEl.innerHTML = `
+        <div class="topBar">
+          <button class="backBtn" id="backBtn">← Назад</button>
+          <div style="font-size:13px;color:var(--muted2);">Голос фиксируется сразу</div>
+        </div>
+
+        <div class="section glass">
+          <div class="sectionTitle">${c.emoji} ${c.title}</div>
+          <div class="mutedHint" style="margin-top:0;color:var(--muted);">${c.description}</div>
+          <div class="chooseHint"><span class="arrow">→</span><span>Выберите кандидата</span></div>
+          <div class="pillList">${pills}</div>
+        </div>
+      `;
+
+      document.getElementById("backBtn").addEventListener("click", () => renderHome());
+
+      viewEl.querySelectorAll(".pill").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          if (btn.disabled) return;
+
+          const memberId = Number(btn.getAttribute("data-mid"));
+          const memberName = members.find(x => Number(x.id) === memberId)?.name || ("#" + memberId);
+
+          const doVote = async () => {
+            try {
+              await api(window.__FEB23_API_BASE, "/api/feb23/vote", {
+                method: "POST",
+                body: JSON.stringify({ category_id: categoryId, target_user_id: memberId })
+              });
+
+              state = await api(window.__FEB23_API_BASE, "/api/feb23/state");
+
+              if (String(state.event_status) !== "open") {
+                results = await api(window.__FEB23_API_BASE, "/api/feb23/results");
+                renderResults();
+                return;
+              }
+
+              if (Number(state.progress_count || 0) >= 5) renderDone();
+              else renderHome();
+            } catch (e) {
+              // если сервер сказал "уже голосовал" — не ругаемся, показываем просмотр
+              try{
+                state = await api(window.__FEB23_API_BASE, "/api/feb23/state");
+                const myVotes2 = state.my_votes || {};
+                if (typeof myVotes2[String(categoryId)] !== "undefined") {
+                  renderViewChoice(categoryId);
+                  return;
+                }
+              }catch(_){}
+              showErrorPopup(e.message || e);
+            }
+          };
+
+          if (tg && tg.showPopup) {
+            tg.showPopup({
+              title: "Подтвердить голос",
+              message: `${c.emoji} ${c.title}\n→ ${memberName}\n\nГолос нельзя будет изменить.`,
+              buttons: [
+                {id: "vote", type: "default", text: "Голосовать"},
+                {id: "cancel", type: "cancel", text: "Отмена"}
+              ]
+            }, (btnId) => { if (btnId === "vote") doVote(); });
+          } else {
+            if (confirm(`Голос: ${c.title} → ${memberName}\n\nГолос нельзя будет изменить. Продолжить?`)) doVote();
+          }
+        });
+      });
+    }
+
+    function renderResults() {
+      if (!state || !results) return;
+
+      subtitleEl.textContent = "Итоги голосования";
+
+      const cats = results.categories || state.categories || [];
+      const top = results.top3_by_category || {};
+      const legend = results.legend;
+
+      const blocks = cats.map(c => {
+        const list = (top[String(c.id)] || []);
+        const medals = ["🥇", "🥈", "🥉"];
+
+        let items = "";
+        if (!list.length) {
+          items = `<div class="mutedHint">— пока нет голосов</div>`;
+        } else {
+          items = `<ol class="ol">${
+            list.map((x, i) => `<li>${medals[i]} ${x.name} — ${x.votes} голосов</li>`).join("")
+          }</ol>`;
         }
 
-        // Passed → go to wheel
-        wheelTargetIndex = (typeof res.wheel_index === 'number') ? res.wheel_index : null;
-        wheelPrizeType = res.prize_type || null;
-        wheelPrizeTitle = res.prize_title || (wheelPrizeType ? (TITLE_BY_TYPE[wheelPrizeType] || wheelPrizeType) : null);
-        wheelPrizeExtra = res.prize_extra || extraTextByType(wheelPrizeType);
-        wheelPoolId = res.pool_id || 0;
+        return `
+          <div class="section glass">
+            <div class="sectionTitle">${c.emoji} ${c.title}</div>
+            ${items}
+          </div>
+        `;
+      }).join("");
 
-        prepareWheelScreen();
-        showScreen('s6');
-      }catch(e){
-        qCard.style.display = 'none';
-        quizEnd.style.display = 'block';
-        quizEndText.textContent = '⚠️ Ошибка.';
-        quizEndSub.textContent = String(e.message||e);
-      }
+      const legendHtml = legend
+        ? `<div class="section glass">
+             <div class="sectionTitle">🏆 Легенда класса</div>
+             <div class="legend"><b>${legend.name}</b> — ${legend.votes_total} голосов</div>
+           </div>`
+        : `<div class="section glass">
+             <div class="sectionTitle">🏆 Легенда класса</div>
+             <div class="mutedHint">Пока не определена — нет голосов.</div>
+           </div>`;
+
+      viewEl.innerHTML = `${blocks}${legendHtml}`;
     }
 
-    btnStartQuiz.addEventListener('click', () => {
-      resetQuiz();
-      renderQuestion(0);
-      showScreen('s5');
-    });
+    async function boot() {
+      const t0 = Date.now();
 
-    // --- Wheel ---
-    function prepareWheelScreen(){
-      resultBox.classList.remove('show');
-      resultBox.style.display = 'none';
-      wheelTapHint.style.display = 'block';
-      wheelSub.textContent = 'Нажми на колесо, чтобы прокрутить';
-      spinning = false;
-    }
+      try {
+        setLoading("Подготовка…");
 
-    function finishWheel(){
-      wheelTapHint.style.display = 'none';
-      wheelSub.textContent = 'Готово!';
-
-      if(wheelPrizeTitle){
-        resultPrize.innerHTML = `🎁 Тебе выпал приз: <b>${wheelPrizeTitle}</b>`;
-        resultExtra.textContent = wheelPrizeExtra || '';
-      }else{
-        resultPrize.innerHTML = '🎁 Призы закончились.';
-        resultExtra.textContent = '';
-      }
-
-      resultBox.style.display = 'block';
-      resultBox.classList.add('show');
-      try{ tg?.HapticFeedback?.notificationOccurred('success'); }catch(_e){}
-    }
-
-    function spinWheel(){
-      if(spinning) return;
-      if(typeof wheelTargetIndex !== 'number'){
-        // no target → show result without spin
-        finishWheel();
-        return;
-      }
-
-      spinning = true;
-      wheelTapHint.textContent = 'Крутим…';
-      try{ tg?.HapticFeedback?.impactOccurred('medium'); }catch(_e){}
-
-      const n = WHEEL_SEGMENTS.length;
-      const step = 360 / n;
-      const center = (wheelTargetIndex + 0.5) * step;
-
-      const turns = 8 + (wheelPoolId % 3); // 8..10
-      const offset = (((wheelPoolId % 100) / 100) - 0.5) * step * 0.18; // deterministic micro-offset
-      const target = (turns * 360) + (360 - center) + offset;
-
-      const duration = 7500 + (wheelPoolId % 2501); // 7.5s..10.0s
-
-      rotation = rotation + target;
-      wheelGroup.style.transition = `transform ${duration}ms cubic-bezier(0.14, 0.85, 0.22, 1)`;
-      wheelGroup.style.transform = `rotate(${rotation}deg)`;
-
-      const onEnd = () => {
-        wheelGroup.removeEventListener('transitionend', onEnd);
-        // Small stop effect
-        try{
-          wheelGroup.animate(
-            [{transform:`rotate(${rotation}deg)`},{transform:`rotate(${rotation+2}deg)`},{transform:`rotate(${rotation}deg)`}],
-            {duration:280, easing:'ease-out'}
-          );
-        }catch(_e){}
-        finishWheel();
-      };
-      wheelGroup.addEventListener('transitionend', onEnd);
-    }
-
-    wheelWrap.addEventListener('click', () => {
-      if(spinning) return;
-      spinWheel();
-    });
-
-    // --- Boot ---
-    (async function boot(){
-      // If opened outside Telegram → show error
-      if(!INIT_DATA){
-        await sleep(450);
-        showErrorBlock('⚠️', 'Открой событие из Telegram.');
-        return;
-      }
-
-      const minLoader = sleep(3000);
-      let s = null;
-      try{
-        s = await fetchState();
-      }catch(e){
-        // Handle common errors
-        const msg = String(e.message||e);
-        await minLoader;
-        if(msg.includes('not_in_class')){
-          showErrorBlock('🏫', 'Событие доступно только участникам класса.');
-        }else{
-          showErrorBlock('⚠️', `<span class='err'><strong>Ошибка</strong>: ${msg}</span>`);
+        if (tg) {
+          tg.ready();
+          tg.expand();
+          if (tg.disableVerticalSwipes) tg.disableVerticalSwipes(); // iPhone: не закрывать на swipe вниз
         }
-        return;
-      }
+        applyTheme();
 
-      await minLoader;
-      routeByState(s);
-    })();
+        setLoading("Подключаемся…");
+        const apiBase = await guessApiBase();
+        window.__FEB23_API_BASE = apiBase;
+
+        setLoading("Загружаем данные…");
+        state = await api(apiBase, "/api/feb23/state");
+
+        // prefetch результатов если закрыто
+        if (String(state.event_status) !== "open") {
+          results = await api(apiBase, "/api/feb23/results");
+        }
+
+        // минимум 3 секунды лоадинг
+        const elapsed = Date.now() - t0;
+        if (elapsed < 3000) await delay(3000 - elapsed);
+
+        // стартовая навигация
+        lastProgress = Number(state.progress_count || 0);
+        routeAfterState();
+
+        setReady();
+      } catch (e) {
+        // тоже держим минимум 3 секунды лоадинг
+        const elapsed = Date.now() - t0;
+        if (elapsed < 3000) await delay(3000 - elapsed);
+
+        setReady();
+        renderErrorScreen(window.__FEB23_API_BASE || "", e);
+      }
+    }
+
+    boot();
+  })();
   </script>
 </body>
 </html>
