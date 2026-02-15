@@ -7,7 +7,6 @@
   <title>23 февраля — Квиз</title>
 
   <style>
-    /* ===== Military green style (no tank) ===== */
     :root{
       --bg0:#07140a;
       --bg1:#0b1b0f;
@@ -37,7 +36,6 @@
       overflow:hidden;
     }
 
-    /* camo-like overlays */
     body::before{
       content:"";
       position:fixed; inset:0;
@@ -69,7 +67,6 @@
       justify-content:center;
     }
 
-    /* ===== Screens ===== */
     .screen{
       position:absolute;
       inset:0;
@@ -98,11 +95,7 @@
       backdrop-filter: blur(10px);
     }
 
-    h1,h2{
-      margin:0 0 8px 0;
-      letter-spacing: .2px;
-    }
-
+    h1,h2{ margin:0 0 8px 0; letter-spacing: .2px; }
     h1{ font-size: 26px; }
     h2{ font-size: 22px; }
 
@@ -110,18 +103,14 @@
     .muted{ color: var(--muted); }
     .tiny{ font-size: 12px; color: var(--muted); line-height: 1.25; }
 
-    .divider{
-      height:1px; background: var(--stroke);
-      margin: 14px 0;
-    }
+    .divider{ height:1px; background: var(--stroke); margin: 14px 0; }
 
-    /* ===== Buttons ===== */
     .btn{
       appearance:none;
       border:0;
       border-radius: 14px;
       padding: 12px 14px;
-      font-weight: 700;
+      font-weight: 800;
       cursor:pointer;
       transition: transform 120ms ease, filter 120ms ease, opacity 120ms ease;
       user-select:none;
@@ -145,24 +134,15 @@
       background: linear-gradient(180deg, #ff8585, var(--danger));
     }
 
-    .btn-row{
-      display:flex;
-      gap:10px;
-      margin-top: 12px;
-    }
+    .btn-row{ display:flex; gap:10px; margin-top: 12px; }
     .btn-row .btn{ width:100%; }
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:10px;
-      margin-top: 12px;
-    }
+    .grid{ display:grid; grid-template-columns: 1fr; gap:10px; margin-top: 12px; }
     @media (min-width: 420px){
       .grid.two{ grid-template-columns: 1fr 1fr; }
     }
 
-    /* ===== Loading ===== */
+    /* Loading */
     .badge{
       display:inline-flex;
       align-items:center;
@@ -171,11 +151,10 @@
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.18);
-      font-weight: 700;
+      font-weight: 800;
       font-size: 12px;
       color: rgba(234,246,234,.86);
     }
-
     .loader{
       margin-top: 14px;
       height: 10px;
@@ -196,10 +175,9 @@
       0%{ transform: translateX(-120%); }
       100%{ transform: translateX(420%); }
     }
-
     .hidden{ display:none !important; }
 
-    /* ===== Rules ===== */
+    /* Rules */
     ul.rules{
       margin: 10px 0 0 16px;
       padding:0;
@@ -218,7 +196,7 @@
       color: rgba(234,246,234,.84);
     }
 
-    /* ===== Quiz ===== */
+    /* Quiz */
     .quiz-card{ padding: 16px 14px; }
     .quiz-top{
       display:flex;
@@ -234,12 +212,12 @@
       min-width: 90px;
     }
     .quiz-step{
-      font-weight: 800;
+      font-weight: 900;
       font-size: 14px;
       letter-spacing:.2px;
     }
     .quiz-percent{
-      font-weight: 800;
+      font-weight: 900;
       font-size: 12px;
       color: rgba(109,255,90,.95);
     }
@@ -259,21 +237,18 @@
       border-radius: 999px;
       transition: width 260ms var(--ease);
     }
-
     .q{
       margin-top: 8px;
       font-size: 16px;
-      font-weight: 800;
+      font-weight: 900;
       line-height: 1.25;
     }
-
     .options{
       display:flex;
       flex-direction:column;
       gap:10px;
       margin-top: 12px;
     }
-
     .opt{
       width:100%;
       border-radius: 14px;
@@ -282,7 +257,7 @@
       color: rgba(234,246,234,.92);
       padding: 12px 12px;
       text-align:left;
-      font-weight: 700;
+      font-weight: 800;
       cursor:pointer;
       transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
     }
@@ -291,27 +266,25 @@
       border-color: rgba(109,255,90,.55);
       background: rgba(109,255,90,.12);
     }
-
-    .fade-in{
-      animation: fadeInUp 260ms var(--ease) both;
-    }
+    .fade-in{ animation: fadeInUp 260ms var(--ease) both; }
     @keyframes fadeInUp{
       from{ opacity:0; transform: translateY(10px); }
       to{ opacity:1; transform: translateY(0); }
     }
 
-    /* ===== Roulette ===== */
+    /* Roulette */
     .roulette-card{ padding: 16px 14px; }
     .roulette-wrap{
       position:relative;
-      width: 270px;
-      height: 270px;
+      width: 292px;
+      height: 292px;
       margin: 14px auto 10px auto;
       display:flex;
       align-items:center;
       justify-content:center;
     }
 
+    /* pointer: tip DOWN (as you asked) */
     .pointer{
       position:absolute;
       top: -6px;
@@ -320,9 +293,9 @@
       width:0; height:0;
       border-left: 14px solid transparent;
       border-right: 14px solid transparent;
-      border-bottom: 26px solid rgba(109,255,90,.95);
+      border-top: 26px solid rgba(109,255,90,.95);
       filter: drop-shadow(0 8px 12px rgba(0,0,0,.5));
-      z-index: 5;
+      z-index: 8;
     }
 
     .wheel{
@@ -346,10 +319,11 @@
 
     .wheel::after{
       content:"";
-      position:absolute; inset: 12px;
+      position:absolute; inset: 14px;
       border-radius:999px;
       border: 1px solid rgba(255,255,255,.10);
       background: radial-gradient(circle at 50% 45%, rgba(0,0,0,.08), rgba(0,0,0,.32));
+      z-index: 1;
     }
 
     .wheel-center{
@@ -358,16 +332,53 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      z-index:2;
-      font-weight: 900;
-      font-size: 42px;
+      z-index: 6;
+      font-weight: 1000;
+      font-size: 40px;
       color: rgba(234,246,234,.92);
       text-shadow: 0 10px 24px rgba(0,0,0,.6);
+      pointer-events:none;
     }
 
-    .impact{
-      animation: impact 420ms var(--ease);
+    /* icons around wheel */
+    .wheel-icons{
+      position:absolute; inset:0;
+      z-index: 4;
+      pointer-events:none;
     }
+    .wicon{
+      position:absolute;
+      left:50%; top:50%;
+      transform-origin: 0 0;
+      font-size: 22px;
+      filter: drop-shadow(0 8px 14px rgba(0,0,0,.55));
+      opacity: .96;
+    }
+    .wicon small{
+      display:block;
+      font-size: 10px;
+      font-weight: 900;
+      color: rgba(234,246,234,.85);
+      letter-spacing: .2px;
+      text-align:center;
+      margin-top: 2px;
+      text-shadow: 0 6px 12px rgba(0,0,0,.6);
+    }
+
+    /* subtle tick marks */
+    .ticks{
+      position:absolute; inset:0;
+      z-index: 3;
+      pointer-events:none;
+      background:
+        repeating-conic-gradient(from -90deg,
+          rgba(255,255,255,.08) 0 1deg,
+          transparent 1deg 22.5deg);
+      mask: radial-gradient(circle, transparent 0 56%, #000 57% 100%);
+      opacity:.55;
+    }
+
+    .impact{ animation: impact 420ms var(--ease); }
     @keyframes impact{
       0%{ transform: scale(1); }
       35%{ transform: scale(1.02); }
@@ -418,22 +429,23 @@
     <!-- 2) Gender -->
     <section id="screen-gender" class="screen">
       <div class="card">
-        <h2>Выбор пола</h2>
-        <p class="muted">Выбирается один раз и хранится в БД до админ-сброса.</p>
+        <h2>Выберите пол</h2>
+        <p class="muted">Это нужно для дальнейшего прохождения события.</p>
         <div class="grid two">
-          <button id="btn-male" class="btn primary">🧑 Я парень</button>
-          <button id="btn-female" class="btn danger">👩 Я девушка</button>
+          <button id="btn-male" class="btn primary">Мужской</button>
+          <button id="btn-female" class="btn danger">Женский</button>
         </div>
-        <div class="divider"></div>
-        <p class="tiny">После выбора повторный вход пропускает этот экран.</p>
       </div>
     </section>
 
     <!-- 3) Locked -->
     <section id="screen-locked" class="screen">
       <div class="card">
-        <h2>⛔ Экран блокировки</h2>
-        <p class="muted">Этот ивент доступен только парням.</p>
+        <h2>💐 Доступ ограничен</h2>
+        <p class="muted">
+          Это событие посвящено 23 февраля и доступно для мальчиков.<br/>
+          🎀 Уже скоро — отдельное событие к 8 марта!
+        </p>
         <div class="btn-row">
           <button id="btn-close-locked" class="btn primary">Закрыть</button>
         </div>
@@ -458,7 +470,6 @@
         <div class="btn-row">
           <button id="btn-start-quiz" class="btn primary">Начать викторину</button>
         </div>
-        <p class="tiny" style="margin-top:10px;">Результат фиксируется в базе.</p>
       </div>
     </section>
 
@@ -495,7 +506,22 @@
 
         <div class="roulette-wrap">
           <div class="pointer" id="pointer"></div>
-          <div id="wheel" class="wheel">
+
+          <div id="wheel" class="wheel" aria-label="Roulette wheel">
+            <div class="ticks"></div>
+
+            <div class="wheel-icons" aria-hidden="true">
+              <!-- 8 icons around (simple + readable) -->
+              <div class="wicon" style="transform: rotate(-90deg) translate(0,-118px) rotate(90deg);">🎁<small>25⭐</small></div>
+              <div class="wicon" style="transform: rotate(-45deg) translate(0,-118px) rotate(45deg);">🚀<small>50⭐</small></div>
+              <div class="wicon" style="transform: rotate(0deg) translate(0,-118px) rotate(0deg);">🎁<small>25⭐</small></div>
+              <div class="wicon" style="transform: rotate(45deg) translate(0,-118px) rotate(-45deg);">🍫<small>шоко</small></div>
+              <div class="wicon" style="transform: rotate(90deg) translate(0,-118px) rotate(-90deg);">🎁<small>25⭐</small></div>
+              <div class="wicon" style="transform: rotate(135deg) translate(0,-118px) rotate(-135deg);">🚀<small>50⭐</small></div>
+              <div class="wicon" style="transform: rotate(180deg) translate(0,-118px) rotate(-180deg);">🎁<small>25⭐</small></div>
+              <div class="wicon" style="transform: rotate(225deg) translate(0,-118px) rotate(-225deg);">🏆<small>100⭐</small></div>
+            </div>
+
             <div class="wheel-center">★</div>
           </div>
         </div>
@@ -512,9 +538,7 @@
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
-    // ===== Config =====
-    // FastAPI (api_server.py) скорее всего крутится на webapp.temo4ka4.ru
-    // Если у тебя другой домен API — меняй только эту строку.
+    // IMPORTANT: API domain
     const API_BASE = "https://api.temo4ka4.ru";
 
     const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
@@ -528,29 +552,13 @@
     };
 
     const QUESTIONS = [
-      {
-        q: "Когда официально отмечается День защитника Отечества?",
-        a: ["8 марта", "23 февраля", "9 мая", "12 июня"],
-      },
-      {
-        q: "Как раньше назывался праздник 23 февраля?",
-        a: ["День Советской Армии", "День Защитника", "День Красной армии", "День ВМФ"],
-      },
-      {
-        q: "Какое событие легло в основу праздника?",
-        a: ["Создание Красной армии", "Окончание Первой мировой", "Победа в Курской битве", "Основание Российской империи"],
-      },
-      {
-        q: "Как называется комплект военной одежды?",
-        a: ["Экипировка", "Китель", "Униформа", "Обмундирование"],
-      },
-      {
-        q: "Сколько букв в слове “ЗАЩИТНИК”?",
-        a: ["7", "8", "9", "10"],
-      }
+      { q: "Когда официально отмечается День защитника Отечества?", a: ["8 марта", "23 февраля", "9 мая", "12 июня"] },
+      { q: "Как раньше назывался праздник 23 февраля?", a: ["День Советской Армии", "День Защитника", "День Красной армии", "День ВМФ"] },
+      { q: "Какое событие легло в основу праздника?", a: ["Создание Красной армии", "Окончание Первой мировой", "Победа в Курской битве", "Основание Российской империи"] },
+      { q: "Как называется комплект военной одежды?", a: ["Экипировка", "Китель", "Униформа", "Обмундирование"] },
+      { q: "Сколько букв в слове “ЗАЩИТНИК”?", a: ["7", "8", "9", "10"] }
     ];
 
-    // ===== Elements =====
     const $ = (id) => document.getElementById(id);
 
     const screens = {
@@ -589,7 +597,6 @@
     const rouletteSub = $("roulette-sub");
     const rouletteNote = $("roulette-note");
 
-    // ===== State =====
     let auth = { uid: null, ts: null, sig: null };
     let serverState = null;
 
@@ -600,7 +607,6 @@
     let spinning = false;
     let wheelDeg = 0;
 
-    // ===== Utils =====
     function showScreen(key){
       Object.values(screens).forEach(s => s.classList.remove("active"));
       screens[key].classList.add("active");
@@ -630,7 +636,6 @@
         opts.headers || {}
       );
 
-      // Чтобы не упираться в TTL подписи — шлём initData, если есть
       if(tg && tg.initData){
         headers["X-Telegram-InitData"] = tg.initData;
       }
@@ -670,39 +675,31 @@
     function applyState(s){
       serverState = s;
 
-      // already won
       if(s && s.prize_type){
         showRouletteFinal(`Ты уже принял участие 🎖<br/>Твой приз: <strong>${prizeText(s.prize_type)}</strong>`, false);
         return;
       }
 
-      // gender not chosen yet
       if(!s || !s.gender){
         showScreen("gender");
         return;
       }
 
-      // female -> locked
       if(s.gender === "female"){
         showScreen("locked");
         return;
       }
 
-      // male:
-      // if quiz submitted and failed (participated true, but no prize)
       if(s.participated && !s.prize_type){
-        // это либо провал квиза, либо no_prize уже записан (но prize_type тогда был бы не null)
         showRouletteFinal(`Участие завершено 🎖<br/>Результат викторины: <strong>${s.quiz_score}/5</strong>`, false);
         return;
       }
 
-      // if quiz passed -> roulette
       if(s.can_spin || (s.quiz_passed && !s.prize_type)){
         showRouletteReady();
         return;
       }
 
-      // default -> rules
       showScreen("rules");
     }
 
@@ -710,7 +707,7 @@
       hideResultBox();
       rouletteTitle.textContent = "Рулетка";
       rouletteSub.textContent = "Нажми «Крутить», чтобы получить результат.";
-      rouletteNote.textContent = "Вращение 3–4 секунды · повторный клик заблокирован";
+      rouletteNote.textContent = ""; // removed as requested
       btnSpin.disabled = false;
       btnSpin.classList.remove("hidden");
       showScreen("roulette");
@@ -722,15 +719,11 @@
       rouletteNote.textContent = "";
       setResultBox(textHtml);
       btnSpin.disabled = true;
-      if(showSpin){
-        btnSpin.classList.remove("hidden");
-      }else{
-        btnSpin.classList.add("hidden");
-      }
+      if(showSpin) btnSpin.classList.remove("hidden");
+      else btnSpin.classList.add("hidden");
       showScreen("roulette");
     }
 
-    // ===== Quiz UI =====
     function updateQuizHeader(){
       const total = QUESTIONS.length;
       const step = quizIndex + 1;
@@ -746,9 +739,8 @@
       btnNext.disabled = true;
       quizStatus.textContent = "";
 
-      // animate question
       quizQuestion.classList.remove("fade-in");
-      quizQuestion.offsetWidth; // reflow
+      quizQuestion.offsetWidth;
       quizQuestion.classList.add("fade-in");
 
       const item = QUESTIONS[quizIndex];
@@ -775,14 +767,13 @@
     }
 
     async function submitQuiz(){
-      const minSpin = 450; // маленькая задержка на UX
+      const minSpin = 450;
       quizStatus.textContent = "Отправляю результат…";
       btnNext.disabled = true;
 
       const p = api("/api/feb23/submit_quiz", { method:"POST", body: { answers } });
       const [res] = await Promise.all([p, delay(minSpin)]);
 
-      // res: { ok, score, passed, state: {...} } или ошибка
       if(res && res.state){
         serverState = res.state;
       }
@@ -795,7 +786,6 @@
       }
     }
 
-    // ===== Roulette Spin =====
     async function spin(){
       if(spinning) return;
       spinning = true;
@@ -806,15 +796,13 @@
       rouletteSub.textContent = "Вращаем…";
       rouletteNote.textContent = "";
 
-      const duration = 3700; // 3–4 сек
-      const turns = 6 + Math.floor(Math.random() * 2); // 6-7 оборотов
-      const offset = Math.random() * 360; // случайная остановка (сегменты не подписаны)
+      const duration = 3700;
+      const turns = 6 + Math.floor(Math.random() * 2);
+      const offset = Math.random() * 360;
       wheelDeg = wheelDeg + (turns * 360) + offset;
 
-      // старт вращения (ускорение->замедление за счёт cubic-bezier в CSS)
       wheel.style.transform = `rotate(${wheelDeg}deg)`;
 
-      // запрос на сервер параллельно; результат показываем только после окончания вращения
       const spinPromise = api("/api/feb23/spin", { method:"POST" });
       let resp;
       try{
@@ -823,11 +811,9 @@
         spinning = false;
         btnSpin.disabled = false;
         rouletteSub.textContent = "Ошибка: " + (e.message || "не удалось");
-        rouletteNote.textContent = "Попробуй ещё раз.";
         return;
       }
 
-      // эффект остановки
       wheel.classList.add("impact");
       pointer.classList.add("impact");
       setTimeout(() => {
@@ -835,7 +821,6 @@
         pointer.classList.remove("impact");
       }, 420);
 
-      // resp: { ok, prize_type, state } или { ok:false, error, state }
       const st = resp && resp.state ? resp.state : null;
       if(st) serverState = st;
 
@@ -847,7 +832,6 @@
         if(err === "quiz_not_passed"){
           showRouletteFinal("Нужно минимум <strong>3</strong> правильных, чтобы крутить рулетку.", false);
         }else if(err === "already_participated"){
-          // если сервер считает, что уже участвовал
           if(serverState && serverState.prize_type){
             showRouletteFinal(`Ты уже принял участие 🎖<br/>Твой приз: <strong>${prizeText(serverState.prize_type)}</strong>`, false);
           }else{
@@ -857,7 +841,6 @@
           showScreen("locked");
         }else{
           rouletteSub.textContent = "Не удалось получить результат.";
-          rouletteNote.textContent = "Попробуй ещё раз.";
           btnSpin.disabled = false;
         }
       }
@@ -865,7 +848,7 @@
       spinning = false;
     }
 
-    // ===== Events =====
+    // Events
     btnRetry.addEventListener("click", () => init());
 
     btnMale.addEventListener("click", async () => {
@@ -896,7 +879,6 @@
     });
 
     btnStartQuiz.addEventListener("click", () => {
-      // старт квиза (локально). Сервер фиксирует только после submit
       quizIndex = 0;
       answers = new Array(QUESTIONS.length).fill(null);
       renderQuiz();
@@ -904,7 +886,6 @@
     });
 
     btnQuit.addEventListener("click", () => {
-      // вернём на правила (без доп. экранов)
       showScreen("rules");
     });
 
@@ -916,7 +897,6 @@
         quizIndex += 1;
         renderQuiz();
       }else{
-        // submit to server
         await submitQuiz();
       }
     });
@@ -928,7 +908,6 @@
       else window.close();
     });
 
-    // ===== Init =====
     async function init(){
       try{
         if(tg){
