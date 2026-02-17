@@ -1,547 +1,509 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0b1b0f" />
-  <title>23 февраля — Квиз</title>
-
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>23 февраля — событие</title>
   <style>
+    /* Keep existing style structure: only adjust roulette + small additions for locked button */
     :root{
-      --bg0:#07140a;
-      --bg1:#0b1b0f;
-      --card: rgba(12, 28, 16, 0.78);
-      --card2: rgba(10, 22, 13, 0.88);
-      --stroke: rgba(170, 255, 170, 0.12);
-      --text:#eaf6ea;
-      --muted: rgba(234,246,234,.72);
-      --accent:#6dff5a;
-      --accent2:#28d17c;
-      --danger:#ff5c5c;
-      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --bg1:#0b1020;
+      --bg2:#101a33;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.10);
+      --text:#e9f0ff;
+      --muted:rgba(233,240,255,.70);
+      --green:#6dff5a;
+      --green2:#35d84a;
+      --red:#ff4d5a;
+      --shadow: 0 20px 40px rgba(0,0,0,.35);
       --radius: 18px;
-      --t: 360ms;
-      --ease: cubic-bezier(.2,.9,.2,1);
+      --radius2: 26px;
+      --border: 1px solid rgba(255,255,255,.10);
+      --border2: 1px solid rgba(255,255,255,.16);
     }
-
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       color:var(--text);
-      background: radial-gradient(1200px 700px at 20% 10%, #143a1f 0%, transparent 55%),
-                  radial-gradient(900px 600px at 80% 0%, #1b4b2a 0%, transparent 55%),
-                  linear-gradient(180deg, var(--bg0), var(--bg1));
-      overflow:hidden;
-    }
-
-    body::before{
-      content:"";
-      position:fixed; inset:0;
-      background:
-        radial-gradient(300px 220px at 20% 30%, rgba(109,255,90,.10), transparent 60%),
-        radial-gradient(260px 200px at 70% 40%, rgba(40,209,124,.10), transparent 60%),
-        radial-gradient(280px 210px at 55% 75%, rgba(255,255,255,.06), transparent 60%),
-        repeating-linear-gradient(135deg, rgba(255,255,255,.03) 0 10px, rgba(0,0,0,.03) 10px 20px);
-      opacity:.55;
-      pointer-events:none;
-      mix-blend-mode: overlay;
-    }
-
-    body::after{
-      content:"";
-      position:fixed; inset:-80px;
-      background: conic-gradient(from 180deg, rgba(0,0,0,.2), rgba(255,255,255,.05), rgba(0,0,0,.2));
-      filter: blur(60px);
-      opacity:.22;
-      pointer-events:none;
-    }
-
-    .stage{
-      position:relative;
-      height:100%;
-      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px;
+      background: radial-gradient(1200px 800px at 30% -10%, #1a2a6c 0%, transparent 55%),
+                  radial-gradient(900px 700px at 110% 10%, #0f9b0f 0%, transparent 45%),
+                  linear-gradient(180deg, var(--bg1), var(--bg2));
       display:flex;
-      align-items:center;
+      align-items:stretch;
       justify-content:center;
+      padding: 18px 12px 22px;
     }
-
-    .screen{
-      position:absolute;
-      inset:0;
+    .app{
+      width: min(520px, 100%);
       display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: 18px 16px 22px 16px;
-      opacity:0;
-      transform: translateY(12px) scale(.99);
-      pointer-events:none;
-      transition: opacity var(--t) var(--ease), transform var(--t) var(--ease);
+      flex-direction:column;
+      gap:14px;
     }
-    .screen.active{
-      opacity:1;
-      transform: translateY(0) scale(1);
-      pointer-events:auto;
+    header{
+      padding: 10px 6px 0;
+      text-align:center;
+    }
+    .title{
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: .3px;
+    }
+    .subtitle{
+      margin-top:6px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.35;
     }
 
     .card{
-      width:min(520px, 100%);
-      background: linear-gradient(180deg, var(--card), var(--card2));
-      border: 1px solid var(--stroke);
-      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border: var(--border);
       box-shadow: var(--shadow);
-      padding: 18px 16px;
-      backdrop-filter: blur(10px);
+      border-radius: var(--radius2);
+      padding: 16px 16px 14px;
     }
-
-    h1,h2{ margin:0 0 8px 0; letter-spacing: .2px; }
-    h1{ font-size: 26px; }
-    h2{ font-size: 22px; }
-
-    p{ margin: 8px 0; line-height: 1.35; }
     .muted{ color: var(--muted); }
-    .tiny{ font-size: 12px; color: var(--muted); line-height: 1.25; }
-
-    .divider{ height:1px; background: var(--stroke); margin: 14px 0; }
-
-    .btn{
-      appearance:none;
-      border:0;
-      border-radius: 14px;
-      padding: 12px 14px;
-      font-weight: 800;
-      cursor:pointer;
-      transition: transform 120ms ease, filter 120ms ease, opacity 120ms ease;
-      user-select:none;
-      width:100%;
-    }
-    .btn:active{ transform: scale(.98); }
-    .btn[disabled]{ opacity:.45; cursor:not-allowed; }
-
-    .btn.primary{
-      color:#07140a;
-      background: linear-gradient(180deg, var(--accent), #3fe14f);
-      box-shadow: 0 10px 22px rgba(109,255,90,.16);
-    }
-    .btn.ghost{
-      color: var(--text);
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
-    }
-    .btn.danger{
-      color:#1b0a0a;
-      background: linear-gradient(180deg, #ff8585, var(--danger));
-    }
-
-    .btn-row{ display:flex; gap:10px; margin-top: 12px; }
-    .btn-row .btn{ width:100%; }
-
-    .grid{ display:grid; grid-template-columns: 1fr; gap:10px; margin-top: 12px; }
-    @media (min-width: 420px){
-      .grid.two{ grid-template-columns: 1fr 1fr; }
-    }
-
-    /* Loading */
-    .badge{
+    .pill{
       display:inline-flex;
       align-items:center;
       gap:8px;
-      padding: 8px 10px;
+      padding: 6px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      font-weight: 800;
+      border: var(--border);
+      background: rgba(0,0,0,.12);
       font-size: 12px;
-      color: rgba(234,246,234,.86);
+      color: var(--muted);
+      margin-top:10px;
     }
-    .loader{
-      margin-top: 14px;
-      height: 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
-      overflow:hidden;
+    .pill b{ color: var(--text); }
+
+    .btn-row{
+      display:flex;
+      gap:10px;
+      margin-top:14px;
     }
-    .loader > i{
-      display:block;
-      height:100%;
-      width: 30%;
-      background: linear-gradient(90deg, rgba(109,255,90,.1), rgba(109,255,90,.85), rgba(40,209,124,.85));
-      border-radius: 999px;
-      animation: loadmove 1.05s linear infinite;
+    .btn{
+      border:none;
+      outline:none;
+      cursor:pointer;
+      font-weight:800;
+      border-radius: 14px;
+      padding: 12px 14px;
+      flex:1;
+      transition: transform .07s ease, filter .2s ease, opacity .2s ease;
+      color: #06110a;
+      background: linear-gradient(180deg, var(--green), var(--green2));
+      box-shadow: 0 16px 28px rgba(53,216,74,.18);
     }
-    @keyframes loadmove{
-      0%{ transform: translateX(-120%); }
-      100%{ transform: translateX(420%); }
+    .btn:active{ transform: scale(.98); }
+    .btn[disabled]{ opacity:.55; cursor:not-allowed; }
+    .btn.secondary{
+      color: var(--text);
+      background: rgba(255,255,255,.08);
+      border: var(--border2);
+      box-shadow: none;
+    }
+    .btn.danger{
+      color: #fff;
+      background: linear-gradient(180deg, #ff6b77, var(--red));
+      box-shadow: 0 16px 28px rgba(255,77,90,.16);
     }
     .hidden{ display:none !important; }
 
-    /* Rules */
-    ul.rules{
-      margin: 10px 0 0 16px;
-      padding:0;
-      color: rgba(234,246,234,.88);
-    }
-    ul.rules li{ margin: 8px 0; }
-
-    .pill{
-      display:inline-flex;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      font-size: 12px;
-      margin-top: 8px;
-      color: rgba(234,246,234,.84);
-    }
-
-    /* Quiz */
-    .quiz-card{ padding: 16px 14px; }
-    .quiz-top{
-      display:flex;
-      gap: 12px;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom: 10px;
-    }
-    .quiz-meta{
-      display:flex;
-      flex-direction:column;
-      gap: 4px;
-      min-width: 90px;
-    }
-    .quiz-step{
-      font-weight: 900;
-      font-size: 14px;
-      letter-spacing:.2px;
-    }
-    .quiz-percent{
-      font-weight: 900;
-      font-size: 12px;
-      color: rgba(109,255,90,.95);
-    }
-    .bar{
-      flex:1;
-      height: 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
-      overflow:hidden;
-    }
-    .bar > b{
-      display:block;
-      height:100%;
-      width: 0%;
-      background: linear-gradient(90deg, rgba(109,255,90,.35), rgba(109,255,90,.95));
-      border-radius: 999px;
-      transition: width 260ms var(--ease);
-    }
-    .q{
-      margin-top: 8px;
-      font-size: 16px;
-      font-weight: 900;
-      line-height: 1.25;
-    }
-    .options{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      margin-top: 12px;
-    }
-    .opt{
-      width:100%;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color: rgba(234,246,234,.92);
-      padding: 12px 12px;
-      text-align:left;
-      font-weight: 800;
-      cursor:pointer;
-      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
-    }
-    .opt:active{ transform: scale(.99); }
-    .opt.selected{
-      border-color: rgba(109,255,90,.55);
-      background: rgba(109,255,90,.12);
-    }
-    .fade-in{ animation: fadeInUp 260ms var(--ease) both; }
-    @keyframes fadeInUp{
-      from{ opacity:0; transform: translateY(10px); }
+    /* Screens */
+    .screen{ display:none; animation: fadeIn .25s ease; }
+    .screen.active{ display:block; }
+    @keyframes fadeIn{
+      from{ opacity:0; transform: translateY(6px); }
       to{ opacity:1; transform: translateY(0); }
     }
 
+    /* Quiz */
+    .quiz-grid{
+      display:grid;
+      gap:10px;
+      margin-top:10px;
+    }
+    .q-card{
+      border-radius: var(--radius);
+      border: var(--border);
+      background: rgba(0,0,0,.14);
+      padding: 12px 12px 10px;
+    }
+    .q-title{
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .opt-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .opt{
+      flex: 1 1 calc(50% - 8px);
+      border-radius: 14px;
+      border: var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 10px;
+      font-weight: 700;
+      cursor:pointer;
+      text-align:center;
+      user-select:none;
+    }
+    .opt.selected{
+      border-color: rgba(109,255,90,.55);
+      background: rgba(109,255,90,.14);
+      color: #dfffe0;
+    }
+
+    /* Result */
+    .result{
+      text-align:center;
+      padding: 18px 14px 14px;
+    }
+    .result h2{
+      margin:0;
+      font-size: 18px;
+      font-weight: 900;
+    }
+    .result p{
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.35;
+      font-size: 13px;
+    }
+
     /* Roulette */
-    .roulette-card{ padding: 16px 14px; }
     .roulette-wrap{
-      position:relative;
       width: 292px;
       height: 292px;
-      margin: 14px auto 10px auto;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+      margin: 12px auto 0;
+      position: relative;
+      border-radius: 999px;
+      filter: drop-shadow(0 30px 50px rgba(0,0,0,.35));
     }
-
-    /* pointer: tip DOWN (as you asked) */
     .pointer{
       position:absolute;
-      top: -6px;
-      left:50%;
+      top: -10px;
+      left: 50%;
+      width: 0; height: 0;
       transform: translateX(-50%);
-      width:0; height:0;
-      border-left: 14px solid transparent;
-      border-right: 14px solid transparent;
-      border-top: 26px solid rgba(109,255,90,.95);
-      filter: drop-shadow(0 8px 12px rgba(0,0,0,.5));
-      z-index: 8;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-bottom: 22px solid rgba(255,255,255,.92);
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
+      z-index: 10;
     }
-
     .wheel{
       width: 100%;
       height: 100%;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.16);
       background:
-        repeating-conic-gradient(from -90deg,
-          rgba(109,255,90,.12) 0 22.5deg,
-          rgba(0,0,0,.14) 22.5deg 45deg),
-        radial-gradient(circle at 30% 25%, rgba(255,255,255,.10), transparent 55%),
-        radial-gradient(circle at 70% 75%, rgba(109,255,90,.10), transparent 60%);
-      box-shadow: 0 22px 70px rgba(0,0,0,.55);
-      position:relative;
+        repeating-conic-gradient(from -102.8571429deg,
+          rgba(109,255,90,.12) 0 25.7142857deg,
+          rgba(0,0,0,.14) 25.7142857deg 51.4285714deg),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.14), transparent 55%),
+        radial-gradient(circle at 30% 20%, rgba(109,255,90,.18), transparent 48%),
+        radial-gradient(circle at 80% 80%, rgba(255,255,255,.10), transparent 55%);
+      box-shadow: inset 0 0 0 6px rgba(255,255,255,.06);
+      position: relative;
       transform: rotate(0deg);
-      transition: transform 3.7s cubic-bezier(.12,.82,.18,1);
+      transition: transform 6.5s cubic-bezier(.42,0,.58,1);
       will-change: transform;
       overflow:hidden;
     }
-
     .wheel::after{
       content:"";
-      position:absolute; inset: 14px;
-      border-radius:999px;
+      position:absolute;
+      inset: 10px;
+      border-radius: 999px;
       border: 1px solid rgba(255,255,255,.10);
-      background: radial-gradient(circle at 50% 45%, rgba(0,0,0,.08), rgba(0,0,0,.32));
-      z-index: 1;
+      pointer-events:none;
     }
-
     .wheel-center{
       position:absolute;
-      inset:0;
+      inset: 0;
+      margin:auto;
+      width: 68px;
+      height: 68px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.26);
+      border: 1px solid rgba(255,255,255,.16);
       display:flex;
       align-items:center;
       justify-content:center;
-      z-index: 6;
-      font-weight: 1000;
-      font-size: 40px;
-      color: rgba(234,246,234,.92);
-      text-shadow: 0 10px 24px rgba(0,0,0,.6);
-      pointer-events:none;
+      font-weight: 900;
+      color: rgba(255,255,255,.85);
+      z-index: 8;
+      box-shadow: 0 20px 40px rgba(0,0,0,.25);
     }
 
-    /* icons around wheel */
-    .wheel-icons{
+    /* segment icons around wheel */
+    .wheel-segments{
       position:absolute; inset:0;
       z-index: 4;
       pointer-events:none;
     }
-    .wicon{
+    .seg{
       position:absolute;
       left:50%; top:50%;
       transform-origin: 0 0;
-      font-size: 22px;
+      font-size: 20px;
       filter: drop-shadow(0 8px 14px rgba(0,0,0,.55));
       opacity: .96;
-    }
-    .wicon small{
-      display:block;
-      font-size: 10px;
-      font-weight: 900;
-      color: rgba(234,246,234,.85);
-      letter-spacing: .2px;
-      text-align:center;
-      margin-top: 2px;
-      text-shadow: 0 6px 12px rgba(0,0,0,.6);
     }
 
     /* subtle tick marks */
     .ticks{
-      position:absolute; inset:0;
+      position:absolute;
+      inset:0;
       z-index: 3;
       pointer-events:none;
-      background:
-        repeating-conic-gradient(from -90deg,
+      background: repeating-conic-gradient(from -102.8571429deg,
           rgba(255,255,255,.08) 0 1deg,
-          transparent 1deg 22.5deg);
+          transparent 1deg 25.7142857deg);
       mask: radial-gradient(circle, transparent 0 56%, #000 57% 100%);
-      opacity:.55;
+      opacity: .55;
     }
 
-    .impact{ animation: impact 420ms var(--ease); }
+    .impact{
+      animation: impact .25s ease;
+    }
     @keyframes impact{
-      0%{ transform: scale(1); }
-      35%{ transform: scale(1.02); }
-      100%{ transform: scale(1); }
+      0%{ transform: translateX(-50%) scale(1); }
+      50%{ transform: translateX(-50%) scale(1.06); }
+      100%{ transform: translateX(-50%) scale(1); }
     }
 
-    .result{
-      border-radius: 14px;
-      border: 1px solid rgba(109,255,90,.22);
-      background: rgba(109,255,90,.10);
-      padding: 12px 12px;
-      margin-bottom: 10px;
-    }
-    .result strong{ color: rgba(109,255,90,.95); }
-
+    /* small helper text */
     .note{
-      margin-top: 8px;
       font-size: 12px;
-      color: rgba(234,246,234,.72);
+      color: var(--muted);
       text-align:center;
+      margin-top: 8px;
+      line-height: 1.35;
     }
 
+    /* Mobile safe areas */
+    .safe{
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    /* Optional: reduce motion */
     @media (prefers-reduced-motion: reduce){
-      .screen{ transition:none; }
+      .screen{ animation:none; }
       .wheel{ transition:none; }
-      .fade-in{ animation:none; }
-      .loader > i{ animation:none; }
+      .btn{ transition:none; }
     }
   </style>
 </head>
-
 <body>
-  <div class="stage">
-    <!-- 1) Loading -->
-    <section id="screen-loading" class="screen active">
-      <div class="card">
-        <div class="badge">🎖 23 февраля · Квиз</div>
-        <h1 style="margin-top:10px;">Подготовка</h1>
-        <p class="muted">Загрузка и проверка участия…</p>
-        <div class="loader"><i></i></div>
-        <div id="loading-status" class="tiny" style="margin-top:10px;">Загрузка…</div>
-        <div class="btn-row">
-          <button id="btn-retry" class="btn ghost hidden">Повторить</button>
-        </div>
-      </div>
-    </section>
+  <div class="app safe">
+    <header>
+      <div class="title">🎖 Событие ко Дню Защитника Отечества</div>
+      <div class="subtitle">Ответь на 5 вопросов и получи шанс выиграть приз. Каждый может участвовать только один раз.</div>
+      <div class="pill"><span>Призы:</span> <b>🏆 🚀 🎁 🍫</b></div>
+    </header>
 
-    <!-- 2) Gender -->
-    <section id="screen-gender" class="screen">
-      <div class="card">
-        <h2>Выберите пол</h2>
-        <p class="muted">Это нужно для дальнейшего прохождения события.</p>
-        <div class="grid two">
-          <button id="btn-male" class="btn primary">Мужской</button>
-          <button id="btn-female" class="btn danger">Женский</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3) Locked -->
-    <section id="screen-locked" class="screen">
-      <div class="card">
-        <h2>💐 Доступ ограничен</h2>
-        <p class="muted">
-          Это событие посвящено 23 февраля и доступно для мальчиков.<br/>
-          🎀 Уже скоро — отдельное событие к 8 марта!
-        </p>
-        <div class="btn-row">
-          <button id="btn-close-locked" class="btn primary">Закрыть</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- 4) Rules -->
-    <section id="screen-rules" class="screen">
-      <div class="card">
-        <h2>Правила</h2>
-        <ul class="rules">
-          <li><b>5</b> вопросов, <b>4</b> варианта ответа.</li>
-          <li>Чтобы открыть рулетку — минимум <b>3</b> правильных.</li>
-          <li><b>Одна попытка</b>. Повторное участие запрещено.</li>
-          <li>Призы — <b>фиксированный пул</b> (16 шт):<br/>
-            <span class="pill">🏆 1× 100⭐ Кубок</span>
-            <span class="pill">🚀 3× 50⭐ Ракета</span>
-            <span class="pill">🎁 10× 25⭐ Подарок</span>
-            <span class="pill">🍫 2× Шоколадка</span>
-          </li>
-        </ul>
-        <div class="btn-row">
-          <button id="btn-start-quiz" class="btn primary">Начать викторину</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- 5) Quiz -->
-    <section id="screen-quiz" class="screen">
-      <div class="card quiz-card">
-        <div class="quiz-top">
-          <div class="quiz-meta">
-            <div id="quiz-step" class="quiz-step">1/5</div>
-            <div id="quiz-percent" class="quiz-percent">20%</div>
+    <!-- Screens wrapper (keep structure) -->
+    <main>
+      <!-- 1) Gender selection -->
+      <section id="screen-gender" class="screen active">
+        <div class="card">
+          <h2 style="margin:0;font-size:18px;font-weight:900;">Выбери пол</h2>
+          <p class="muted" style="margin:10px 0 0;line-height:1.35;font-size:13px;">
+            Это событие предназначено для мальчиков. Девочек ждёт отдельное событие к 8 марта.
+          </p>
+          <div class="btn-row">
+            <button id="btn-male" class="btn">Мужской</button>
+            <button id="btn-female" class="btn secondary">Женский</button>
           </div>
-          <div class="bar"><b id="quiz-bar"></b></div>
         </div>
+      </section>
 
-        <div id="quiz-question" class="q fade-in"></div>
-        <div id="quiz-options" class="options"></div>
+      <!-- 2) Quiz -->
+      <section id="screen-quiz" class="screen">
+        <div class="card">
+          <h2 style="margin:0;font-size:18px;font-weight:900;">🧠 Мини‑викторина</h2>
+          <p class="muted" style="margin:10px 0 0;line-height:1.35;font-size:13px;">
+            Ответь на все вопросы. Нужно минимум <b>3</b> правильных ответа, чтобы крутить рулетку.
+          </p>
 
-        <div class="btn-row" style="margin-top:14px;">
-          <button id="btn-next" class="btn primary" disabled>Далее</button>
-          <button id="btn-quit" class="btn ghost">Выйти</button>
+          <div id="quiz-grid" class="quiz-grid"></div>
+
+          <div class="btn-row">
+            <button id="btn-submit-quiz" class="btn">Отправить</button>
+            <button id="btn-back-gender" class="btn secondary">Назад</button>
+          </div>
         </div>
+      </section>
 
-        <p id="quiz-status" class="tiny" style="margin-top:10px;"></p>
-      </div>
-    </section>
+      <!-- 3) Locked -->
+      <section id="screen-locked" class="screen">
+        <div class="card">
+          <h2 id="locked-title">💐 Доступ ограничен</h2>
+          <p id="locked-text" class="muted">
+            Это событие посвящено 23 февраля и доступно для мальчиков.<br/>
+            🎀 Уже скоро — отдельное событие к 8 марта!
+          </p>
+          <div class="btn-row">
+            <button id="btn-locked-error" class="btn danger hidden">Ошибка</button>
+            <button id="btn-close-locked" class="btn primary">Закрыть</button>
+          </div>
+        </div>
+      </section>
 
-    <!-- 6) Roulette + Result -->
-    <section id="screen-roulette" class="screen">
-      <div class="card roulette-card">
-        <div id="result-box" class="result hidden"></div>
+      <!-- 4) Rules -->
+      <section id="screen-rules" class="screen">
+        <div class="card">
+          <h2 style="margin:0;font-size:18px;font-weight:900;">📌 Правила</h2>
+          <p class="muted" style="margin:10px 0 0;line-height:1.35;font-size:13px;">
+            Один пользователь — один шанс. Призы ограничены.
+          </p>
+          <ul class="muted" style="margin:10px 0 0; padding-left:18px; line-height:1.35; font-size:13px;">
+            <li>Нужно минимум <b>3</b> правильных ответа из 5.</li>
+            <li>Призы выдаются из <b>фиксированного пула</b> (14 шт): 🏆 1× 100⭐, 🚀 3× 50⭐, 🎁 8× 25⭐, 🍫 2×.</li>
+            <li>Если призы закончились — выпадет «Призы закончились».</li>
+          </ul>
+          <div class="btn-row">
+            <button id="btn-accept-rules" class="btn">Понятно</button>
+          </div>
+        </div>
+      </section>
 
-        <h2 id="roulette-title">Рулетка</h2>
-        <p id="roulette-sub" class="muted">Нажми «Крутить», чтобы получить результат.</p>
+      <!-- 5) Roulette -->
+      <section id="screen-roulette" class="screen">
+        <div class="card">
+          <h2 id="roulette-title" style="margin:0;font-size:18px;font-weight:900;">🎡 Рулетка</h2>
+          <p id="roulette-sub" class="muted" style="margin:10px 0 0;line-height:1.35;font-size:13px;">
+            Нажми «Крутить», чтобы узнать приз.
+          </p>
 
-        <div class="roulette-wrap">
-          <div class="pointer" id="pointer"></div>
+          <div class="roulette-wrap" aria-label="Roulette area">
+            <div id="pointer" class="pointer" aria-hidden="true"></div>
+            <div id="wheel" class="wheel" aria-label="Roulette wheel">
+              <div class="ticks"></div>
+              <div id="wheel-segments" class="wheel-segments" aria-hidden="true"></div>
 
-          <div id="wheel" class="wheel" aria-label="Roulette wheel">
-            <div class="ticks"></div>
-
-            <div class="wheel-icons" aria-hidden="true">
-              <!-- 8 icons around (simple + readable) -->
-              <div class="wicon" style="transform: rotate(-90deg) translate(0,-118px) rotate(90deg);">🎁<small>25⭐</small></div>
-              <div class="wicon" style="transform: rotate(-45deg) translate(0,-118px) rotate(45deg);">🚀<small>50⭐</small></div>
-              <div class="wicon" style="transform: rotate(0deg) translate(0,-118px) rotate(0deg);">🎁<small>25⭐</small></div>
-              <div class="wicon" style="transform: rotate(45deg) translate(0,-118px) rotate(-45deg);">🍫<small>шоко</small></div>
-              <div class="wicon" style="transform: rotate(90deg) translate(0,-118px) rotate(-90deg);">🎁<small>25⭐</small></div>
-              <div class="wicon" style="transform: rotate(135deg) translate(0,-118px) rotate(-135deg);">🚀<small>50⭐</small></div>
-              <div class="wicon" style="transform: rotate(180deg) translate(0,-118px) rotate(-180deg);">🎁<small>25⭐</small></div>
-              <div class="wicon" style="transform: rotate(225deg) translate(0,-118px) rotate(-225deg);">🏆<small>100⭐</small></div>
+              <div class="wheel-center">★</div>
             </div>
+          </div>
 
-            <div class="wheel-center">★</div>
+          <div id="roulette-note" class="note"></div>
+
+          <div class="btn-row">
+            <button id="btn-spin" class="btn">Крутить</button>
+          </div>
+
+          <div id="result-box" class="result hidden">
+            <h2 id="result-title">Результат</h2>
+            <p id="result-text" class="muted"></p>
+            <div class="btn-row">
+              <button id="btn-close" class="btn primary">Закрыть</button>
+            </div>
           </div>
         </div>
-
-        <div class="btn-row">
-          <button id="btn-spin" class="btn primary">Крутить</button>
-          <button id="btn-close" class="btn ghost">Закрыть</button>
-        </div>
-
-        <div id="roulette-note" class="note"></div>
-      </div>
-    </section>
+      </section>
+    </main>
   </div>
 
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
-    // IMPORTANT: API domain
+    // Config
     const API_BASE = "https://api.temo4ka4.ru";
 
-    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+    // Telegram WebApp
+    const tg = window.Telegram ? window.Telegram.WebApp : null;
+    if(tg){
+      tg.expand();
+      tg.ready();
+    }
+
+    // Helpers
+    const $ = (id) => document.getElementById(id);
+    const delay = (ms) => new Promise(r => setTimeout(r, ms));
+
+    async function api(path, opts={}){
+      const headers = Object.assign({ "Content-Type":"application/json" }, opts.headers || {});
+      // Keep existing auth logic: use signed uid/ts/sig if present, plus initData when available.
+      if(window.__auth && window.__auth.uid){
+        // query auth
+      }
+      if(tg && tg.initData){
+        headers["X-Telegram-InitData"] = tg.initData;
+      }
+
+      let url = API_BASE + path;
+      if(window.__auth && window.__auth.uid){
+        const q = new URLSearchParams({ uid: String(window.__auth.uid), ts: String(window.__auth.ts), sig: String(window.__auth.sig) });
+        url += (url.includes("?") ? "&" : "?") + q.toString();
+      }
+
+      const res = await fetch(url, {
+        method: opts.method || "GET",
+        headers,
+        body: opts.body ? JSON.stringify(opts.body) : undefined,
+      });
+
+      if(!res.ok){
+        let txt = "";
+        try{ txt = await res.text(); }catch(e){}
+        throw new Error(txt || ("HTTP " + res.status));
+      }
+      const data = await res.json();
+      return data;
+    }
+
+    // Elements / screens
+    const screens = {
+      gender: $("screen-gender"),
+      quiz: $("screen-quiz"),
+      locked: $("screen-locked"),
+      rules: $("screen-rules"),
+      roulette: $("screen-roulette"),
+    };
+
+    const btnMale = $("btn-male");
+    const btnFemale = $("btn-female");
+    const btnBackGender = $("btn-back-gender");
+    const btnSubmitQuiz = $("btn-submit-quiz");
+    const btnAcceptRules = $("btn-accept-rules");
+    const btnCloseLocked = $("btn-close-locked");
+
+    const lockedTitle = $("locked-title");
+    const lockedText = $("locked-text");
+    const btnLockedError = $("btn-locked-error");
+
+    const quizGrid = $("quiz-grid");
+
+    const wheel = $("wheel");
+    const pointer = $("pointer");
+    const wheelSegments = $("wheel-segments");
+    const btnSpin = $("btn-spin");
+
+    const rouletteTitle = $("roulette-title");
+    const rouletteSub = $("roulette-sub");
+    const rouletteNote = $("roulette-note");
+
+    const resultBox = $("result-box");
+    const resultTitle = $("result-title");
+    const resultText = $("result-text");
+    const btnClose = $("btn-close");
+
+    // State
+    let serverState = null;
+    let quizAnswers = [null,null,null,null,null];
+    let quizPassed = false;
+    let spinning = false;
+    let wheelDeg = 0;
+
+    const LOCKED_DEFAULT_TITLE = lockedTitle ? lockedTitle.innerHTML : "";
+    const LOCKED_DEFAULT_TEXT = lockedText ? lockedText.innerHTML : "";
 
     const PRIZE_NAMES = {
       cup_100: "🏆 100⭐ Кубок",
@@ -551,132 +513,155 @@
       no_prize: "😔 Призы закончились",
     };
 
-    const QUESTIONS = [
-      { q: "Когда официально отмечается День защитника Отечества?", a: ["8 марта", "23 февраля", "9 мая", "12 июня"] },
-      { q: "Как раньше назывался праздник 23 февраля?", a: ["День Советской Армии", "День Защитника", "День Красной армии", "День ВМФ"] },
-      { q: "Какое событие легло в основу праздника?", a: ["Создание Красной армии", "Окончание Первой мировой", "Победа в Курской битве", "Основание Российской империи"] },
-      { q: "Как называется комплект военной одежды?", a: ["Экипировка", "Китель", "Униформа", "Обмундирование"] },
-      { q: "Сколько букв в слове “ЗАЩИТНИК”?", a: ["7", "8", "9", "10"] }
-    ];
-
-    const $ = (id) => document.getElementById(id);
-
-    const screens = {
-      loading: $("screen-loading"),
-      gender: $("screen-gender"),
-      locked: $("screen-locked"),
-      rules: $("screen-rules"),
-      quiz: $("screen-quiz"),
-      roulette: $("screen-roulette"),
+    const PRIZE_EMOJI = {
+      cup_100: "🏆",
+      rocket_50: "🚀",
+      gift_25: "🎁",
+      choco: "🍫",
+      no_prize: "😔",
     };
 
-    const loadingStatus = $("loading-status");
-    const btnRetry = $("btn-retry");
+    // 14 segments, order must match server segment_index mapping
+    const WHEEL_SEGMENTS = [
+      "gift_25",
+      "rocket_50",
+      "gift_25",
+      "choco",
+      "gift_25",
+      "rocket_50",
+      "gift_25",
+      "gift_25",
+      "cup_100",
+      "gift_25",
+      "rocket_50",
+      "gift_25",
+      "choco",
+      "gift_25",
+    ];
 
-    const btnMale = $("btn-male");
-    const btnFemale = $("btn-female");
-    const btnCloseLocked = $("btn-close-locked");
+    const SEG_COUNT = WHEEL_SEGMENTS.length;
+    const SEG_ANGLE = 360 / SEG_COUNT;
 
-    const btnStartQuiz = $("btn-start-quiz");
+    const SPIN_DURATION = 6500; // 6–7s
+    const SPIN_TURNS = 10;
 
-    const quizStep = $("quiz-step");
-    const quizPercent = $("quiz-percent");
-    const quizBar = $("quiz-bar");
-    const quizQuestion = $("quiz-question");
-    const quizOptions = $("quiz-options");
-    const btnNext = $("btn-next");
-    const btnQuit = $("btn-quit");
-    const quizStatus = $("quiz-status");
+    function setLockedVariant(kind){
+      if(!lockedTitle || !lockedText) return;
 
-    const wheel = $("wheel");
-    const pointer = $("pointer");
-    const btnSpin = $("btn-spin");
-    const btnClose = $("btn-close");
-    const resultBox = $("result-box");
-    const rouletteTitle = $("roulette-title");
-    const rouletteSub = $("roulette-sub");
-    const rouletteNote = $("roulette-note");
+      if(kind === "not_allowed"){
+        lockedTitle.textContent = "🚫 Доступ ограничен";
+        lockedText.textContent = "Вам ограничен доступ в данное событие, вы не находитесь в базе.";
+        if(btnLockedError) btnLockedError.classList.remove("hidden");
+        return;
+      }
 
-    let auth = { uid: null, ts: null, sig: null };
-    let serverState = null;
+      lockedTitle.innerHTML = LOCKED_DEFAULT_TITLE;
+      lockedText.innerHTML = LOCKED_DEFAULT_TEXT;
+      if(btnLockedError) btnLockedError.classList.add("hidden");
+    }
 
-    let quizIndex = 0;
-    let selected = null;
-    let answers = new Array(QUESTIONS.length).fill(null);
+    function buildWheel(){
+      if(!wheelSegments) return;
+      wheelSegments.innerHTML = "";
 
-    let spinning = false;
-    let wheelDeg = 0;
+      const r = 118; // radius for icons
+      for(let i = 0; i < SEG_COUNT; i++){
+        const t = WHEEL_SEGMENTS[i];
+        const el = document.createElement("div");
+        el.className = "seg";
+        el.textContent = PRIZE_EMOJI[t] || "❔";
+
+        const a = i * SEG_ANGLE;
+        el.style.transform = `rotate(${a}deg) translate(0,-${r}px) rotate(${-a}deg) translate(-50%,-50%)`;
+
+        wheelSegments.appendChild(el);
+      }
+    }
+
+    // Quiz data (existing)
+    const QUIZ = [
+      { q: "Кто является Верховным Главнокомандующим РФ?", opts: ["Президент", "Премьер‑министр", "Министр обороны", "Генштаб"], correct: 0 },
+      { q: "Какой цвет на флаге РФ находится сверху?", opts: ["Красный", "Синий", "Белый", "Зелёный"], correct: 2 },
+      { q: "Сколько звёзд на погонах у капитана?", opts: ["1", "2", "3", "4"], correct: 2 },
+      { q: "Что означает слово «Отечество»?", opts: ["Родина", "Семья", "Город", "Армия"], correct: 0 },
+      { q: "Как называется праздничный день 23 февраля?", opts: ["День Победы", "День Защитника Отечества", "День России", "Новый год"], correct: 1 },
+    ];
 
     function showScreen(key){
       Object.values(screens).forEach(s => s.classList.remove("active"));
       screens[key].classList.add("active");
     }
 
-    function delay(ms){ return new Promise(res => setTimeout(res, ms)); }
-
-    function parseAuth(){
-      const qs = new URLSearchParams(location.search);
-      auth.uid = qs.get("uid");
-      auth.ts = qs.get("ts");
-      auth.sig = qs.get("sig");
+    function prizeText(pt){
+      return PRIZE_NAMES[pt] || pt;
     }
 
-    function authQuery(){
-      if(auth.uid && auth.ts && auth.sig){
-        const qs = new URLSearchParams({ uid: auth.uid, ts: auth.ts, sig: auth.sig });
-        return "?" + qs.toString();
-      }
-      return "";
-    }
-
-    async function api(path, opts = {}){
-      const url = `${API_BASE}${path}${authQuery()}`;
-      const headers = Object.assign(
-        { "Content-Type": "application/json" },
-        opts.headers || {}
-      );
-
-      if(tg && tg.initData){
-        headers["X-Telegram-InitData"] = tg.initData;
-      }
-
-      const res = await fetch(url, {
-        method: opts.method || "GET",
-        headers,
-        body: opts.body ? JSON.stringify(opts.body) : undefined,
-        credentials: "omit",
+    function renderQuiz(){
+      quizGrid.innerHTML = "";
+      QUIZ.forEach((item, qi) => {
+        const q = document.createElement("div");
+        q.className = "q-card";
+        q.innerHTML = `
+          <div class="q-title">${qi+1}. ${item.q}</div>
+          <div class="opt-row" id="q-${qi}"></div>
+        `;
+        quizGrid.appendChild(q);
+        const row = q.querySelector(`#q-${qi}`);
+        item.opts.forEach((opt, oi) => {
+          const b = document.createElement("div");
+          b.className = "opt";
+          b.textContent = opt;
+          b.addEventListener("click", () => {
+            quizAnswers[qi] = oi;
+            [...row.children].forEach(c => c.classList.remove("selected"));
+            b.classList.add("selected");
+          });
+          row.appendChild(b);
+        });
       });
-
-      let data = null;
-      try{ data = await res.json(); } catch(e){}
-
-      if(!res.ok){
-        const msg = (data && (data.detail || data.error)) ? (data.detail || data.error) : `HTTP ${res.status}`;
-        throw new Error(msg);
-      }
-      return data;
     }
 
-    function prizeText(prizeType){
-      if(!prizeType) return "—";
-      return PRIZE_NAMES[prizeType] || prizeType;
-    }
-
-    function setResultBox(html){
-      resultBox.innerHTML = html;
-      resultBox.classList.remove("hidden");
+    function showRouletteReady(){
+      rouletteTitle.textContent = "🎡 Рулетка";
+      rouletteSub.innerHTML = "Нажми «Крутить», чтобы узнать приз.";
+      rouletteNote.textContent = ""; // removed as requested
+      btnSpin.disabled = false;
+      btnSpin.classList.remove("hidden");
+      hideResultBox();
+      showScreen("roulette");
     }
 
     function hideResultBox(){
       resultBox.classList.add("hidden");
-      resultBox.innerHTML = "";
+    }
+
+    function showRouletteFinal(text, canClose){
+      resultTitle.textContent = "Результат";
+      resultText.innerHTML = text;
+      resultBox.classList.remove("hidden");
+      btnSpin.disabled = true;
+      btnSpin.classList.add("hidden");
+      if(canClose){
+        btnClose.classList.remove("hidden");
+      }else{
+        btnClose.classList.remove("hidden");
+      }
     }
 
     function applyState(s){
       serverState = s;
 
       if(s && s.prize_type){
-        showRouletteFinal(`Ты уже принял участие 🎖<br/>Твой приз: <strong>${prizeText(s.prize_type)}</strong>`, false);
+        showScreen("roulette");
+        rouletteTitle.textContent = "🎉 Ты уже участвовал";
+        rouletteSub.innerHTML = `Твой приз: <strong>${prizeText(s.prize_type)}</strong>`;
+        rouletteNote.textContent = "";
+        btnSpin.disabled = true;
+        btnSpin.classList.add("hidden");
+        hideResultBox();
+        resultTitle.textContent = "Результат";
+        resultText.innerHTML = `Твой приз: <strong>${prizeText(s.prize_type)}</strong>`;
+        resultBox.classList.remove("hidden");
         return;
       }
 
@@ -686,106 +671,20 @@
       }
 
       if(s.gender === "female"){
+        setLockedVariant("female");
         showScreen("locked");
         return;
       }
 
-      if(s.participated && !s.prize_type){
-        showRouletteFinal(`Участие завершено 🎖<br/>Результат викторины: <strong>${s.quiz_score}/5</strong>`, false);
+      if(!s.quiz_passed){
+        showScreen("rules");
         return;
       }
 
-      if(s.can_spin || (s.quiz_passed && !s.prize_type)){
-        showRouletteReady();
-        return;
-      }
-
-      showScreen("rules");
+      showRouletteReady();
     }
 
-    function showRouletteReady(){
-      hideResultBox();
-      rouletteTitle.textContent = "Рулетка";
-      rouletteSub.textContent = "Нажми «Крутить», чтобы получить результат.";
-      rouletteNote.textContent = ""; // removed as requested
-      btnSpin.disabled = false;
-      btnSpin.classList.remove("hidden");
-      showScreen("roulette");
-    }
-
-    function showRouletteFinal(textHtml, showSpin){
-      rouletteTitle.textContent = "Результат";
-      rouletteSub.textContent = "";
-      rouletteNote.textContent = "";
-      setResultBox(textHtml);
-      btnSpin.disabled = true;
-      if(showSpin) btnSpin.classList.remove("hidden");
-      else btnSpin.classList.add("hidden");
-      showScreen("roulette");
-    }
-
-    function updateQuizHeader(){
-      const total = QUESTIONS.length;
-      const step = quizIndex + 1;
-      const pct = Math.round((step / total) * 100);
-      quizStep.textContent = `${step}/${total}`;
-      quizPercent.textContent = `${pct}%`;
-      quizBar.style.width = `${pct}%`;
-    }
-
-    function renderQuiz(){
-      updateQuizHeader();
-      selected = null;
-      btnNext.disabled = true;
-      quizStatus.textContent = "";
-
-      quizQuestion.classList.remove("fade-in");
-      quizQuestion.offsetWidth;
-      quizQuestion.classList.add("fade-in");
-
-      const item = QUESTIONS[quizIndex];
-      quizQuestion.textContent = item.q;
-
-      quizOptions.innerHTML = "";
-      item.a.forEach((txt, idx) => {
-        const b = document.createElement("button");
-        b.className = "opt fade-in";
-        b.textContent = txt;
-        b.addEventListener("click", () => {
-          [...quizOptions.querySelectorAll(".opt")].forEach(x => x.classList.remove("selected"));
-          b.classList.add("selected");
-          selected = idx;
-          btnNext.disabled = false;
-          if(tg && tg.HapticFeedback){
-            try{ tg.HapticFeedback.impactOccurred("light"); }catch(e){}
-          }
-        });
-        quizOptions.appendChild(b);
-      });
-
-      btnNext.textContent = (quizIndex === QUESTIONS.length - 1) ? "Завершить" : "Далее";
-    }
-
-    async function submitQuiz(){
-      const minSpin = 450;
-      quizStatus.textContent = "Отправляю результат…";
-      btnNext.disabled = true;
-
-      const p = api("/api/feb23/submit_quiz", { method:"POST", body: { answers } });
-      const [res] = await Promise.all([p, delay(minSpin)]);
-
-      if(res && res.state){
-        serverState = res.state;
-      }
-
-      if(res && res.passed){
-        showRouletteReady();
-      }else{
-        const sc = (res && typeof res.score === "number") ? res.score : (serverState ? serverState.quiz_score : 0);
-        showRouletteFinal(`Участие завершено 🎖<br/>Нужно минимум <strong>3</strong> правильных.<br/>Твой результат: <strong>${sc}/5</strong>`, false);
-      }
-    }
-
+    // Spin (rewritten roulette logic)
     async function spin(){
       if(spinning) return;
       spinning = true;
@@ -796,17 +695,9 @@
       rouletteSub.textContent = "Вращаем…";
       rouletteNote.textContent = "";
 
-      const duration = 3700;
-      const turns = 6 + Math.floor(Math.random() * 2);
-      const offset = Math.random() * 360;
-      wheelDeg = wheelDeg + (turns * 360) + offset;
-
-      wheel.style.transform = `rotate(${wheelDeg}deg)`;
-
-      const spinPromise = api("/api/feb23/spin", { method:"POST" });
-      let resp;
+      let resp = null;
       try{
-        [resp] = await Promise.all([spinPromise, delay(duration)]);
+        resp = await api("/api/feb23/spin", { method:"POST" });
       }catch(e){
         spinning = false;
         btnSpin.disabled = false;
@@ -814,20 +705,10 @@
         return;
       }
 
-      wheel.classList.add("impact");
-      pointer.classList.add("impact");
-      setTimeout(() => {
-        wheel.classList.remove("impact");
-        pointer.classList.remove("impact");
-      }, 420);
-
       const st = resp && resp.state ? resp.state : null;
       if(st) serverState = st;
 
-      if(resp && resp.ok && resp.prize_type){
-        const pt = resp.prize_type;
-        showRouletteFinal(`Поздравляем 🎉<br/>Твой приз: <strong>${prizeText(pt)}</strong>`, false);
-      }else{
+      if(!(resp && resp.ok && resp.prize_type)){
         const err = (resp && resp.error) ? resp.error : "unknown";
         if(err === "quiz_not_passed"){
           showRouletteFinal("Нужно минимум <strong>3</strong> правильных, чтобы крутить рулетку.", false);
@@ -838,23 +719,56 @@
             showRouletteFinal("Ты уже принял участие 🎖", false);
           }
         }else if(err === "gender_blocked"){
+          setLockedVariant("female");
           showScreen("locked");
         }else{
           rouletteSub.textContent = "Не удалось получить результат.";
           btnSpin.disabled = false;
         }
+        spinning = false;
+        return;
       }
+
+      const pt = resp.prize_type;
+      const segIdx = (typeof resp.segment_index === "number") ? resp.segment_index : -1;
+
+      if(pt !== "no_prize" && segIdx >= 0 && segIdx < SEG_COUNT){
+        const currentMod = ((wheelDeg % 360) + 360) % 360;
+        const targetMod = (360 - (segIdx * SEG_ANGLE)) % 360;
+        const delta = (targetMod - currentMod + 360) % 360;
+
+        wheelDeg = wheelDeg + (SPIN_TURNS * 360) + delta;
+        wheel.style.transform = `rotate(${wheelDeg}deg)`;
+
+        await delay(SPIN_DURATION);
+      }else{
+        await delay(450);
+      }
+
+      wheel.classList.add("impact");
+      pointer.classList.add("impact");
+      setTimeout(() => {
+        wheel.classList.remove("impact");
+        pointer.classList.remove("impact");
+      }, 420);
+
+      showRouletteFinal(`Поздравляем 🎉<br/>Твой приз: <strong>${prizeText(pt)}</strong>`, false);
 
       spinning = false;
     }
 
     // Events
-    btnRetry.addEventListener("click", () => init());
-
     btnMale.addEventListener("click", async () => {
       btnMale.disabled = true; btnFemale.disabled = true;
       try{
         const st = await api("/api/feb23/set_gender", { method:"POST", body:{ gender:"male" } });
+
+        if(st && st.error === "not_allowed"){
+          setLockedVariant("not_allowed");
+          showScreen("locked");
+          return;
+        }
+
         applyState(st);
       }catch(e){
         alert("Ошибка: " + (e.message || "не удалось"));
@@ -873,31 +787,40 @@
       }
     });
 
-    btnCloseLocked.addEventListener("click", () => {
-      if(tg && tg.close){ tg.close(); }
-      else window.close();
+    btnBackGender.addEventListener("click", () => {
+      showScreen("gender");
+      btnMale.disabled = false; btnFemale.disabled = false;
     });
 
-    btnStartQuiz.addEventListener("click", () => {
-      quizIndex = 0;
-      answers = new Array(QUESTIONS.length).fill(null);
+    btnAcceptRules.addEventListener("click", () => {
       renderQuiz();
       showScreen("quiz");
     });
 
-    btnQuit.addEventListener("click", () => {
-      showScreen("rules");
-    });
-
-    btnNext.addEventListener("click", async () => {
-      if(selected === null) return;
-      answers[quizIndex] = selected;
-
-      if(quizIndex < QUESTIONS.length - 1){
-        quizIndex += 1;
-        renderQuiz();
-      }else{
-        await submitQuiz();
+    btnSubmitQuiz.addEventListener("click", async () => {
+      btnSubmitQuiz.disabled = true;
+      try{
+        const resp = await api("/api/feb23/submit_quiz", { method:"POST", body:{ answers: quizAnswers } });
+        if(resp.ok && typeof resp.score === "number"){
+          quizPassed = !!resp.passed;
+          if(quizPassed){
+            showRouletteReady();
+          }else{
+            alert("Правильных ответов: " + resp.score + ". Нужно минимум 3.");
+            btnSubmitQuiz.disabled = false;
+          }
+        }else{
+          if(resp && resp.error === "gender_blocked"){
+            setLockedVariant("female");
+            showScreen("locked");
+          }else{
+            alert("Ошибка: " + (resp && resp.error ? resp.error : "не удалось"));
+          }
+          btnSubmitQuiz.disabled = false;
+        }
+      }catch(e){
+        alert("Ошибка: " + (e.message || "не удалось"));
+        btnSubmitQuiz.disabled = false;
       }
     });
 
@@ -908,42 +831,48 @@
       else window.close();
     });
 
+    btnCloseLocked.addEventListener("click", () => {
+      if(tg && tg.close){ tg.close(); }
+      else window.close();
+    });
+
+    if(btnLockedError){
+      btnLockedError.addEventListener("click", () => {
+        const url = "https://t.me/Temo4ka4";
+        if(tg && tg.openTelegramLink){
+          try{ tg.openTelegramLink(url); }catch(e){ window.open(url, "_blank"); }
+        }else{
+          window.open(url, "_blank");
+        }
+      });
+    }
+
+    // Auth: keep existing signed uid/ts/sig parsing
+    function parseAuth(){
+      const u = new URL(window.location.href);
+      const uid = u.searchParams.get("uid");
+      const ts = u.searchParams.get("ts");
+      const sig = u.searchParams.get("sig");
+      if(uid && ts && sig){
+        return { uid: parseInt(uid,10), ts: parseInt(ts,10), sig };
+      }
+      return null;
+    }
+
     async function init(){
+      window.__auth = parseAuth();
       try{
-        if(tg){
-          try{
-            tg.ready();
-            tg.expand();
-            if(tg.setHeaderColor) tg.setHeaderColor("#0b1b0f");
-            if(tg.setBackgroundColor) tg.setBackgroundColor("#0b1b0f");
-          }catch(e){}
-        }
-
-        parseAuth();
-        showScreen("loading");
-        btnRetry.classList.add("hidden");
-        loadingStatus.textContent = "Загрузка…";
-
-        const minLoading = delay(3000);
-        let st = null;
-        try{
-          st = await api("/api/feb23/state");
-        }catch(e){
-          await minLoading;
-          loadingStatus.textContent = "Ошибка загрузки: " + (e.message || "не удалось");
-          btnRetry.classList.remove("hidden");
-          return;
-        }
-
-        await minLoading;
+        const st = await api("/api/feb23/state");
         applyState(st);
       }catch(e){
-        loadingStatus.textContent = "Критическая ошибка.";
-        btnRetry.classList.remove("hidden");
+        alert("Ошибка загрузки: " + (e.message || "не удалось"));
       }
     }
+
+    buildWheel();
 
     init();
   </script>
 </body>
 </html>
+```0
