@@ -605,9 +605,10 @@
 
     function headers(){
       const h = { "Content-Type": "application/json" };
-      if(auth.initData){
-        h["x-telegram-initdata"] = auth.initData;
-      }
+      if (auth.initData) {
+  h["x-telegram-initdata"] = auth.initData;
+  h["x-telegram-init_data"] = auth.initData; // ДОБАВИТЬ
+}
       if(auth.sig){
         h["x-user-id"] = String(auth.sig.user_id);
         h["x-ts"] = String(auth.sig.ts);
