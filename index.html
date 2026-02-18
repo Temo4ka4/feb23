@@ -4,220 +4,259 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0b1b0f" />
-  <title>23 февраля — Событие</title>
+  <title>23 февраля - С днём защитника отечества!</title>
 
   <style>
     :root{
-      --bg1:#07120a;
-      --bg2:#0b1b0f;
-      --card:#0f2314;
-      --text:rgba(234,246,234,.92);
-      --muted:rgba(234,246,234,.72);
-      --green: #6dff5a;
-      --red: #ff4d4d;
-      --shadow: 0 16px 40px rgba(0,0,0,.55);
+      --bg0:#07140a;
+      --bg1:#0b1b0f;
+      --card: rgba(12, 28, 16, 0.78);
+      --card2: rgba(10, 22, 13, 0.88);
+      --stroke: rgba(170, 255, 170, 0.12);
+      --text:#eaf6ea;
+      --muted: rgba(234,246,234,.72);
+      --accent:#6dff5a;
+      --accent2:#28d17c;
+      --danger:#ff5c5c;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
       --radius: 18px;
+      --t: 360ms;
       --ease: cubic-bezier(.2,.9,.2,1);
     }
 
     *{ box-sizing:border-box; }
-    html,body{ height:100%; margin:0; }
+    html,body{ height:100%; }
     body{
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
-      color: var(--text);
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background: radial-gradient(1200px 700px at 20% 10%, #143a1f 0%, transparent 55%),
+                  radial-gradient(900px 600px at 80% 0%, #1b4b2a 0%, transparent 55%),
+                  linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed; inset:0;
       background:
-        radial-gradient(1200px 800px at 20% 10%, rgba(109,255,90,.13), transparent 55%),
-        radial-gradient(900px 700px at 85% 30%, rgba(109,255,90,.08), transparent 60%),
-        radial-gradient(900px 800px at 50% 90%, rgba(0,0,0,.55), transparent 60%),
-        linear-gradient(180deg, var(--bg1), var(--bg2));
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: 18px;
+        radial-gradient(300px 220px at 20% 30%, rgba(109,255,90,.10), transparent 60%),
+        radial-gradient(260px 200px at 70% 40%, rgba(40,209,124,.10), transparent 60%),
+        radial-gradient(280px 210px at 55% 75%, rgba(255,255,255,.06), transparent 60%),
+        repeating-linear-gradient(135deg, rgba(255,255,255,.03) 0 10px, rgba(0,0,0,.03) 10px 20px);
+      opacity:.55;
+      pointer-events:none;
+      mix-blend-mode: overlay;
+    }
+
+    body::after{
+      content:"";
+      position:fixed; inset:-80px;
+      background: conic-gradient(from 180deg, rgba(0,0,0,.2), rgba(255,255,255,.05), rgba(0,0,0,.2));
+      filter: blur(60px);
+      opacity:.22;
+      pointer-events:none;
     }
 
     .stage{
-      width: 100%;
-      max-width: 420px;
+      position:relative;
+      height:100%;
+      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
 
     .screen{
-      display:none;
-      animation: pop 280ms var(--ease);
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 18px 16px 22px 16px;
+      opacity:0;
+      transform: translateY(12px) scale(.99);
+      pointer-events:none;
+      transition: opacity var(--t) var(--ease), transform var(--t) var(--ease);
     }
-    .screen.active{ display:block; }
-
-    @keyframes pop{
-      from{ opacity:0; transform: translateY(10px) scale(.98); }
-      to{ opacity:1; transform: translateY(0) scale(1); }
+    .screen.active{
+      opacity:1;
+      transform: translateY(0) scale(1);
+      pointer-events:auto;
     }
 
     .card{
-      background: rgba(15,35,20,.92);
-      border: 1px solid rgba(255,255,255,.08);
-      box-shadow: var(--shadow);
+      width:min(520px, 100%);
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border: 1px solid var(--stroke);
       border-radius: var(--radius);
+      box-shadow: var(--shadow);
       padding: 18px 16px;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
     }
 
-    h1,h2,h3{ margin: 0 0 10px 0; }
-    h1{ font-size: 22px; }
-    h2{ font-size: 18px; }
-    p{ margin: 0 0 12px 0; }
-    .muted{ color: var(--muted); font-size: 13px; line-height: 1.35; }
-    .tiny{ font-size: 12px; color: rgba(234,246,234,.66); }
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap: 8px;
-      background: rgba(109,255,90,.12);
-      border: 1px solid rgba(109,255,90,.28);
-      color: rgba(234,246,234,.92);
-      padding: 7px 10px;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: 12px;
-      letter-spacing: .2px;
-    }
+    h1,h2{ margin:0 0 8px 0; letter-spacing: .2px; }
+    h1{ font-size: 26px; }
+    h2{ font-size: 22px; }
+
+    p{ margin: 8px 0; line-height: 1.35; }
+    .muted{ color: var(--muted); }
+    .tiny{ font-size: 12px; color: var(--muted); line-height: 1.25; }
+
+    .divider{ height:1px; background: var(--stroke); margin: 14px 0; }
 
     .btn{
-      width: 100%;
-      border: none;
+      appearance:none;
+      border:0;
       border-radius: 14px;
       padding: 12px 14px;
-      font-weight: 900;
-      font-size: 14px;
-      cursor: pointer;
-      transition: transform 120ms ease, filter 120ms ease;
+      font-weight: 800;
+      cursor:pointer;
+      transition: transform 120ms ease, filter 120ms ease, opacity 120ms ease;
       user-select:none;
+      width:100%;
     }
-    .btn:active{ transform: translateY(1px) scale(.99); }
+    .btn:active{ transform: scale(.98); }
+    .btn[disabled]{ opacity:.45; cursor:not-allowed; }
 
     .btn.primary{
-      background: rgba(109,255,90,.95);
-      color: #0a140c;
-      box-shadow: 0 10px 24px rgba(109,255,90,.20);
+      color:#07140a;
+      background: linear-gradient(180deg, var(--accent), #3fe14f);
+      box-shadow: 0 10px 22px rgba(109,255,90,.16);
     }
     .btn.ghost{
+      color: var(--text);
       background: rgba(255,255,255,.06);
       border: 1px solid rgba(255,255,255,.12);
-      color: rgba(234,246,234,.92);
     }
     .btn.danger{
-      background: rgba(255,77,77,.92);
-      color: #1a0606;
-      box-shadow: 0 10px 24px rgba(255,77,77,.18);
+      color:#1b0a0a;
+      background: linear-gradient(180deg, #ff8585, var(--danger));
     }
-    .btn[disabled]{ opacity:.55; cursor:not-allowed; }
 
-    .btn-row{
-      display:flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .btn-row .btn{ width: 100%; }
+    .btn-row{ display:flex; gap:10px; margin-top: 12px; }
+    .btn-row .btn{ width:100%; }
 
-    .grid{
-      display:grid;
-      gap: 10px;
-    }
-    .grid.two{ grid-template-columns: 1fr 1fr; }
-
-    .rules{
-      margin: 10px 0 0 0;
-      padding-left: 18px;
-      color: rgba(234,246,234,.82);
-      line-height: 1.45;
-      font-size: 13px;
-    }
-    .rules li{ margin: 8px 0; }
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(0,0,0,.18);
-      border: 1px solid rgba(255,255,255,.10);
-      margin: 6px 6px 0 0;
-      font-weight: 800;
-      font-size: 12px;
+    .grid{ display:grid; grid-template-columns: 1fr; gap:10px; margin-top: 12px; }
+    @media (min-width: 420px){
+      .grid.two{ grid-template-columns: 1fr 1fr; }
     }
 
     /* Loading */
-    .loader{
-      width: 54px;
-      height: 54px;
-      margin: 14px auto 0 auto;
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
       border-radius: 999px;
-      border: 3px solid rgba(255,255,255,.12);
-      border-top-color: rgba(109,255,90,.88);
-      animation: spin 800ms linear infinite;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-weight: 800;
+      font-size: 12px;
+      color: rgba(234,246,234,.86);
     }
-    @keyframes spin{
-      to{ transform: rotate(360deg); }
+    .loader{
+      margin-top: 14px;
+      height: 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      overflow:hidden;
+    }
+    .loader > i{
+      display:block;
+      height:100%;
+      width: 30%;
+      background: linear-gradient(90deg, rgba(109,255,90,.1), rgba(109,255,90,.85), rgba(40,209,124,.85));
+      border-radius: 999px;
+      animation: loadmove 1.05s linear infinite;
+    }
+    @keyframes loadmove{
+      0%{ transform: translateX(-120%); }
+      100%{ transform: translateX(420%); }
+    }
+    .hidden{ display:none !important; }
+
+    /* Rules */
+    ul.rules{
+      margin: 10px 0 0 16px;
+      padding:0;
+      color: rgba(234,246,234,.88);
+    }
+    ul.rules li{ margin: 8px 0; }
+
+    .pill{
+      display:inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      font-size: 12px;
+      margin-top: 8px;
+      color: rgba(234,246,234,.84);
     }
 
     /* Quiz */
     .quiz-card{ padding: 16px 14px; }
     .quiz-top{
       display:flex;
-      align-items:flex-start;
+      gap: 12px;
+      align-items:center;
       justify-content:space-between;
-      gap: 10px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .quiz-meta{
       display:flex;
       flex-direction:column;
       gap: 4px;
+      min-width: 90px;
     }
     .quiz-step{
       font-weight: 900;
-      font-size: 13px;
-      opacity: .88;
+      font-size: 14px;
+      letter-spacing:.2px;
     }
     .quiz-percent{
+      font-weight: 900;
       font-size: 12px;
-      opacity: .7;
+      color: rgba(109,255,90,.95);
     }
     .bar{
       flex:1;
       height: 10px;
       border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
       overflow:hidden;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.10);
-      margin-top: 2px;
     }
     .bar > b{
       display:block;
       height:100%;
-      width:0%;
-      background: rgba(109,255,90,.92);
-      transition: width 240ms var(--ease);
+      width: 0%;
+      background: linear-gradient(90deg, rgba(109,255,90,.35), rgba(109,255,90,.95));
+      border-radius: 999px;
+      transition: width 260ms var(--ease);
     }
-
     .q{
-      font-weight: 900;
+      margin-top: 8px;
       font-size: 16px;
-      line-height: 1.3;
-      margin: 8px 0 14px 0;
+      font-weight: 900;
+      line-height: 1.25;
     }
-
     .options{
-      display:grid;
-      gap: 10px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top: 12px;
     }
     .opt{
       width:100%;
-      text-align:left;
-      padding: 12px 12px;
       border-radius: 14px;
       border: 1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.06);
       color: rgba(234,246,234,.92);
+      padding: 12px 12px;
+      text-align:left;
       font-weight: 800;
       cursor:pointer;
       transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
@@ -265,15 +304,15 @@
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.18);
       background:
-        repeating-conic-gradient(from -102.857deg,
-          rgba(109,255,90,.12) 0 25.714deg,
-          rgba(0,0,0,.14) 25.714deg 51.428deg),
+        repeating-conic-gradient(from -90deg,
+          rgba(109,255,90,.12) 0 22.5deg,
+          rgba(0,0,0,.14) 22.5deg 45deg),
         radial-gradient(circle at 30% 25%, rgba(255,255,255,.10), transparent 55%),
         radial-gradient(circle at 70% 75%, rgba(109,255,90,.10), transparent 60%);
       box-shadow: 0 22px 70px rgba(0,0,0,.55);
       position:relative;
       transform: rotate(0deg);
-      transition: transform 6.5s cubic-bezier(.42,0,.58,1);
+      transition: transform 3.7s cubic-bezier(.12,.82,.18,1);
       will-change: transform;
       overflow:hidden;
     }
@@ -332,9 +371,9 @@
       z-index: 3;
       pointer-events:none;
       background:
-        repeating-conic-gradient(from -102.857deg,
+        repeating-conic-gradient(from -90deg,
           rgba(255,255,255,.08) 0 1deg,
-          transparent 1deg 25.714deg);
+          transparent 1deg 22.5deg);
       mask: radial-gradient(circle, transparent 0 56%, #000 57% 100%);
       opacity:.55;
     }
@@ -390,11 +429,11 @@
     <!-- 2) Gender -->
     <section id="screen-gender" class="screen">
       <div class="card">
-        <h2>Выберите пол</h2>
+        <h2>♂️ Выберите пол</h2>
         <p class="muted">Это нужно для дальнейшего прохождения события.</p>
         <div class="grid two">
-          <button id="btn-male" class="btn primary">Мужской</button>
-          <button id="btn-female" class="btn danger">Женский</button>
+          <button id="btn-male" class="btn primary">👨 Мужской</button>
+          <button id="btn-female" class="btn danger">👩 Женский</button>
         </div>
       </div>
     </section>
@@ -402,15 +441,13 @@
     <!-- 3) Locked -->
     <section id="screen-locked" class="screen">
       <div class="card">
-        <h2>💐 Доступ ограничен</h2>
+        <h2>🔒 Доступ ограничен</h2>
         <p class="muted">
           Это событие посвящено 23 февраля и доступно для мальчиков.<br/>
-          🎀 Уже скоро — отдельное событие к 8 марта!
+          🎀 Уже скоро - отдельное событие к 8 марта!
         </p>
-        <p id="locked-allowlist-text" class="muted hidden">Вам ограничен доступ в данное событие, вы не находитесь в базе.</p>
         <div class="btn-row">
           <button id="btn-close-locked" class="btn primary">Закрыть</button>
-          <button id="btn-locked-error" class="btn ghost hidden">Ошибка</button>
         </div>
       </div>
     </section>
@@ -418,20 +455,20 @@
     <!-- 4) Rules -->
     <section id="screen-rules" class="screen">
       <div class="card">
-        <h2>Правила</h2>
+        <h2>📝 Правила</h2>
         <ul class="rules">
           <li><b>5</b> вопросов, <b>4</b> варианта ответа.</li>
-          <li>Чтобы открыть рулетку — минимум <b>3</b> правильных.</li>
+          <li>Чтобы открыть рулетку - минимум <b>3</b> правильных.</li>
           <li><b>Одна попытка</b>. Повторное участие запрещено.</li>
-          <li>Призы — <b>фиксированный пул</b> (16 шт):<br/>
+          <li>Призы — <b>фиксированный пул</b> (14 шт):<br/>
             <span class="pill">🏆 1× 100⭐ Кубок</span>
             <span class="pill">🚀 3× 50⭐ Ракета</span>
-            <span class="pill">🎁 10× 25⭐ Подарок</span>
+            <span class="pill">🎁 8× 25⭐ Подарок</span>
             <span class="pill">🍫 2× Шоколадка</span>
           </li>
         </ul>
         <div class="btn-row">
-          <button id="btn-start-quiz" class="btn primary">Начать викторину</button>
+          <button id="btn-start-quiz" class="btn primary">▶️ Начать викторину</button>
         </div>
       </div>
     </section>
@@ -474,6 +511,7 @@
             <div class="ticks"></div>
 
             <div class="wheel-icons" aria-hidden="true">
+              <!-- 8 icons around (simple + readable) -->
               <!-- 14 icons around (simple + readable) -->
               <div class="wicon" style="transform: rotate(-90deg) translate(0,-118px) rotate(90deg);">🏆<small>100⭐</small></div>
               <div class="wicon" style="transform: rotate(-64.286deg) translate(0,-118px) rotate(64.286deg);">🎁<small>25⭐</small></div>
@@ -525,7 +563,7 @@
       { q: "Как раньше назывался праздник 23 февраля?", a: ["День Советской Армии", "День Защитника", "День Красной армии", "День ВМФ"] },
       { q: "Какое событие легло в основу праздника?", a: ["Создание Красной армии", "Окончание Первой мировой", "Победа в Курской битве", "Основание Российской империи"] },
       { q: "Как называется комплект военной одежды?", a: ["Экипировка", "Китель", "Униформа", "Обмундирование"] },
-      { q: "Сколько букв в слове “ЗАЩИТНИК”?", a: ["7", "8", "9", "10"] }
+      { q: "Кто обезвреживает мины и снаряды?", a: ["Воённый", "Сапёр", "Лётчик", "Боец"] }
     ];
 
     const $ = (id) => document.getElementById(id);
@@ -545,10 +583,6 @@
     const btnMale = $("btn-male");
     const btnFemale = $("btn-female");
     const btnCloseLocked = $("btn-close-locked");
-
-    const btnLockedError = $("btn-locked-error");
-    const lockedAllowlistText = $("locked-allowlist-text");
-    const lockedInfoText = screens.locked.querySelector("p.muted");
 
     const btnStartQuiz = $("btn-start-quiz");
 
@@ -645,20 +679,6 @@
       resultBox.innerHTML = "";
     }
 
-    function showLockedDefault(){
-      if(lockedInfoText) lockedInfoText.classList.remove("hidden");
-      if(lockedAllowlistText) lockedAllowlistText.classList.add("hidden");
-      if(btnLockedError) btnLockedError.classList.add("hidden");
-      showScreen("locked");
-    }
-
-    function showLockedNotAllowed(){
-      if(lockedInfoText) lockedInfoText.classList.add("hidden");
-      if(lockedAllowlistText) lockedAllowlistText.classList.remove("hidden");
-      if(btnLockedError) btnLockedError.classList.remove("hidden");
-      showScreen("locked");
-    }
-
     function applyState(s){
       serverState = s;
 
@@ -673,7 +693,7 @@
       }
 
       if(s.gender === "female"){
-        showLockedDefault();
+        showScreen("locked");
         return;
       }
 
@@ -783,10 +803,17 @@
       rouletteSub.textContent = "Вращаем…";
       rouletteNote.textContent = "";
 
-      const duration = 6500;
+      const duration = 3700;
+      const turns = 6 + Math.floor(Math.random() * 2);
+      const offset = Math.random() * 360;
+      wheelDeg = wheelDeg + (turns * 360) + offset;
+
+      wheel.style.transform = `rotate(${wheelDeg}deg)`;
+
+      const spinPromise = api("/api/feb23/spin", { method:"POST" });
       let resp;
       try{
-        resp = await api("/api/feb23/spin", { method:"POST" });
+        [resp] = await Promise.all([spinPromise, delay(duration)]);
       }catch(e){
         spinning = false;
         btnSpin.disabled = false;
@@ -794,57 +821,35 @@
         return;
       }
 
+      wheel.classList.add("impact");
+      pointer.classList.add("impact");
+      setTimeout(() => {
+        wheel.classList.remove("impact");
+        pointer.classList.remove("impact");
+      }, 420);
+
       const st = resp && resp.state ? resp.state : null;
       if(st) serverState = st;
 
       if(resp && resp.ok && resp.prize_type){
-        const segCount = 14;
-        const segAngle = 360 / segCount;
-        let idx = (resp.segment_index !== undefined && resp.segment_index !== null) ? parseInt(resp.segment_index, 10) : NaN;
-
-        if(Number.isFinite(idx)){
-          idx = ((idx % segCount) + segCount) % segCount;
-
-          const targetNorm = (360 - (idx * segAngle)) % 360;
-          const currentNorm = ((wheelDeg % 360) + 360) % 360;
-          const delta = (targetNorm - currentNorm + 360) % 360;
-
-          const turns = 11;
-          wheelDeg = wheelDeg + (turns * 360) + delta;
-
-          wheel.style.transform = `rotate(${wheelDeg}deg)`;
-
-          await delay(duration);
-
-          wheel.classList.add("impact");
-          pointer.classList.add("impact");
-          setTimeout(() => {
-            wheel.classList.remove("impact");
-            pointer.classList.remove("impact");
-          }, 420);
-        }
-
         const pt = resp.prize_type;
         showRouletteFinal(`Поздравляем 🎉<br/>Твой приз: <strong>${prizeText(pt)}</strong>`, false);
-
-        spinning = false;
-        return;
-      }
-
-      const err = (resp && resp.error) ? resp.error : "unknown";
-      if(err === "quiz_not_passed"){
-        showRouletteFinal("Нужно минимум <strong>3</strong> правильных, чтобы крутить рулетку.", false);
-      }else if(err === "already_participated"){
-        if(serverState && serverState.prize_type){
-          showRouletteFinal(`Ты уже принял участие 🎖<br/>Твой приз: <strong>${prizeText(serverState.prize_type)}</strong>`, false);
-        }else{
-          showRouletteFinal("Ты уже принял участие 🎖", false);
-        }
-      }else if(err === "gender_blocked"){
-        showLockedDefault();
       }else{
-        rouletteSub.textContent = "Не удалось получить результат.";
-        btnSpin.disabled = false;
+        const err = (resp && resp.error) ? resp.error : "unknown";
+        if(err === "quiz_not_passed"){
+          showRouletteFinal("Нужно минимум <strong>3</strong> правильных, чтобы крутить рулетку.", false);
+        }else if(err === "already_participated"){
+          if(serverState && serverState.prize_type){
+            showRouletteFinal(`Ты уже принял участие 🎖<br/>Твой приз: <strong>${prizeText(serverState.prize_type)}</strong>`, false);
+          }else{
+            showRouletteFinal("Ты уже принял участие 🎖", false);
+          }
+        }else if(err === "gender_blocked"){
+          showScreen("locked");
+        }else{
+          rouletteSub.textContent = "Не удалось получить результат.";
+          btnSpin.disabled = false;
+        }
       }
 
       spinning = false;
@@ -857,10 +862,6 @@
       btnMale.disabled = true; btnFemale.disabled = true;
       try{
         const st = await api("/api/feb23/set_gender", { method:"POST", body:{ gender:"male" } });
-        if(st && st.ok === false && st.error === "not_allowed"){
-          showLockedNotAllowed();
-          return;
-        }
         applyState(st);
       }catch(e){
         alert("Ошибка: " + (e.message || "не удалось"));
@@ -883,14 +884,6 @@
       if(tg && tg.close){ tg.close(); }
       else window.close();
     });
-
-    btnLockedError.addEventListener("click", () => {
-      if(tg && tg.openTelegramLink){
-        try{ tg.openTelegramLink("https://t.me/Temo4ka4"); return; }catch(e){}
-      }
-      window.open("https://t.me/Temo4ka4", "_blank");
-    });
-
 
     btnStartQuiz.addEventListener("click", () => {
       quizIndex = 0;
