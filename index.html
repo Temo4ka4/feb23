@@ -616,20 +616,26 @@
       return h;
     }
 
-    async function api(path, opts={}){
-      const res = await fetch(path, {
-        method: opts.method || "GET",
-        headers: { ...headers(), ...(opts.headers||{}) },
-        body: opts.body ? JSON.stringify(opts.body) : undefined,
-      });
-      let data = null;
-      try{ data = await res.json(); }catch(e){ data = null; }
-      if(!res.ok){
-        const msg = (data && (data.detail || data.error)) ? (data.detail || data.error) : ("HTTP " + res.status);
-        throw new Error(msg);
-      }
-      return data;
-    }
+    const API_BASE = "https://api.temo4ka4.ru";
+
+async function api(path, opts={}){
+  const url = path.startsWith("http") ? path : (API_BASE + path);
+
+  const res = await fetch(url, {
+    method: opts.method || "GET",
+    headers: { ...headers(), ...(opts.headers||{}) },
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+
+  let data = null;
+  try{ data = await res.json(); }catch(e){ data = null; }
+
+  if(!res.ok){
+    const msg = (data && (data.detail || data.error)) ? (data.detail || data.error) : ("HTTP " + res.status);
+    throw new Error(msg);
+  }
+  return data;
+}
 
     function prizeText(type){
       return PRIZE_NAMES[type] || type;
