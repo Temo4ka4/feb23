@@ -565,6 +565,14 @@ h1,h2,h3{ letter-spacing: .2px; }
 .bar b{
   background: linear-gradient(90deg, rgba(255,111,177,.95), rgba(166,107,255,.92));
 }
+
+    /* ===== FIX: only one screen visible ===== */
+.screen { display: none !important; }
+.screen.active { display: block !important; }
+
+/* если у тебя вместо active другой класс — добавь его сюда */
+.screen.show { display: block !important; }
+.screen.hidden { display: none !important; }
   </style>
 </head>
 
