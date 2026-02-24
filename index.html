@@ -779,10 +779,14 @@ h1,h2,h3{ letter-spacing: .2px; }
     let spinning = false;
     let wheelDeg = 0;
 
-    function showScreen(key){
-      Object.values(screens).forEach(s => s.classList.remove("active"));
-      screens[key].classList.add("active");
-    }
+    function showScreen(id){
+  document.querySelectorAll(".screen").forEach(el => {
+    el.classList.remove("active", "show");
+  });
+
+  const target = document.getElementById(id);
+  if(target) target.classList.add("active");
+}
 
     function delay(ms){ return new Promise(res => setTimeout(res, ms)); }
 
