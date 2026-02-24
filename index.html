@@ -407,6 +407,164 @@
       .fade-in{ animation:none; }
       .loader > i{ animation:none; }
     }
+    /* ====== MAR8 GLASS PATCH (append at the END of <style>) ====== */
+:root{
+  --bg0:#12071a;
+  --bg1:#1a0b22;
+
+  --card: rgba(255, 255, 255, 0.10);
+  --card2: rgba(255, 255, 255, 0.14);
+  --stroke: rgba(255, 255, 255, 0.18);
+
+  --text:#fff7fb;
+  --muted: rgba(255, 247, 251, 0.72);
+
+  --accent:#ff6fb1;
+  --accent2:#a66bff;
+  --danger:#ff4d7d;
+
+  --shadow: 0 18px 60px rgba(0,0,0,.45);
+}
+
+body{
+  background:
+    radial-gradient(900px 600px at 20% 15%, rgba(255,111,177,.25), transparent 60%),
+    radial-gradient(900px 700px at 80% 75%, rgba(166,107,255,.22), transparent 62%),
+    linear-gradient(160deg, var(--bg0), var(--bg1));
+  color: var(--text);
+}
+
+body::before{
+  content:"";
+  position:fixed; inset:-80px;
+  background:
+    radial-gradient(700px 500px at 25% 20%, rgba(255,255,255,.10), transparent 60%),
+    radial-gradient(700px 500px at 75% 80%, rgba(255,255,255,.08), transparent 60%);
+  filter: blur(60px);
+  opacity:.55;
+  pointer-events:none;
+}
+
+.card{
+  background: linear-gradient(180deg, var(--card), var(--card2));
+  border: 1px solid var(--stroke);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+h1,h2,h3{ letter-spacing: .2px; }
+
+.muted{ color: var(--muted) !important; }
+
+.btn{
+  border: 1px solid rgba(255,255,255,.20);
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+}
+
+.btn:active{ transform: translateY(1px) scale(.99); }
+
+.btn.primary{
+  background: linear-gradient(135deg, rgba(255,111,177,.95), rgba(166,107,255,.92));
+  border-color: rgba(255,255,255,.25);
+}
+
+.btn.ghost{
+  background: rgba(255,255,255,.08);
+}
+
+.btn.danger{
+  background: linear-gradient(135deg, rgba(255,77,125,.95), rgba(255,111,177,.72));
+  border-color: rgba(255,255,255,.22);
+}
+
+.screen{
+  animation: mar8Fade .22s ease both;
+}
+
+@keyframes mar8Fade{
+  from{ opacity:0; transform: translateY(6px); }
+  to{ opacity:1; transform: translateY(0); }
+}
+
+/* Roulette visuals (soft pink) */
+.wheel{
+  border: 1px solid rgba(255,255,255,.22);
+  box-shadow: 0 22px 70px rgba(0,0,0,.50);
+  background:
+    repeating-conic-gradient(from -90deg,
+      rgba(255,111,177,.18) 0 12deg,
+      rgba(166,107,255,.16) 12deg 24deg),
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,.12), transparent 55%),
+    radial-gradient(circle at 70% 75%, rgba(255,255,255,.10), transparent 60%);
+}
+
+.pointer{
+  filter: drop-shadow(0 10px 24px rgba(0,0,0,.35));
+}
+
+/* ====== Quiz cards / answers upgrade (no logic changes) ====== */
+.quiz-card .q{
+  font-weight: 700;
+  line-height: 1.25;
+  text-shadow: 0 10px 28px rgba(0,0,0,.30);
+}
+
+.options{ gap: 10px; }
+
+.opt{
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.18);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 14px 14px;
+  text-align: left;
+  box-shadow: 0 10px 26px rgba(0,0,0,.22);
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.opt::before{
+  content:"";
+  position:absolute; inset:-2px;
+  background: radial-gradient(400px 220px at 15% 30%, rgba(255,111,177,.22), transparent 55%),
+              radial-gradient(400px 220px at 85% 70%, rgba(166,107,255,.18), transparent 60%);
+  opacity:.7;
+  pointer-events:none;
+}
+
+.opt:active{ transform: translateY(1px) scale(.995); }
+
+.opt.selected{
+  background: linear-gradient(135deg, rgba(255,111,177,.28), rgba(166,107,255,.22));
+  border-color: rgba(255,255,255,.28);
+  box-shadow: 0 14px 34px rgba(0,0,0,.28);
+}
+
+.opt.selected::after{
+  content:"✓";
+  position:absolute;
+  top: 10px; right: 12px;
+  width: 22px; height: 22px;
+  display:grid; place-items:center;
+  border-radius: 999px;
+  background: rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.22);
+  font-weight: 800;
+}
+
+.bar{
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.16);
+}
+
+.bar b{
+  background: linear-gradient(90deg, rgba(255,111,177,.95), rgba(166,107,255,.92));
+}
   </style>
 </head>
 
@@ -510,25 +668,24 @@
           <div id="wheel" class="wheel" aria-label="Roulette wheel">
             <div class="ticks"></div>
 
-            <div class="wheel-icons" aria-hidden="true">
-              <!-- 8 icons around (simple + readable) -->
-              <!-- 14 icons around (simple + readable) -->
-              <div class="wicon" style="transform: rotate(-90deg) translate(0,-118px) rotate(90deg);">🎁<small>?</small></div>
-              <div class="wicon" style="transform: rotate(-64.286deg) translate(0,-118px) rotate(64.286deg);">🎁<small>?</small></div>
-              <div class="wicon" style="transform: rotate(-38.571deg) translate(0,-118px) rotate(38.571deg);">🎁<small>?</small></div>
-              <div class="wicon" style="transform: rotate(-12.857deg) translate(0,-118px) rotate(12.857deg);">🎁<small>?</small></div>
-              <div class="wicon" style="transform: rotate(12.857deg) translate(0,-118px) rotate(-12.857deg);">🎁<small>?</small></div>
-              <div class="wicon" style="transform: rotate(38.571deg) translate(0,-118px) rotate(-38.571deg);">🎁<small>?</small></div>
-              <div class="wicon" style="transform: rotate(64.286deg) translate(0,-118px) rotate(-64.286deg);">🎁<small>?</small></div>
-              <div class="wicon" style="transform: rotate(90deg) translate(0,-118px) rotate(-90deg);">🎁<small>?</small></div>
-              <div class="wicon" style="transform: rotate(115.714deg) translate(0,-118px) rotate(-115.714deg);">🎁<small>?</small></div>
-              <div class="wicon" style="transform: rotate(141.429deg) translate(0,-118px) rotate(-141.429deg);">🎁<small>?</small></div>
-              <div class="wicon" style="transform: rotate(167.143deg) translate(0,-118px) rotate(-167.143deg);">🎁<small>?</small></div>
-              <div class="wicon" style="transform: rotate(192.857deg) translate(0,-118px) rotate(-192.857deg);">🎁<small>?</small></div>
-              <div class="wicon" style="transform: rotate(218.571deg) translate(0,-118px) rotate(-218.571deg);">🎁<small>?</small></div>
-              <div class="wicon" style="transform: rotate(244.286deg) translate(0,-118px) rotate(-244.286deg);">🎁<small>?</small></div>
-            </div>
-
+           <div class="wheel-icons" aria-hidden="true">
+  <!-- 15 icons around -->
+  <div class="wicon" style="transform: rotate(-90deg) translate(0,-118px) rotate(90deg);">🎁<small>?</small></div>
+  <div class="wicon" style="transform: rotate(-66deg) translate(0,-118px) rotate(66deg);">🎁<small>?</small></div>
+  <div class="wicon" style="transform: rotate(-42deg) translate(0,-118px) rotate(42deg);">🎁<small>?</small></div>
+  <div class="wicon" style="transform: rotate(-18deg) translate(0,-118px) rotate(18deg);">🎁<small>?</small></div>
+  <div class="wicon" style="transform: rotate(6deg) translate(0,-118px) rotate(-6deg);">🎁<small>?</small></div>
+  <div class="wicon" style="transform: rotate(30deg) translate(0,-118px) rotate(-30deg);">🎁<small>?</small></div>
+  <div class="wicon" style="transform: rotate(54deg) translate(0,-118px) rotate(-54deg);">🎁<small>?</small></div>
+  <div class="wicon" style="transform: rotate(78deg) translate(0,-118px) rotate(-78deg);">🎁<small>?</small></div>
+  <div class="wicon" style="transform: rotate(102deg) translate(0,-118px) rotate(-102deg);">🎁<small>?</small></div>
+  <div class="wicon" style="transform: rotate(126deg) translate(0,-118px) rotate(-126deg);">🎁<small>?</small></div>
+  <div class="wicon" style="transform: rotate(150deg) translate(0,-118px) rotate(-150deg);">🎁<small>?</small></div>
+  <div class="wicon" style="transform: rotate(174deg) translate(0,-118px) rotate(-174deg);">🎁<small>?</small></div>
+  <div class="wicon" style="transform: rotate(198deg) translate(0,-118px) rotate(-198deg);">🎁<small>?</small></div>
+  <div class="wicon" style="transform: rotate(222deg) translate(0,-118px) rotate(-222deg);">🎁<small>?</small></div>
+  <div class="wicon" style="transform: rotate(246deg) translate(0,-118px) rotate(-246deg);">🎁<small>?</small></div>
+</div>
             <div class="wheel-center">★</div>
           </div>
         </div>
@@ -692,7 +849,7 @@
         return;
       }
 
-      if(s.gender === "female"){
+      if(s.gender === "male"){
         showScreen("locked");
         return;
       }
@@ -870,15 +1027,22 @@
     });
 
     btnFemale.addEventListener("click", async () => {
-      btnMale.disabled = true; btnFemale.disabled = true;
-      try{
-        const st = await api("/api/feb23/set_gender", { method:"POST", body:{ gender:"female" } });
-        applyState(st);
-      }catch(e){
-        alert("Ошибка: " + (e.message || "не удалось"));
-        btnMale.disabled = false; btnFemale.disabled = false;
-      }
-    });
+  btnMale.disabled = true; btnFemale.disabled = true;
+  try{
+    const st = await api("/api/feb23/set_gender", { method:"POST", body:{ gender:"female" } });
+
+    // если сервер вернул not_allowed — покажем locked (или оставь alert если хочешь)
+    if(st && st.ok === false && st.error === "not_allowed"){
+      showScreen("locked");
+      return;
+    }
+
+    applyState(st);
+  }catch(e){
+    alert("Ошибка: " + (e.message || "не удалось"));
+    btnMale.disabled = false; btnFemale.disabled = false;
+  }
+});
 
     btnCloseLocked.addEventListener("click", () => {
       if(tg && tg.close){ tg.close(); }
