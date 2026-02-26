@@ -7,128 +7,129 @@
   <title>23 февраля - С днём защитника отечества!</title>
 
   <style>
-    :root{
-      --bg0:#07140a;
-      --bg1:#0b1b0f;
-      --card: rgba(12, 28, 16, 0.78);
-      --card2: rgba(10, 22, 13, 0.88);
-      --stroke: rgba(170, 255, 170, 0.12);
-      --text:#eaf6ea;
-      --muted: rgba(234,246,234,.72);
-      --accent:#6dff5a;
-      --accent2:#28d17c;
-      --danger:#ff5c5c;
-      --shadow: 0 18px 60px rgba(0,0,0,.45);
-      --radius: 18px;
-      --t: 360ms;
-      --ease: cubic-bezier(.2,.9,.2,1);
-    }
+   :root {
+    --bg0: #2a1a3d;
+    --bg1: #3a2450;
+    --card: rgba(80, 40, 80, 0.8);
+    --card2: rgba(90, 50, 90, 0.9);
+    --stroke: rgba(255, 180, 220, 0.15);
+    --text: #f8e0ff;
+    --muted: rgba(248, 224, 255, 0.75);
+    --accent: #ff99cc;
+    --accent2: #ff66b3;
+    --danger: #ff88aa;
+    --shadow: 0 18px 60px rgba(100, 60, 120, 0.45);
+    --radius: 18px;
+    --t: 360ms;
+    --ease: cubic-bezier(.2,.9,.2,1);
+  }
 
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
-      color:var(--text);
-      background: radial-gradient(1200px 700px at 20% 10%, #143a1f 0%, transparent 55%),
-                  radial-gradient(900px 600px at 80% 0%, #1b4b2a 0%, transparent 55%),
-                  linear-gradient(180deg, var(--bg0), var(--bg1));
-      overflow:hidden;
-    }
+    *{ box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+    color: var(--text);
+    background:
+      radial-gradient(1200px 700px at 20% 10%, #5a3aa0 0%, transparent 55%),
+      radial-gradient(900px 600px at 80% 0%, #7a4ab0 0%, transparent 55%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    overflow: hidden;
+  }
 
-    body::before{
-      content:"";
-      position:fixed; inset:0;
-      background:
-        radial-gradient(300px 220px at 20% 30%, rgba(109,255,90,.10), transparent 60%),
-        radial-gradient(260px 200px at 70% 40%, rgba(40,209,124,.10), transparent 60%),
-        radial-gradient(280px 210px at 55% 75%, rgba(255,255,255,.06), transparent 60%),
-        repeating-linear-gradient(135deg, rgba(255,255,255,.03) 0 10px, rgba(0,0,0,.03) 10px 20px);
-      opacity:.55;
-      pointer-events:none;
-      mix-blend-mode: overlay;
-    }
+    body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(300px 220px at 20% 30%, rgba(255, 153, 204, 0.12), transparent 60%),
+      radial-gradient(260px 200px at 70% 40%, rgba(255, 102, 179, 0.12), transparent 60%),
+      radial-gradient(280px 210px at 55% 75%, rgba(255, 255, 255, 0.08), transparent 60%),
+      repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0 10px, rgba(0, 0, 0, 0.04) 10px 20px);
+    opacity: 0.6;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
 
-    body::after{
-      content:"";
-      position:fixed; inset:-80px;
-      background: conic-gradient(from 180deg, rgba(0,0,0,.2), rgba(255,255,255,.05), rgba(0,0,0,.2));
-      filter: blur(60px);
-      opacity:.22;
-      pointer-events:none;
-    }
+   body::after {
+    content: "";
+    position: fixed; inset: -80px;
+    background: conic-gradient(from 180deg, rgba(50, 30, 70, 0.25), rgba(255, 200, 240, 0.1), rgba(50, 30, 70, 0.25));
+    filter: blur(60px);
+    opacity: 0.25;
+    pointer-events: none;
+  }
 
-    .stage{
-      position:relative;
-      height:100%;
-      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
 
-    .screen{
-      position:absolute;
-      inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: 18px 16px 22px 16px;
-      opacity:0;
-      transform: translateY(12px) scale(.99);
-      pointer-events:none;
-      transition: opacity var(--t) var(--ease), transform var(--t) var(--ease);
-    }
-    .screen.active{
-      opacity:1;
-      transform: translateY(0) scale(1);
-      pointer-events:auto;
-    }
+    .stage {
+    position: relative;
+    height: 100%;
+    padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-    .card{
-      width:min(520px, 100%);
-      background: linear-gradient(180deg, var(--card), var(--card2));
-      border: 1px solid var(--stroke);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 18px 16px;
-      backdrop-filter: blur(10px);
-    }
+    .screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px 16px 22px 16px;
+    opacity: 0;
+    transform: translateY(12px) scale(.99);
+    pointer-events: none;
+    transition: opacity var(--t) var(--ease), transform var(--t) var(--ease);
+  }
+  .screen.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+    .card {
+    width: min(520px, 100%);
+    background: linear-gradient(180deg, var(--card), var(--card2));
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 16px;
+    backdrop-filter: blur(10px);
+  }
 
-    h1,h2{ margin:0 0 8px 0; letter-spacing: .2px; }
-    h1{ font-size: 26px; }
-    h2{ font-size: 22px; }
+    h1, h2 { margin: 0 0 8px 0; letter-spacing: .2px; }
+  h1 { font-size: 26px; }
+  h2 { font-size: 22px; }
 
-    p{ margin: 8px 0; line-height: 1.35; }
-    .muted{ color: var(--muted); }
-    .tiny{ font-size: 12px; color: var(--muted); line-height: 1.25; }
+  p { margin: 8px 0; line-height: 1.35; }
+  .muted { color: var(--muted); }
+  .tiny { font-size: 12px; color: var(--muted); line-height: 1.25; }
 
-    .divider{ height:1px; background: var(--stroke); margin: 14px 0; }
+  .divider { height: 1px; background: var(--stroke); margin: 14px 0; }
 
-    .btn{
-      appearance:none;
-      border:0;
-      border-radius: 14px;
-      padding: 12px 14px;
-      font-weight: 800;
-      cursor:pointer;
-      transition: transform 120ms ease, filter 120ms ease, opacity 120ms ease;
-      user-select:none;
-      width:100%;
-    }
-    .btn:active{ transform: scale(.98); }
-    .btn[disabled]{ opacity:.45; cursor:not-allowed; }
+    .btn {
+    appearance: none;
+    border: 0;
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 120ms ease, filter 120ms ease, opacity 120ms ease;
+    user-select: none;
+    width: 100%;
+  }
+  .btn:active { transform: scale(.98); }
+  .btn[disabled] { opacity: .45; cursor: not-allowed; }
 
-    .btn.primary{
-      color:#07140a;
-      background: linear-gradient(180deg, var(--accent), #3fe14f);
-      box-shadow: 0 10px 22px rgba(109,255,90,.16);
-    }
-    .btn.ghost{
-      color: var(--text);
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
-    }
+  .btn.primary {
+    color: #1a0a20;
+    background: linear-gradient(180deg, var(--accent), #ff77b8);
+    box-shadow: 0 10px 22px rgba(255, 153, 204, 0.2);
+  }
+  .btn.ghost {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
     .btn.danger{
       color:#1b0a0a;
       background: linear-gradient(180deg, #ff8585, var(--danger));
