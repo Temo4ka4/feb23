@@ -8,17 +8,17 @@
 
   <style>
   :root {
-    --bg0: #fff5f7;
-    --bg1: #ffe8ee;
-    --card: rgba(255, 240, 245, 0.9);
-    --card2: rgba(255, 235, 242, 0.95);
-    --stroke: rgba(255, 180, 200, 0.2);
-    --text: #5a2a4a;
-    --muted: rgba(90, 42, 74, 0.6);
-    --accent: #ff99b3;
-    --accent2: #ff6b90;
-    --danger: #ff7a9a;
-    --shadow: 0 18px 60px rgba(220, 120, 150, 0.35);
+    --bg0: #2a1a3d;
+    --bg1: #3a2450;
+    --card: rgba(80, 40, 80, 0.8);
+    --card2: rgba(90, 50, 90, 0.9);
+    --stroke: rgba(255, 180, 220, 0.15);
+    --text: #f8e0ff;
+    --muted: rgba(248, 224, 255, 0.75);
+    --accent: #ff99cc;
+    --accent2: #ff66b3;
+    --danger: #ff88aa;
+    --shadow: 0 18px 60px rgba(100, 60, 120, 0.45);
     --radius: 18px;
     --t: 360ms;
     --ease: cubic-bezier(.2,.9,.2,1);
@@ -31,8 +31,8 @@
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
     color: var(--text);
     background:
-      radial-gradient(1200px 700px at 20% 10%, #ffd6e2 0%, transparent 55%),
-      radial-gradient(900px 600px at 80% 0%, #ffcce0 0%, transparent 55%),
+      radial-gradient(1200px 700px at 20% 10%, #5a3aa0 0%, transparent 55%),
+      radial-gradient(900px 600px at 80% 0%, #7a4ab0 0%, transparent 55%),
       linear-gradient(180deg, var(--bg0), var(--bg1));
     overflow: hidden;
   }
@@ -41,11 +41,11 @@
     content: "";
     position: fixed; inset: 0;
     background:
-      radial-gradient(300px 220px at 20% 30%, rgba(255, 160, 190, 0.1), transparent 60%),
-      radial-gradient(260px 200px at 70% 40%, rgba(255, 140, 170, 0.1), transparent 60%),
+      radial-gradient(300px 220px at 20% 30%, rgba(255, 153, 204, 0.12), transparent 60%),
+      radial-gradient(260px 200px at 70% 40%, rgba(255, 102, 179, 0.12), transparent 60%),
       radial-gradient(280px 210px at 55% 75%, rgba(255, 255, 255, 0.08), transparent 60%),
-      repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0 10px, rgba(0, 0, 0, 0.03) 10px 20px);
-    opacity: 0.5;
+      repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0 10px, rgba(0, 0, 0, 0.04) 10px 20px);
+    opacity: 0.6;
     pointer-events: none;
     mix-blend-mode: overlay;
   }
@@ -53,9 +53,9 @@
   body::after {
     content: "";
     position: fixed; inset: -80px;
-    background: conic-gradient(from 180deg, rgba(255, 220, 230, 0.2), rgba(255, 245, 250, 0.15), rgba(255, 220, 230, 0.2));
+    background: conic-gradient(from 180deg, rgba(50, 30, 70, 0.25), rgba(255, 200, 240, 0.1), rgba(50, 30, 70, 0.25));
     filter: blur(60px);
-    opacity: 0.2;
+    opacity: 0.25;
     pointer-events: none;
   }
 
@@ -121,15 +121,15 @@
   .btn[disabled] { opacity: .45; cursor: not-allowed; }
 
   .btn.primary {
-    color: #3a1a2a;
-    background: linear-gradient(180deg, var(--accent), #ff779a);
-    box-shadow: 0 10px 22px rgba(255, 153, 179, 0.25);
+    color: #1a0a20;
+    background: linear-gradient(180deg, var(--accent), #ff77b8);
+    box-shadow: 0 10px 22px rgba(255, 153, 204, 0.2);
   }
   .btn.ghost {
     color: var(--text);
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(25
-   
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
     .btn.danger{
       color:#1b0a0a;
       background: linear-gradient(180deg, #ff8585, var(--danger));
@@ -416,7 +416,7 @@
     <!-- 1) Loading -->
     <section id="screen-loading" class="screen active">
       <div class="card">
-        <div class="badge">🎖 23 февраля · День защитника отечества!</div>
+        <div class="badge">🌷 8 марта · Международный женский день!</div>
         <h1 style="margin-top:10px;">Подготовка</h1>
         <p class="muted">Загрузка и проверка участия…</p>
         <div class="loader"><i></i></div>
@@ -444,8 +444,8 @@
       <div class="card">
         <h2>🔒 Доступ ограничен</h2>
         <p class="muted">
-          Это событие посвящено 23 февраля и доступно для мальчиков.<br/>
-          🎀 Уже скоро - отдельное событие к 8 марта!
+          🌷 Это событие посвещенно девушкам!<br/>
+          🎖️ Мужчины в данном событии не могут поучавствовать, вам было посвещенно событие 23 февраля.
         </p>
         <div class="btn-row">
           <button id="btn-close-locked" class="btn primary">Закрыть</button>
@@ -469,7 +469,7 @@
           </li>
         </ul>
         <div class="btn-row">
-          <button id="btn-start-quiz" class="btn primary">Начать викторину</button>
+          <button id="btn-start-quiz" class="btn primary">Приступить к игре</button>
         </div>
       </div>
     </section>
@@ -512,8 +512,6 @@
             <div class="ticks"></div>
 
             <div class="wheel-icons" aria-hidden="true">
-              <!-- 8 icons around (simple + readable) -->
-              <!-- 14 icons around (simple + readable) -->
               <div class="wicon" style="transform: rotate(-90deg) translate(0,-118px) rotate(90deg);">🎁<small>?</small></div>
               <div class="wicon" style="transform: rotate(-64.286deg) translate(0,-118px) rotate(64.286deg);">🎁<small>?</small></div>
               <div class="wicon" style="transform: rotate(-38.571deg) translate(0,-118px) rotate(38.571deg);">🎁<small>?</small></div>
@@ -528,6 +526,7 @@
               <div class="wicon" style="transform: rotate(192.857deg) translate(0,-118px) rotate(-192.857deg);">🎁<small>?</small></div>
               <div class="wicon" style="transform: rotate(218.571deg) translate(0,-118px) rotate(-218.571deg);">🎁<small>?</small></div>
               <div class="wicon" style="transform: rotate(244.286deg) translate(0,-118px) rotate(-244.286deg);">🎁<small>?</small></div>
+              <div class="wicon" style="transform: rotate(244.286deg) translate(0,-118px) rotate(-244.286deg);">🎁<small>?</small></div>
             </div>
 
             <div class="wheel-center">★</div>
@@ -535,7 +534,7 @@
         </div>
 
         <div class="btn-row">
-          <button id="btn-spin" class="btn primary">Крутить</button>
+          <button id="btn-spin" class="btn primary">Прокрутить колесо</button>
           <button id="btn-close" class="btn ghost">Закрыть</button>
         </div>
 
@@ -560,9 +559,9 @@
     };
 
     const QUESTIONS = [
-      { q: "Когда официально отмечается День защитника Отечества?", a: ["8 марта", "23 февраля", "9 мая", "12 июня"] },
-      { q: "Как раньше назывался праздник 23 февраля?", a: ["День Советской Армии", "День Защитника", "День Красной армии", "День ВМФ"] },
-      { q: "Какое событие легло в основу праздника?", a: ["Создание Красной армии", "Окончание Первой мировой", "Победа в Курской битве", "Основание Российской империи"] },
+      { q: "Когда официально отмечается Международный женский день?", a: ["8 марта", "23 февраля", "9 мая", "12 июня"] },
+      { q: "Какой цветок является символом 8 марта?", a: ["Роза", "Мимоза", "Тюльпан", "Лилия"] },
+      { q: "Как называется женское платье, у которого нет рукавов?", a: ["Футляр", "Вечерние", "Приталенные", "Сарафан"] },
       { q: "Как называется комплект военной одежды?", a: ["Экипировка", "Китель", "Униформа", "Обмундирование"] },
       { q: "Кто обезвреживает мины и снаряды?", a: ["Воённый", "Сапёр", "Лётчик", "Боец"] }
     ];
