@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -8,17 +9,17 @@
 
   <style>
   :root {
-    --bg0: #f9f4f0; /* Светлый кремовый */
-    --bg1: #fff8f3; /* Нежно‑розовый */
-    --card: rgba(255, 245, 240, 0.9); /* Кремовый с прозрачностью */
-    --card2: rgba(255, 250, 245, 0.95); /* Ещё светлее кремовый */
-    --stroke: rgba(255, 180, 200, 0.2); /* Розовый акцент */
-    --text: #5a4a42; /* Тёмно‑коричневый для лучшей читаемости */
-    --muted: rgba(90, 74, 66, 0.6); /* Приглушённый коричневый */
-    --accent: #ff99c8; /* Яркий розовый */
-    --accent2: #ffb3d9; /* Более светлый розовый */
-    --danger: #ff88aa; /* Для ошибок/предупреждений */
-    --shadow: 0 18px 60px rgba(255, 160, 190, 0.25); /* Лёгкая розовая тень */
+    --bg0: #2a1a3d;
+    --bg1: #3a2450;
+    --card: rgba(80, 40, 80, 0.8);
+    --card2: rgba(90, 50, 90, 0.9);
+    --stroke: rgba(255, 180, 220, 0.15);
+    --text: #f8e0ff;
+    --muted: rgba(248, 224, 255, 0.75);
+    --accent: #ff99cc;
+    --accent2: #ff66b3;
+    --danger: #ff88aa;
+    --shadow: 0 18px 60px rgba(100, 60, 120, 0.45);
     --radius: 18px;
     --t: 360ms;
     --ease: cubic-bezier(.2,.9,.2,1);
@@ -31,8 +32,8 @@
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
     color: var(--text);
     background:
-      radial-gradient(1200px 700px at 20% 10%, #ffe6f2 0%, transparent 55%),
-      radial-gradient(900px 600px at 80% 0%, #fff0f8 0%, transparent 55%),
+      radial-gradient(1200px 700px at 20% 10%, #5a3aa0 0%, transparent 55%),
+      radial-gradient(900px 600px at 80% 0%, #7a4ab0 0%, transparent 55%),
       linear-gradient(180deg, var(--bg0), var(--bg1));
     overflow: hidden;
   }
@@ -41,11 +42,11 @@
     content: "";
     position: fixed; inset: 0;
     background:
-      radial-gradient(300px 220px at 20% 30%, rgba(255, 153, 200, 0.08), transparent 60%),
-      radial-gradient(260px 200px at 70% 40%, rgba(255, 179, 217, 0.08), transparent 60%),
-      radial-gradient(280px 210px at 55% 75%, rgba(255, 255, 255, 0.1), transparent 60%),
-      repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0 10px, rgba(0, 0, 0, 0.02) 10px 20px);
-    opacity: 0.7;
+      radial-gradient(300px 220px at 20% 30%, rgba(255, 153, 204, 0.12), transparent 60%),
+      radial-gradient(260px 200px at 70% 40%, rgba(255, 102, 179, 0.12), transparent 60%),
+      radial-gradient(280px 210px at 55% 75%, rgba(255, 255, 255, 0.08), transparent 60%),
+      repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0 10px, rgba(0, 0, 0, 0.04) 10px 20px);
+    opacity: 0.6;
     pointer-events: none;
     mix-blend-mode: overlay;
   }
@@ -53,9 +54,9 @@
   body::after {
     content: "";
     position: fixed; inset: -80px;
-    background: conic-gradient(from 180deg, rgba(255, 230, 242, 0.15), rgba(255, 240, 248, 0.1), rgba(255, 230, 242, 0.15));
+    background: conic-gradient(from 180deg, rgba(50, 30, 70, 0.25), rgba(255, 200, 240, 0.1), rgba(50, 30, 70, 0.25));
     filter: blur(60px);
-    opacity: 0.3;
+    opacity: 0.25;
     pointer-events: none;
   }
 
@@ -112,25 +113,6 @@
     border-radius: 14px;
     padding: 12px 14px;
     font-weight: 800;
-    cursor: pointer;
-    transition: transform 120ms ease, filter 120ms ease, opacity 120ms ease;
-    user-select: none;
-    width: 100%;
-  }
-  .btn:active { transform: scale(.98); }
-  .btn[disabled] { opacity: .45; cursor: not-allowed; }
-
-  .btn.primary {
-    color: #5a4a42;
-    background: linear-gradient(180deg, var(--accent), var(--accent2));
-    box-shadow: 0 10px 22px rgba(255, 153, 200, 0.25);
-  }
-  .btn.ghost {
-    color: var(--text);
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 180, 200, 0.3);
-  }
-
     cursor: pointer;
     transition: transform 120ms ease, filter 120ms ease, opacity 120ms ease;
     user-select: none;
