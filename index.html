@@ -687,10 +687,11 @@
       return data;
     }
 
-    function prizeText(prizeType){
-      if(!prizeType) return "—";
-      return PRIZE_NAMES[prizeType] || prizeType;
-    }
+   function prizeText(prizeType){
+  if(!prizeType) return "—";
+  const key = String(prizeType).trim();
+  return PRIZE_NAMES[key] || key;
+}
 
     function setResultBox(html){
       resultBox.innerHTML = html;
