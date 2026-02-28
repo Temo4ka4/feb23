@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -488,10 +487,9 @@
           <li>Чтобы открыть рулетку - минимум <b>3</b> правильных.</li>
           <li><b>Одна попытка</b>. Повторное участие невозможно.</li>
           <li>Призы - <b>фиксированный пул</b> (14 шт):<br/>
-            <span class="pill">🍫 2× Шоколадки Milka</span>
-            <span class="pill">🏆 1× 100⭐ Кубок</span>
-            <span class="pill">🚀 3× 50⭐ Ракета</span>
-            <span class="pill">🎁 8× 25⭐ Подарок</span>
+            <span class="pill">🍫 5× Шоколадки Milka</span>
+            <span class="pill">💍 3× 100⭐ Кольцо</span>
+            <span class="pill">🌷 7× 50⭐ Тюльпан</span>
           </li>
         </ul>
         <div class="btn-row">
@@ -577,12 +575,11 @@
     const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
 
     const PRIZE_NAMES = {
-      cup_100: "🏆 100⭐ Кубок",
-      rocket_50: "🚀 50⭐ Ракета",
-      gift_25: "🎁 25⭐ Подарок",
-      choco: "🍫 Шоколадка",
-      no_prize: "😔 Призы закончились",
-    };
+  ring_100: "💍 100⭐ Кольцо",
+  tulip_50: "🌷 50⭐ Тюльпаны",
+  choco: "🍫 Шоколадка Milka",
+  no_prize: "😔 Призы закончились",
+};
 
     const QUESTIONS = [
       { q: "Когда официально отмечается Международный женский день?", a: ["8 марта", "23 февраля", "1 сентября", "12 июня"] },
