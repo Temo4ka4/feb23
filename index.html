@@ -445,7 +445,7 @@
         <h1 style="margin-top:10px;">Подготовка</h1>
         <p class="muted">Загрузка и проверка участия…</p>
         <div class="loader"><i></i></div>
-        <div id="loading-status" class="tiny" style="margin-top:10px;">Загрузка…</div>
+        <div id="loading-status" class="tiny" style="margin-top:10px;">С 8 марта! 🌷</div>
         <div class="btn-row">
           <button id="btn-retry" class="btn ghost hidden">Повторить</button>
         </div>
@@ -469,8 +469,8 @@
       <div class="card">
         <h2>🔒 Доступ ограничен</h2>
         <p class="muted">
-          🌷 Это событие посвещенно девушкам!<br/>
-          🎖️ Мужчины в данном событии не могут поучавствовать, вам было посвещенно событие 23 февраля.
+          🌷 Это событие посвещенно девочкам нашего класса!<br/>
+          🎖️ Мальчики в данном событии не могут поучавствовать, вам было посвещенно событие 23 февраля.
         </p>
         <div class="btn-row">
           <button id="btn-close-locked" class="btn primary">Закрыть</button>
@@ -485,11 +485,11 @@
         <ul class="rules">
           <li><b>5</b> вопросов, <b>4</b> варианта ответа.</li>
           <li>Чтобы открыть рулетку - минимум <b>3</b> правильных.</li>
-          <li><b>Одна попытка</b>. Повторное участие невозможно.</li>
-          <li>Призы - <b>фиксированный пул</b> (14 шт):<br/>
-            <span class="pill">🍫 5× Шоколадки Milka</span>
-            <span class="pill">💍 3× 100⭐ Кольцо</span>
-            <span class="pill">🌷 7× 50⭐ Тюльпан</span>
+          <li><b>Даётся одна попытка</b>. Повторное участие невозможно.</li>
+          <li>Призы - <b>фиксированные </b> (15 шт):<br/>
+            <span class="pill">🍫 5 Шоколадок Milka</span>
+            <span class="pill">💍 3 Подарка Кольца 100⭐</span>
+            <span class="pill">🌷 7 Подарков Тюльпаны 50⭐</span>
           </li>
         </ul>
         <div class="btn-row">
@@ -558,7 +558,7 @@
         </div>
 
         <div class="btn-row">
-          <button id="btn-spin" class="btn primary">Прокрутить колесо</button>
+          <button id="btn-spin" class="btn primary">Крутить</button>
           <button id="btn-close" class="btn ghost">Закрыть</button>
         </div>
 
@@ -584,8 +584,8 @@
     const QUESTIONS = [
       { q: "Когда официально отмечается Международный женский день?", a: ["8 марта", "23 февраля", "1 сентября", "12 июня"] },
       { q: "Какой цветок чаще всего дарят на 8 марта?", a: ["Роза", "Мимоза", "Тюльпан", "Лилия"] },
-      { q: "Как называется женское платье, у которого нет рукавов?", a: ["Футляр", "Вечерние", "Приталенные", "Сарафан"] },
-      { q: "Какой цвет традиционно ассоциируется с 8 марта?", a: ["Жёлтый", "Серый", "Красный", "Розовый"] },
+      { q: "Если бы у праздника 8 Марта был свой аромат, каким бы он был?", a: ["Аромат весенних цветов и духов", "Аромат моря", "Аромат свежей выпечки", "Аромат краски после ремонта"] },
+      { q: "Какой цвет традиционно ассоциируется с 8 марта?", a: ["Жёлтый - Синий", "Серый - Чёрный", "Красный - Розовый", "Фиолетовый - Красный"] },
       { q: "Главная идея праздника 8 марта - это…", a: ["Уважение и внимание к девушкам", "Военные победы", "Начало учебного года", "Спортивные соревнования"] }
     ];
 
@@ -707,7 +707,7 @@
       serverState = s;
 
       if(s && s.prize_type){
-        showRouletteFinal(`Ты уже принял участие 🎖<br/>Твой приз: <strong>${prizeText(s.prize_type)}</strong>`, false);
+        showRouletteFinal(`Ты уже приняла участие! 🌷<br/>Твой приз: <strong>${prizeText(s.prize_type)}</strong>`, false);
         return;
       }
 
@@ -722,7 +722,7 @@
       }
 
       if(s.participated && !s.prize_type){
-        showRouletteFinal(`Участие завершено 🎖<br/>Результат викторины: <strong>${s.quiz_score}/5</strong>`, false);
+        showRouletteFinal(`Участие завершено! 🌷<br/>Результат викторины: <strong>${s.quiz_score}/5</strong>`, false);
         return;
       }
 
@@ -813,7 +813,7 @@
         showRouletteReady();
       }else{
         const sc = (res && typeof res.score === "number") ? res.score : (serverState ? serverState.quiz_score : 0);
-        showRouletteFinal(`Участие завершено 🎖<br/>Нужно минимум <strong>3</strong> правильных.<br/>Твой результат: <strong>${sc}/5</strong>`, false);
+        showRouletteFinal(`Участие завершено! 🌷<br/>Нужно минимум <strong>3</strong> правильных.<br/>Твой результат: <strong>${sc}/5</strong>`, false);
       }
     }
 
@@ -857,16 +857,16 @@
 
       if(resp && resp.ok && resp.prize_type){
         const pt = resp.prize_type;
-        showRouletteFinal(`Поздравляем 🎉<br/>Твой приз: <strong>${prizeText(pt)}</strong>`, false);
+        showRouletteFinal(`Поздравляю 🎉<br/>Твой приз: <strong>${prizeText(pt)}</strong>`, false);
       }else{
         const err = (resp && resp.error) ? resp.error : "unknown";
         if(err === "quiz_not_passed"){
           showRouletteFinal("Нужно минимум <strong>3</strong> правильных, чтобы крутить рулетку.", false);
         }else if(err === "already_participated"){
           if(serverState && serverState.prize_type){
-            showRouletteFinal(`Ты уже принял участие 🎖<br/>Твой приз: <strong>${prizeText(serverState.prize_type)}</strong>`, false);
+            showRouletteFinal(`Ты уже приняла участие 🌷<br/>Твой приз: <strong>${prizeText(serverState.prize_type)}</strong>`, false);
           }else{
-            showRouletteFinal("Ты уже принял участие 🎖", false);
+            showRouletteFinal("Ты уже приняла участие 🌷", false);
           }
         }else if(err === "gender_blocked"){
           showScreen("locked");
